@@ -1,0 +1,75 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"/>
+<meta name="_csrf" th:content="${_csrf.token}">
+<meta name="_csrf_header" th:content="${_csrf.headerName}">
+<body>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <section>
+                <h3 class="sub-title">오늘의 진상</h3>
+            </section>
+        </div>
+    </div>
+    <div class="card" style="margin-top: 30px">
+        <div class="card-body">
+            <div style="border-bottom: 1px solid gray;padding-bottom: 10px">
+                <h3 th:text="${board.title}" style="display: inline"></h3>
+                <div style="float: right">
+                    <span th:text="${board.createdDate}"></span>
+                    <span th:text="${board.member.name}"></span>
+                    <span th:text="${board.likeCount}"></span>
+                </div>
+            </div>
+            <div th:utext="${board.content}" style="margin-top: 25px">
+
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center">
+        <button id="likeBtn" class="btn btn-dark" style="margin-top: 15px">
+            <span style="display: block">진상 인정</span>
+            <span id="count" th:text="${board.likeCount}" th:value="${board.likeCount}"></span>
+        </button>
+    </div>
+    <button id="goList" class="btn btn-outline-primary" style="float: right; margin-top: 15px">목록</button>
+</div>
+
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        var bno = [[${board.id}]];
+
+        $("#goList").on("click", function () {
+            self.location = "/board/list";
+        });
+
+        $("#likeBtn").on("click", function () {
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+            var countValue = $("#count");
+            var count = parseInt(countValue.text());
+            var data = {count: count, bno: bno};
+            console.log(data);
+            $.ajax({
+                url: '/board/agree',
+                data: data,
+                method: 'post',
+                dataType: 'json',
+                success: function (result) {
+                    console.log(result);
+                    if (result == -1) {
+                        alert("로그인을 먼저 해주세요.");
+                        self.location = "/user/login";
+                    } else {
+                        countValue.text(result);
+                    }
+                }
+            })
+        });
+    })
+</script>

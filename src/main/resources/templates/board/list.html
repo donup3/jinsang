@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"/>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/board/register}" method="get">
+                <h3 class="sub-title">오늘의 진상</h3>
+                <button type="submit" class="btn btn-outline-info" style="float: right">글쓰기</button>
+            </form>
+        </div>
+    </div>
+    <table class="table" style="margin-top: 20px">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">제목</th>
+            <th scope="col">작성일</th>
+            <th scope="col">작성자</th>
+            <th scope="col">공감</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="board : ${board}">
+            <td th:text="${board.id}"></td>
+            <td><a href="#" th:href="@{/board/{id} (id=${board.id})}" th:text="${board.title}"></a></td>
+            <td th:text="${board.createdDate}"></td>
+            <td th:text="${board.member.name}"></td>
+            <td th:text="${board.likeCount}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
