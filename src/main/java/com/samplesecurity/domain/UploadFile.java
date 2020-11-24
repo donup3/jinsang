@@ -1,30 +1,33 @@
 package com.samplesecurity.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class UploadFile {
     @Id
     @GeneratedValue
     private Long id;
 
-    private String fileName;                //예류.jpg
+    private String fileName;
 
-    private String saveFileName;            //uuid예류.jpg
+    private String saveFileName;
 
-    private String filePath;                // D:/image/uuid예류.jpg
+    private String filePath;
 
-    private String contentType;             // image/jpeg
+    private String contentType;
 
-    private long size;                      // 4476873 (byte)
+    private long size;
 
     private LocalDateTime registerDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
 
 }

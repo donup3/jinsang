@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "../utilities/mixins.sass",
+        "../utilities/initial-variables.sass"
+    ],
+    "names": [],
+    "file": "mixins.css"
+}

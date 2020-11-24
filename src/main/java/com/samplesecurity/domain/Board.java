@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -11,29 +13,49 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "js_board")
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_id")
     private Long id;
 
     private String title;
 
-    private String content;
+    private String contents;
 
-    private String writer;
+    private int agreeCount;
 
-    private int likeCount;
+    private float latitude; //위도
+
+    private float longitude; //경도
 
     private String address;
 
     private LocalDate createdDate;
 
-    @ManyToOne
+    private String boardType; //게시물 구분분
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category; //게시물 분류 ex) 연인, 음식점
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void setMember(Member member){
-        this.member=member;
+    //attach 파일들은 단방향 매핑해놓음
+
+    @OneToMany(mappedBy = "board")
+    private List<UploadFile> uploadFiles = new ArrayList<>();
+
+    public void setMember(Member member) {
+        this.member = member;
         member.getBoards().add(this);
     }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
 }

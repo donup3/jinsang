@@ -1,0 +1,67 @@
+@charset "utf-8";
+
+// Import a Google Font
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
+
+// Set your brand colors
+$blue: #7d6db4;
+$mint: #00d1b2;
+$darkgrey: #666;
+$beige-light: #D0D1CD;
+$beige-lighter: #fafafa;
+
+$column-gap: 0.75rem;
+
+// Update Bulma's global variables
+$family-sans-serif: 'Noto Sans KR','Noto+Sans','맑은 고딕', sans-serif;
+$family-primary: 'Noto Sans KR','Noto+Sans','맑은 고딕', sans-serif;
+$grey-dark: $darkgrey;
+$grey-light: $beige-light;
+$primary: $mint;
+$link: $blue;
+$widescreen-enabled: false;
+$fullhd-enabled: false;
+
+// Update some of Bulma's component variables
+$body-background-color: $beige-lighter;
+$control-border-width: 2px;
+$input-border-color: transparent;
+$input-shadow: none;
+
+// Import only what you need from Bulma
+@import "./bulma/sass/utilities/_all.sass";
+@import "./bulma/sass/base/_all.sass";
+@import "./_font.scss";
+@import "./_delete.scss";
+
+@import "./bulma/sass/grid/columns.sass";
+
+@import "./bulma/sass/layout/hero.sass";
+@import "./bulma/sass/layout/section.sass";
+
+@import "./bulma/sass/elements/button.sass";
+@import "./bulma/sass/elements/container.sass";
+@import "./bulma/sass/elements/content.sass";
+@import "./bulma/sass/elements/form.sass";
+@import "./bulma/sass/elements/notification.sass";
+@import "./bulma/sass/elements/progress.sass";
+@import "./bulma/sass/elements/icon.sass";
+@import "./bulma/sass/elements/table.sass";
+@import "./bulma/sass/elements/tag.sass";
+@import "./bulma/sass/elements/title.sass";
+
+@import "./bulma/sass/components/level.sass";
+@import "./bulma/sass/components/card.sass";
+@import "./bulma/sass/components/dropdown.sass";
+@import "./bulma/sass/components/message.sass";
+@import "./bulma/sass/components/breadcrumb.sass";
+@import "./bulma/sass/components/media.sass";
+@import "./bulma/sass/components/modal.sass";
+@import "./bulma/sass/components/list.sass";
+@import "./bulma/sass/components/navbar.sass";
+@import "./bulma/sass/components/pagination.sass";
+@import "./bulma/sass/components/tabs.sass";
+
+// Import add scss
+@import "./board.scss";
+@import "./jinsang.scss";

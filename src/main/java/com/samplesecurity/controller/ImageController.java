@@ -46,6 +46,5 @@ public class ImageController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-
     }
 }
