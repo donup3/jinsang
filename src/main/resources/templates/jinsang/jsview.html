@@ -45,8 +45,10 @@
                         </div>
                     </div>
                     <div class="board-recommend">
-                        <button type="button" id="btnagree"><span class="btn-txt">진상인정</span><span
-                                class="ico-like-1"></span><span class="agree_num" th:text="${board.agreeCount}"></span>
+                        <button type="button" id="btnagree">
+                            <span class="btn-txt">진상인정</span>
+                            <span class="ico-like-1"></span>
+                            <span class="agree_num" id="agreeCount" th:text="${board.agreeCount}"></span>
                         </button>
                     </div>
                     <div class="fr">
@@ -120,7 +122,9 @@
 </script>
 <script>
     var id = [[${board.id}]];
-
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    //파일첨부
     (function () {
         $.getJSON("/jinsang/getAttachList", {boardId: id}, function (arr) {
             console.log(arr);
@@ -139,182 +143,147 @@
         $("#listBtn").on("click", function (e) {
             e.preventDefault();
             goListForm.submit();
-        })
-        $("#uploadResult").on("click","li a",function (e) {
+        });
+
+        $("#uploadResult").on("click", "li a", function (e) {
             e.preventDefault();
             var liObj = $("#uploadResult li");
             var path = encodeURIComponent(liObj.data("path") + "/" + liObj.data("uuid") + "_" + liObj.data("filename"));
             console.log("!!!")
             self.location = "/download?fileName=" + path;
+        });
+        //진상 인정 버튼
+        $("#btnagree").on("click", function (e) {
+
+            var countValue = $("#agreeCount");
+            var count = parseInt(countValue.text());
+            var param = {boardId: id};
+
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            $.ajax({
+                url: '/jinsang/addAgree',
+                data: param,
+                method: 'post',
+                dataType: 'json',
+                beforeSend: function (xmlHttpRequest) {
+                    xmlHttpRequest.setRequestHeader("AJAX", "true");
+                },
+                success: function (result) {
+                    console.log("a" + result)
+                    if (result == -1) {
+                        self.location = "/user/login";
+                    }
+                    countValue.text(result);
+                },
+                error: function (request, status, error) {
+                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        });
+
+        $(document).ajaxError(function (event, request, settings, thrownError) {
+            console.log("error!!!!!!!!!!!!!!!!!!!!!!");
+            console.log(request.status)
+            if (request.status == 401 ) {
+                alert('로그인 해주세요.');
+                location.href = '/user/login';
+            }
         })
-    })
+    });
 
-    $(function () {
-        var boardidx = 413;
-        var curmenu = '2';
-        $("ul.menu-list li").removeClass("on");
-        $("ul.menu-list li").eq(curmenu - 1).addClass("on");
+    $(document).on("click", ".regReply", function () {
+        var $cmtcontent = $(this).parent().parent().parent().parent();
 
-        $(".attachfile").click(function (e) {
-            //첨부파일 다운로드.
-            e.preventDefault();
-            var form = $('#f2');
-            f2.filename.value = $(this).text();
-            form.submit();
-        });
-        $(".title").click(function () {
-            location.href = 'index.php';
-        });
+        var $commet = $cmtcontent.find(".comment-write");
+        var replyidx = $(this).attr("data-idx");
+        var step = $(this).attr("data-step");
+        console.log($commet.val());
 
-        $(".viewArticle").click(function () {
-            var idx = $(this).attr("data-idx");
-            location.href = '?type=T&menu=2&idx=' + idx;
-        });
+        if (!$commet.val()) {
+            alert("댓글을 입력해주세요.");
+            $commet.focus();
+            return false;
+        }
+        if ($commet.val().length > 2000) {
+            alert("댓글이 2000자가 넘었습니다.");
+            return false;
+        }
 
-        $("#edit").click(function (e) {
-            location.href = 'edit.php?boardidx=' + boardidx;
-        });
 
-        $("#btnagree").click(function (e) {
-            var param = {boardidx: boardidx};
-            //ajax
-            $.ajax({
-                url: './ajax/addAgree.php',
-                data: param,
-                method: 'post',
-                dataType: 'json',
-                success: function (result) {
-                    console.log(result);
-                    if (result.result == 'S') {
-                        //add count
-                        $(".agree_num").text(result.agreenum);
-                    } else {
-                        alert(result.msg);
-                        location.href = 'login.php';
-                    }
-                },
-                error: function (request, status, error) {
-                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+        var param = {boardidx: boardidx, step: step, contents: $commet.val()};
+
+        if (step == "1") {
+            //touser, tousernickname, replyidx
+            var $writer = $(this).closest(".cmt-content").find(".cmt-writer");
+            var touser = $writer.attr("data-user");
+            var tousernickname = $writer.text();
+            param.touser = touser;
+            param.tousernickname = tousernickname;
+            param.replyidx = replyidx;
+        }
+        console.log($cmtcontent);
+
+        $.ajax({
+            url: './ajax/writeReply.php',
+            data: param,
+            method: 'post',
+            dataType: 'html',
+            success: function (data) {
+                console.log(data);
+                if (step == "0") {
+                    $("#cmt-list").append(data);
+                } else {
+                    location.reload();
                 }
-            });
+
+            },
+            error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
         });
 
-        $(document).on("click", ".regReply", function () {
-            var $cmtcontent = $(this).parent().parent().parent().parent();
+    });
 
-            var $commet = $cmtcontent.find(".comment-write");
+    $(document).on("keyup", ".comment-write", function () {
+        var content = $(this).val();
+        var $num = $(this).parent().parent().parent().find(".num");
+
+        $num.html(content.length);
+        if (content.length >= 2000) {
+            alert('2000자 글자수를 초과했습니다.');
+            //글자 자르기.
+            $(this).val(content.substring(0, 2000));
+            $num.html($(this).val().length);
+            return false;
+        }
+    });
+
+    $(document).on("click", ".showreply", function () {
+        $(".input-comment").hide();
+        $(".show").show();
+        $txt = $(this).closest(".cmt-content").find(".input-comment");
+        $txt.show();
+    });
+
+    $(document).on("click", ".delbtn", function () {
+        //댓글삭제.
+        if (confirm("댓글을 삭제하시겠습니까?")) {
             var replyidx = $(this).attr("data-idx");
-            var step = $(this).attr("data-step");
-            console.log($commet.val());
-
-            if (!$commet.val()) {
-                alert("댓글을 입력해주세요.");
-                $commet.focus();
-                return false;
-            }
-            if ($commet.val().length > 2000) {
-                alert("댓글이 2000자가 넘었습니다.");
-                return false;
-            }
-
-
-            var param = {boardidx: boardidx, step: step, contents: $commet.val()};
-
-            if (step == "1") {
-                //touser, tousernickname, replyidx
-                var $writer = $(this).closest(".cmt-content").find(".cmt-writer");
-                var touser = $writer.attr("data-user");
-                var tousernickname = $writer.text();
-                param.touser = touser;
-                param.tousernickname = tousernickname;
-                param.replyidx = replyidx;
-            }
-            console.log($cmtcontent);
-
-            $.ajax({
-                url: './ajax/writeReply.php',
-                data: param,
-                method: 'post',
-                dataType: 'html',
-                success: function (data) {
-                    console.log(data);
-                    if (step == "0") {
-                        $("#cmt-list").append(data);
-                    } else {
-                        location.reload();
-                    }
-
-                },
-                error: function (request, status, error) {
-                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
-                }
-            });
-
-        });
-        $(document).on("keyup", ".comment-write", function () {
-            var content = $(this).val();
-            var $num = $(this).parent().parent().parent().find(".num");
-
-            $num.html(content.length);
-            if (content.length >= 2000) {
-                alert('2000자 글자수를 초과했습니다.');
-                //글자 자르기.
-                $(this).val(content.substring(0, 2000));
-                $num.html($(this).val().length);
-                return false;
-            }
-        });
-
-        $(document).on("click", ".showreply", function () {
-            $(".input-comment").hide();
-            $(".show").show();
-            $txt = $(this).closest(".cmt-content").find(".input-comment");
-            $txt.show();
-        });
-
-        $(document).on("click", ".delbtn", function () {
-            //댓글삭제.
-            if (confirm("댓글을 삭제하시겠습니까?")) {
-                var replyidx = $(this).attr("data-idx");
-                var param = {replyidx: replyidx};
-                var $mydom = $(this);
-                //ajax
-                $.ajax({
-                    url: './ajax/delReply.php',
-                    data: param,
-                    method: 'post',
-                    dataType: 'json',
-                    success: function (result) {
-                        console.log(result);
-                        if (result.result == 'S') {
-                            $mydom.closest(".cmt-content").parent().remove();
-                        } else {
-                            alert(result.msg);
-                            location.href = 'login.php';
-                        }
-                    },
-                    error: function (request, status, error) {
-                        console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
-                    }
-                });
-            }
-        });
-
-        $(document).on("click", ".cmt-agree", function () {
-            //댓글 추천.
-            var replyidx = $(this).closest(".cmt-content").attr("data-idx");
-            var param = {replyidx: replyidx, flag: 'Y'};
+            var param = {replyidx: replyidx};
             var $mydom = $(this);
             //ajax
             $.ajax({
-                url: './ajax/replyAgree.php',
+                url: './ajax/delReply.php',
                 data: param,
                 method: 'post',
                 dataType: 'json',
                 success: function (result) {
                     console.log(result);
                     if (result.result == 'S') {
-                        $mydom.html('<span class="ico-like-1"></span>' + result.agreenum);
+                        $mydom.closest(".cmt-content").parent().remove();
                     } else {
                         alert(result.msg);
                         location.href = 'login.php';
@@ -324,34 +293,59 @@
                     console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
                 }
             });
-        });
+        }
+    });
 
-        $(document).on("click", ".cmt-disa", function () {
-            //댓글 비추천.
-            var replyidx = $(this).closest(".cmt-content").attr("data-idx");
-            var param = {replyidx: replyidx, flag: 'N'};
-            var $mydom = $(this);
-            //ajax
-            $.ajax({
-                url: './ajax/replyAgree.php',
-                data: param,
-                method: 'post',
-                dataType: 'json',
-                success: function (result) {
-                    console.log(result);
-                    if (result.result == 'S') {
-                        $mydom.html('<span class="ico-like-1"></span>' + result.disagreenum);
-                    } else {
-                        alert(result.msg);
-                        location.href = 'login.php';
-                    }
-                },
-                error: function (request, status, error) {
-                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+    $(document).on("click", ".cmt-agree", function () {
+        //댓글 추천.
+        var replyidx = $(this).closest(".cmt-content").attr("data-idx");
+        var param = {replyidx: replyidx, flag: 'Y'};
+        var $mydom = $(this);
+        //ajax
+        $.ajax({
+            url: './ajax/replyAgree.php',
+            data: param,
+            method: 'post',
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+                if (result.result == 'S') {
+                    $mydom.html('<span class="ico-like-1"></span>' + result.agreenum);
+                } else {
+                    alert(result.msg);
+                    location.href = 'login.php';
                 }
-            });
+            },
+            error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
         });
+    });
 
+    $(document).on("click", ".cmt-disa", function () {
+        //댓글 비추천.
+        var replyidx = $(this).closest(".cmt-content").attr("data-idx");
+        var param = {replyidx: replyidx, flag: 'N'};
+        var $mydom = $(this);
+        //ajax
+        $.ajax({
+            url: './ajax/replyAgree.php',
+            data: param,
+            method: 'post',
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+                if (result.result == 'S') {
+                    $mydom.html('<span class="ico-like-1"></span>' + result.disagreenum);
+                } else {
+                    alert(result.msg);
+                    location.href = 'login.php';
+                }
+            },
+            error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
+        });
     });
 </script>
 

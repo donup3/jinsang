@@ -11,7 +11,7 @@ import com.samplesecurity.dto.Board.BoardRegisterDto;
 import com.samplesecurity.dto.PageMaker;
 import com.samplesecurity.repository.CategoryRepository;
 import com.samplesecurity.repository.MemberRepository;
-import com.samplesecurity.repository.board.AttachFileRepository;
+import com.samplesecurity.repository.AttachFileRepository;
 import com.samplesecurity.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,45 +86,29 @@ public class BoardController {
         Board board = boardRegisterDto.toEntity(findMember, category);
         List<AttachFileDto> fileDtos = boardRegisterDto.getFileDtos();
 
-        boardService.register(board,fileDtos);
+        boardService.register(board, fileDtos);
 
-        rttr.addAttribute("boardType",boardRegisterDto.getBoardType());
+        rttr.addAttribute("boardType", boardRegisterDto.getBoardType());
 
         return "redirect:/jinsang/jslist";
     }
 
     @GetMapping("/getAttachList")
     @ResponseBody
-    public ResponseEntity<List<AttachFile>> getAttachList(Long boardId){
-        log.info("boardId: "+boardId);
+    public ResponseEntity<List<AttachFile>> getAttachList(Long boardId) {
+        log.info("boardId: " + boardId);
         List<AttachFile> boardAttachList = attachFileRepository.findByBoardId(boardId);
 
         return new ResponseEntity<>(boardAttachList, HttpStatus.OK);
     }
-//    @PostMapping("/agree")
-//    @ResponseBody
-//    @Transactional
-//    public int agree(Long bno,int count, Authentication authentication) {
-//        System.out.println("bno = " + bno);
-//        System.out.println("count = " + count);
-//        if (authentication == null) {
-//            return -1;
-//        }
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//        String username = userDetails.getUsername();
-//        Member findMember = memberRepository.findByEmail(username).get();
-//
-//        Board board = boardRepository.findById(bno).get();
-//        if(!findMember.isAgreeCheck()){
-//            count++;
-//            findMember.setAgreeCheck(true);
-//            board.setLikeCount(count);
-//        }else{
-//            count--;
-//            findMember.setAgreeCheck(false);
-//            board.setLikeCount(count);
-//        }
-//
-//        return count;
-//    }
+
+    @PostMapping("/addAgree")
+    @ResponseBody
+    public int agree(Long boardId, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        Member findMember = memberRepository.findByEmail(username).get();
+
+        return boardService.addAgree(findMember,boardId);
+    }
 }

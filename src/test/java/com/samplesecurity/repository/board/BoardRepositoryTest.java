@@ -30,20 +30,17 @@ class BoardRepositoryTest {
 
     @Test
     public void 더미데이터생성() {
-        Category category1 = new Category();
-        category1.setName("연인");
-        categoryRepository.save(category1);
-        Category category2 = new Category();
-        category2.setName("음식점");
-        categoryRepository.save(category2);
+        Category category1 = categoryRepository.findById(1L).get();
+        Category category2 = categoryRepository.findById(2L).get();
+        Category category3 = categoryRepository.findById(3L).get();
         Member member1 = new Member();
-        member1.setEmail("test@test.com");
+        member1.setEmail("test@t.com");
         member1.setPassword("123");
-        member1.setName("멤버1");
+        member1.setName("테스트멤버1");
         memberRepository.save(member1);
         Member member2 = new Member();
-        member2.setEmail("test@test.com");
-        member2.setName("멤버2");
+        member2.setEmail("test@t.com");
+        member2.setName("테스트멤버2");
         member2.setPassword("123");
         memberRepository.save(member2);
 
@@ -72,7 +69,7 @@ class BoardRepositoryTest {
         }
         for (int i = 30; i < 101; i++) {
             Board board = Board.builder()
-                    .category(category2)
+                    .category(category3)
                     .title("테스트 제목" + i)
                     .boardType("2")
                     .createdDate(LocalDate.now())
