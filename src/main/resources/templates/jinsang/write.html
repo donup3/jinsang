@@ -186,7 +186,6 @@
                 <input type="hidden" name="page" th:value="${pageDto.page}">
             </form>
 
-
         </div>
     </section>
 </div>
@@ -207,6 +206,7 @@
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
     var f1 = $("#f1");
+    var filesTempArr = [];
 
     $(document).ready(function () {
         var goListForm = $("#goList");
@@ -215,32 +215,27 @@
             goListForm.submit();
         })
     })
-    var filesTempArr = [];
 
     // 파일 추가
     function addFiles(e) {
         var files = e.target.files;
-        console.log("files: " + files);
-
         var filesArr = Array.prototype.slice.call(files);
-        console.log("fileArr: " + filesArr)
         var filesArrLen = filesArr.length;
         var filesTempArrLen = filesTempArr.length;
+
         for (var i = 0; i < filesArrLen; i++) {
             filesTempArr.push(filesArr[i]);
             $("#fileList").append("<div>" + filesArr[i].name + "<a href='#' onclick=\"deleteFile(event, " + (filesTempArrLen + i) + ");\">[삭제]</a></div>");
         }
         $(this).val('');
     }
-
+    //파일업로드
     function allFileUpload() {
         var formData = new FormData();
         var str = "";
         for (var i = 0, filesTempArrLen = filesTempArr.length; i < filesTempArrLen; i++) {
             formData.append("uploadFile", filesTempArr[i]);
         }
-        console.log("formData: " + formData);
-
 
         $(document).ajaxSend(function (e, xhr, options) {
             xhr.setRequestHeader(header, token);
@@ -286,6 +281,7 @@
 
         // $("#w-category").load("./ajax/loadcategory.php");
 
+        //파일추가
         $("#fileupload").on("change", addFiles);
 
         $('#summernote').summernote({
@@ -333,7 +329,6 @@
                 $("#w-category").focus();
                 return false;
             }
-            //공개비공개.
 
             if (!$("#w-title").val()) {
                 alert("제목을 입력해주세요.");

@@ -92,11 +92,11 @@ public class FileController {
         try {
             String downloadName = null;
             if (userAgent.contains("Trident")) {
-                downloadName = URLEncoder.encode(resourceOriginalName, "UTF-8").replaceAll("\\+", " ");
+                downloadName = URLEncoder.encode(resourceOriginalName, "UTF-8").replaceAll("\\+", " "); //IE
             } else if (userAgent.contains("Edge")) {
-                downloadName = URLEncoder.encode(resourceOriginalName, "UTF-8");
+                downloadName = URLEncoder.encode(resourceOriginalName, "UTF-8"); //Edge
             } else {
-                downloadName = new String(resourceOriginalName.getBytes("UTF-8"), "ISO-8859-1");
+                downloadName = new String(resourceOriginalName.getBytes("UTF-8"), "ISO-8859-1"); //chrome
             }
             headers.add("Content-Disposition", "attachment; filename=" + downloadName);
         } catch (UnsupportedEncodingException e) {
@@ -104,21 +104,6 @@ public class FileController {
         }
 
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/deleteFile")
-    @ResponseBody
-    public ResponseEntity<String> deleteFile(String fileName, String type) {
-        log.info("deleteFile: " + fileName);
-        File file;
-        file = new File("C:\\upload\\" + URLDecoder.decode(fileName, StandardCharsets.UTF_8));
-        file.delete();
-
-        String largeFileName = file.getAbsolutePath().replace("s_", "");
-        log.info("largeFileName: " + largeFileName);
-        file = new File(largeFileName);
-        file.delete();
-        return new ResponseEntity<>("deleted", HttpStatus.OK);
     }
 
     private String getFolder() {

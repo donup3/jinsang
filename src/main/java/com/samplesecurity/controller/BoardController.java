@@ -9,12 +9,14 @@ import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.BoardPageDto;
 import com.samplesecurity.dto.Board.BoardRegisterDto;
 import com.samplesecurity.dto.PageMaker;
+import com.samplesecurity.exception.SampleException;
 import com.samplesecurity.repository.CategoryRepository;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.AttachFileRepository;
 import com.samplesecurity.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -111,4 +113,5 @@ public class BoardController {
 
         return boardService.addAgree(findMember,boardId);
     }
+
 }

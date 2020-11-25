@@ -149,14 +149,13 @@
             e.preventDefault();
             var liObj = $("#uploadResult li");
             var path = encodeURIComponent(liObj.data("path") + "/" + liObj.data("uuid") + "_" + liObj.data("filename"));
-            console.log("!!!")
+
             self.location = "/download?fileName=" + path;
         });
         //진상 인정 버튼
         $("#btnagree").on("click", function (e) {
 
             var countValue = $("#agreeCount");
-            var count = parseInt(countValue.text());
             var param = {boardId: id};
 
             $(document).ajaxSend(function (e, xhr, options) {
@@ -172,7 +171,6 @@
                     xmlHttpRequest.setRequestHeader("AJAX", "true");
                 },
                 success: function (result) {
-                    console.log("a" + result)
                     if (result == -1) {
                         self.location = "/user/login";
                     }
@@ -211,7 +209,6 @@
             alert("댓글이 2000자가 넘었습니다.");
             return false;
         }
-
 
         var param = {boardidx: boardidx, step: step, contents: $commet.val()};
 
