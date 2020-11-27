@@ -36,11 +36,11 @@ class BoardRepositoryTest {
         Member member1 = new Member();
         member1.setEmail("test@t.com");
         member1.setPassword("123");
-        member1.setName("테스트멤버1");
+        member1.setNickName("테스트멤버1");
         memberRepository.save(member1);
         Member member2 = new Member();
         member2.setEmail("test@t.com");
-        member2.setName("테스트멤버2");
+        member2.setNickName("테스트멤버2");
         member2.setPassword("123");
         memberRepository.save(member2);
 

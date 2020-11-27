@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/mainHeader :: mainHeader"></head>
+
+<body class="jsdotcom vsc-initialized">
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/nav :: mainNav"></div>
+
+<div class="content sub login">
+
+    <section>
+        <h3 class="sub-title">
+            로그인
+        </h3>
+        <form name="f1" action="login_proc.php" method="post">
+            <div class="login-wrap">
+                <div class="field">
+                    <div class="control">
+                        <span class="ico-person-2"></span>
+                        <input class="input" type="text" placeholder="아이디(이메일)" name="userid">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <span class="ico-lock-o"></span>
+                        <input class="input" type="password" placeholder="비밀번호" name="userpass">
+                    </div>
+                </div>
+
+                <div class="login-btns">
+                    <button type="button" class="button login-btn">로그인</button>
+                    <button type="button" class="button register-btn">회원가입</button>
+                    <a href="#" title="비밀번호 찾기" class="pwsearch">비밀번호 분실</a>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+
+<footer class="footer">
+    <div class="footer-wrap">
+        <div class="footer-link">
+            <a href="#" class="privacy">개인정보처리방침</a>
+            <a href="#" class="term">서비스이용약관</a>
+        </div>
+        <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+<script>
+
+</script><script>
+$(function(){
+	//비밀번호 찾기
+	$(".pwsearch").click(function(){
+		if(confirm("비밀번호를 재발급 받으시겠습니까?")){
+			if(!$("input[name='userid']").val()){
+				alert("아이디를 입력해주세요");
+				$("input[name='userid']").focus();
+				return false;
+			}
+
+			var param = {id:$("input[name='userid']").val()};
+			$.ajax({
+				url:'./ajax/resetpass.php',
+				data:param,
+				dataType:'json',
+				method:'post',
+				success:function(data){
+					alert(data.msg);
+					sendMail('resetpass',$("input[name='userid']").val());
+				},
+				error:function(request,status,error){
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				}
+			});
+		}
+	});
+
+	//login
+	$(".login-btn").click(function(){
+		if(!$("input[name='userid']").val()){
+			alert("아이디를 입력해주세요");
+			$("input[name='userid']").focus();
+			return false;
+		}
+		if(!$("input[name='userpass']").val()){
+			alert("비밀번호를 입력해주세요");
+			$("input[name='userpass']").focus();
+			return false;
+		}
+		f1.submit();
+	});
+	//register
+	$(".register-btn").click(function(){
+		location.href= '/user/signup';
+	});
+});
+</script>
+</body>
+</html>

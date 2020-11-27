@@ -44,6 +44,11 @@ public class BoardController {
     private final CategoryRepository categoryRepository;
     private final AttachFileRepository attachFileRepository;
 
+    @GetMapping("/")
+    public String index(){
+        return "/index";
+    }
+
     @GetMapping("/jslist")
     public String list(@ModelAttribute("pageDto") BoardPageDto boardPageDto, Model model) {
         log.info("ss" + boardPageDto);

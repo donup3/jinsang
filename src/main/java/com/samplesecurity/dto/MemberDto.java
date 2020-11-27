@@ -11,14 +11,14 @@ public class MemberDto {
     private Long id;
     private String email;
     private String password;
-    private String name;
+    private String nickName;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
     public Member toEntity() {
         return Member.builder()
                 .id(id)
-                .name(name)
+                .nickName(nickName)
                 .email(email)
                 .password(password)
                 .role(Role.MEMBER)

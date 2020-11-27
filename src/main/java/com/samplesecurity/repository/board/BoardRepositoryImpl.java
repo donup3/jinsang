@@ -25,9 +25,9 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
 
     @Override
     public Page<BoardListDto> findAllByDto(String boardType, Pageable pageable) {
-        BooleanBuilder builder=new BooleanBuilder();
-        if(boardType!=null){
-            switch (boardType){
+        BooleanBuilder builder = new BooleanBuilder();
+        if (boardType != null) {
+            switch (boardType) {
                 case "2":
                     builder.and(board.boardType.eq(boardType));
                     break;
@@ -42,7 +42,7 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                                 category.name.as("category"),
                                 board.title,
                                 board.createdDate,
-                                member.name.as("writer"),
+                                member.nickName.as("writer"),
                                 board.agreeCount))
                 .from(board)
                 .orderBy(board.id.desc())

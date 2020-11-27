@@ -47,7 +47,7 @@ public class Board {
     //attach 파일들은 단방향 매핑해놓음
 
     @OneToMany(mappedBy = "board")
-    private List<UploadFile> uploadFiles = new ArrayList<>();
+    private List<UploadFile> uploadFiles;
 
     public void setMember(Member member) {
         this.member = member;

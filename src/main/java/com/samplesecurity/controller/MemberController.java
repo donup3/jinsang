@@ -1,52 +1,30 @@
 package com.samplesecurity.controller;
 
-import com.samplesecurity.dto.MemberDto;
+import com.samplesecurity.domain.Member;
 import com.samplesecurity.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequiredArgsConstructor
 @Slf4j
+@Controller
+@RequestMapping("/user")
+@RequiredArgsConstructor
 public class MemberController {
+
     private final MemberService memberService;
 
-    @GetMapping("/")
-    public String index(){
-        return "/index";
-    }
-
-    @GetMapping("/user/signup")
+    @GetMapping("/signup")
     public String signupGet(){
-        return "/signup";
+        return "/member/signup";
     }
 
-    @PostMapping("/user/signup")
-    public String signupPost(MemberDto memberDto){
-        memberService.joinUser(memberDto);
-
-        return "redirect:/user/login";
-    }
-
-    @GetMapping("/user/login")
+    @GetMapping("login")
     public String loginForm() {
-        return "/login";
-    }
-
-
-    @GetMapping("/user/login/result")
-    public String dispLoginResult() {
-
-        return "/loginSuccess";
-    }
-
-    // 로그아웃 결과 페이지
-    @GetMapping("/user/logout/result")
-    public String dispLogout() {
-        return "/logout";
+        return "/member/login";
     }
 
     // 접근 거부 페이지
@@ -61,9 +39,25 @@ public class MemberController {
         return "/myinfo";
     }
 
-    // 어드민 페이지
-    @GetMapping("/admin")
-    public String dispAdmin() {
-        return "/admin";
+    @ResponseBody
+    @GetMapping("/nicknameduplecheck")
+    public ResponseEntity<Boolean> verifyNickName(String nickName) {
+        boolean isNickNameExisted = memberService.nickNameChecker(nickName);
+        if (isNickNameExisted) {
+            return ResponseEntity.ok().body(true);
+        }
+        return ResponseEntity.ok().body(false);
     }
+
+    //    @ResponseBody
+//    @GetMapping("/emailduplecheck")
+//    public ResponseEntity<Boolean> verifyEmail(String email) {
+//        boolean isEmailExisted = memberService.emailChecker(email);
+//        if (isEmailExisted) {
+//            return ResponseEntity.ok().body(true);
+//        }
+//        return ResponseEntity.ok().body(false);
+//    }
+
+
 }
