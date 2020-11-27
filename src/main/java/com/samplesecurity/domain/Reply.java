@@ -28,17 +28,18 @@ public class Reply {
 
     private LocalDate createdDate;
 
-//    private int agreeCount;
-//
-//    private int disagreeCount;
+    private int agreeCount;
+
+    private int disagreeCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
+    //member 단방향
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;    //보내는 사람
 
-    private Long toMemberId;  //받는 사람
+    private String toMemberName;  //받는 사람
 }

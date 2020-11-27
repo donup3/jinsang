@@ -11,8 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LoginIntercepter implements HandlerInterceptor {
-
-    public List loginEssential = Arrays.asList("/jinsang/addAgree"); //로그인 필요한 url
+    //delete/1/2 이렇게 두개 들어가면 **두개 해줘야함.
+    public List<String> loginEssential = Arrays.asList(
+            "/jinsang/addAgree",
+            "/jinsang/reply/write/*",
+            "/jinsang/reply/delete/**"
+    ); //로그인 필요한 url
     public List loginInessential = Arrays.asList(); //로그인 필요없는 url
 
     @Override

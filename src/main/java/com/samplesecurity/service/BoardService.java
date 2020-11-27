@@ -34,11 +34,12 @@ public class BoardService {
 
     public void register(Board board, List<AttachFileDto> fileDtos) {
         Board saveBoard = boardRepository.save(board);
-
-        for (AttachFileDto fileDto : fileDtos) {
-            AttachFile attachFile = fileDto.toEntity();
-            AttachFile saveFile = attachFileRepository.save(attachFile);
-            saveFile.setBoard(saveBoard);
+        if(fileDtos!=null) {
+            for (AttachFileDto fileDto : fileDtos) {
+                AttachFile attachFile = fileDto.toEntity();
+                AttachFile saveFile = attachFileRepository.save(attachFile);
+                saveFile.setBoard(saveBoard);
+            }
         }
     }
 
