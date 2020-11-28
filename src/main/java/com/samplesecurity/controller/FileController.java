@@ -1,6 +1,8 @@
 package com.samplesecurity.controller;
 
 import com.samplesecurity.dto.Board.AttachFileDto;
+import com.samplesecurity.service.FileService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -15,55 +17,26 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
-@Controller
 @Slf4j
+@Controller
+@RequiredArgsConstructor
 public class FileController {
-    @PostMapping("/uploadFile")
+
+    private final FileService fileService;
+
     @ResponseBody
-    public ResponseEntity<List<AttachFileDto>> uploadFile(MultipartFile[] uploadFile) {
-        log.info("upload!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        String uploadFolder = "C:\\upload";
-        String uploadFolderPath = getFolder();
-        File uploadPath = new File(uploadFolder, uploadFolderPath);
-        List<AttachFileDto> list = new ArrayList<>();
-        if (!uploadPath.exists()) {
-            uploadPath.mkdirs();
-        }
-        for (MultipartFile multipartFile : uploadFile) {
-            AttachFileDto attachFileDto = new AttachFileDto();
-            log.info("Upload File Name: " + multipartFile.getOriginalFilename());
-            String uploadFileName = multipartFile.getOriginalFilename();
-            uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\") + 1);//IE 일때
-            attachFileDto.setFileName(uploadFileName);
-
-            UUID uuid = UUID.randomUUID();
-            uploadFileName = uuid.toString() + "_" + uploadFileName;
-
-            try {
-                File saveFile = new File(uploadPath, uploadFileName);
-                multipartFile.transferTo(saveFile);
-                attachFileDto.setUuid(uuid.toString());
-                attachFileDto.setUploadPath(uploadFolderPath);
-                list.add(attachFileDto);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-        }
-        return new ResponseEntity<>(list, HttpStatus.OK);
+    @PostMapping("/uploadFile")
+    public ResponseEntity<AttachFileDto> uploadFile(@RequestParam(value = "profileimg") MultipartFile uploadFile) {
+        AttachFileDto attachFileDto = fileService.uploadSingleFile(uploadFile);
+        return new ResponseEntity<>(attachFileDto, HttpStatus.OK);
     }
 
     @GetMapping("/display")
-    @ResponseBody
     public ResponseEntity<byte[]> getFile(String fileName) {
         File file = new File("C:\\upload\\" + fileName);
         ResponseEntity<byte[]> result = null;
@@ -79,7 +52,6 @@ public class FileController {
     }
 
     @GetMapping("/download")
-    @ResponseBody
     public ResponseEntity<Resource> downloadFile(@RequestHeader("User-Agent") String userAgent, String fileName) {
         Resource resource = new FileSystemResource("C:\\upload\\" + fileName);
         if (!resource.exists()) {

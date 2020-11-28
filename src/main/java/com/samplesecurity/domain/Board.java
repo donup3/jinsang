@@ -45,7 +45,6 @@ public class Board {
     private Member member;
 
     //attach 파일들은 단방향 매핑해놓음
-
     @OneToMany(mappedBy = "board")
     private List<UploadFile> uploadFiles;
 

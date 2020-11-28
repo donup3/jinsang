@@ -11,11 +11,11 @@
         <h3 class="sub-title">
             회원가입
         </h3>
-        <form name="f1" action="register_proc.php" method="post" enctype="multipart/form-data">
+        <form id="f1" th:action="@{/user/signup}" method="post">
             <div class="register-wrap">
                 <div class="input-field auth-div">
                     <label class="input-tit" for="user-id">아이디(이메일)</label>
-                    <span><input class="input" type="text" id="user-id" name="userid"><button type="button" class="button sendemail" >인증번호 발송</button></span>
+                    <span><input class="input" type="text" id="user-id" name="email"><button type="button" class="button sendemail" >인증번호 발송</button></span>
                 </div>
                 <div class="input-field">
                     <label class="input-tit" for="auth-code">이메일 인증</label>
@@ -23,7 +23,7 @@
                 </div>
                 <div class="input-field">
                     <label class="input-tit" for="user-pw">비밀번호</label>
-                    <span><input class="input" type="password" id="user-pw" name="userpw"></span>
+                    <span><input class="input" type="password" id="user-pw" name="password"></span>
                 </div>
                 <div class="input-field">
                     <label class="input-tit" for="user-pwre">비밀번호확인</label>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="input-field">
                     <label class="input-tit" for="user-nick">닉네임</label>
-                    <span><input class="input" type="text" id="user-nick" name="usernickname"><button type="button" class="button chknick">중복확인</button></span>
+                    <span><input class="input" type="text" id="user-nick" name="nickName"><button type="button" class="button chknick">중복확인</button></span>
                 </div>
                 <div class="input-field">
                     <span class="input-tit">프로필</span>
@@ -46,7 +46,7 @@
                     </span>
                 </div>
                 <script>
-                    // File upload 를 위한 스크립트
+                    /// File upload 를 위한 스크립트
                     $(function () {
                         $(document).on('change','.file-input',function () {
                             if ($(this).length > 0) {
@@ -74,176 +74,227 @@
         <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
     </div>
 </footer>
+
 <script>
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
 
-</script><script>
-var isidcheck = false; // email check
-var isIdAuthenticated = false; // email authentication check
-var isnicknamecheck = false; //nick check
+    var f1 = $("#f1");
+    var isidcheck = false; // email check
+    var isIdAuthenticated = false; // email authentication check
+    var isnicknamecheck = false; //nick check
 
-function email_check( email ) {
-    var regex=/([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-    return (email != '' && email != 'undefined' && regex.test(email));
+    var inputFile = $("input[name='profileimg']");
 
-}
+    function email_check( email ) {
+        var regex=/([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return (email != '' && email != 'undefined' && regex.test(email));
+    }
 
-$(function(){
-	$(".reg-comp").click(function(e){
-		//validation
-		if(!$("#user-id").val()){
-			alert('아이디를 입력해주세요');
-			$("#user-id").focus();
-			return false;
-		}
-		//email pattern
-		if ( ! email_check($("#user-id").val()) ) {
-			alert('아이디가 이메일 형식이 아닙니다.');
-			$("#user-id").focus();
-			return false;
-		}
+    $(function(){
+        $(".reg-comp").click(function(e){
+            //validation
+            if(!$("#user-id").val()){
+                alert('아이디를 입력해주세요');
+                $("#user-id").focus();
+                return false;
+            }
+            //email pattern
+            if (!email_check($("#user-id").val()) ) {
+                alert('아이디가 이메일 형식이 아닙니다.');
+                $("#user-id").focus();
+                return false;
+            }
 
-		if(!$("#user-pw").val()){
-			alert('비밀번호를 입력해주세요');
-			$("#user-pw").focus();
-			return false;
-		}
-		if(!$("#user-pwre").val()){
-			alert('비밀번호 확인을 입력해주세요');
-			$("#user-pwre").focus();
-			return false;
-		}
-		if($("#user-pw").val() != $("#user-pwre").val()){
-			alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-			$("#user-pw").focus();
-			return false;
-		}
+            if(!$("#user-pw").val()){
+                alert('비밀번호를 입력해주세요');
+                $("#user-pw").focus();
+                return false;
+            }
+            if(!$("#user-pwre").val()){
+                alert('비밀번호 확인을 입력해주세요');
+                $("#user-pwre").focus();
+                return false;
+            }
+            if($("#user-pw").val() != $("#user-pwre").val()){
+                alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                $("#user-pw").focus();
+                return false;
+            }
 
-		//비밀번호 복잡도 10자이상 20이하, 영문숫자특수문자 혼합.
-		if(!check.test($("#user-pw").val())){
-			alert("비밀번호는 10자이상 20자이하, 영문, 숫자, 특수문자를 혼합해야 합니다.");
-			return false;
-		}
+            //비밀번호 복잡도 10자이상 20이하, 영문숫자특수문자 혼합.
+            if(!check.test($("#user-pw").val())){
+                alert("비밀번호는 10자이상 20자이하, 영문, 숫자, 특수문자를 혼합해야 합니다.");
+                return false;
+            }
 
-		//nickname check
-		if(!f1.usernickname.value){
-			alert("닉네임을 입력해주세요");
-			f1.usernickname.focus();
-			return false;
-		}
-		if(!isidcheck){
-			alert("아이디 중복체크를 해주세요.");
-			return false;
-		}
-		if(!isIdAuthenticated){
-			alert("아이디 인증을 해주세요.");
-			return false;
-		}
-		if(!isnicknamecheck){
-			alert("닉네임 중복체크를 해주세요.");
-			return false;
-		}
+            //nickname check
+            if(!$("#user-nick").val()){
+                alert("닉네임을 입력해주세요");
+                f1.usernickname.focus();
+                return false;
+            }
+            if(!isidcheck){
+                alert("아이디 중복체크를 해주세요.");
+                return false;
+            }
+            if(!isIdAuthenticated){
+                alert("아이디 인증을 해주세요.");
+                return false;
+            }
+            if(!isnicknamecheck){
+                alert("닉네임 중복체크를 해주세요.");
+                return false;
+            }
 
-		//file 첨부.
-		f1.submit();
-	});
+            f1.submit();
 
-	$(".sendemail").click(function(e){
-		if(!$("#user-id").val()){
-			alert('아이디를 입력해주세요');
-			$("#user-id").focus();
-			return false;
-		}
-		var str = "";
-		var authDiv = $(".auth-div");
-		var senddata = {"email" :$("#user-id").val()};
+            // 파일이 존재하면 파일과 함께 submit
+<!--            if (inputFile[0].files != null) {-->
+<!--                uploadProfileImg()-->
+<!--            } else {-->
+<!--            }-->
+        });
 
-		// check email
-		$.ajax({
-			method:'GET',
-			url:'/sendauthemail',
-			data:senddata,
-			success:function(data){
-				if(data){
-					alert('이미 등록된 이메일입니다.');
-					return false;
-				}else{
-					alert('인증메일을 전송하였습니다.');
-					str += "";
-                    authDiv.append(str);
-					isidcheck = true;
-				}
-			},
-			error:function(request,status,error){
-				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-			}
-		});
-	});
+        // 인증 번호 발송 이벤트
+        $(".sendemail").click(function(e){
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
 
-	$(".chkauth").click(function(e){
-		if(!$("#auth-code").val()){
-			alert('인증 번호를 입력해주세요');
-			$("#auth-code").focus();
-			return false;
-		}
-		var senddata = {"authCode" :$("#auth-code").val()};
+            if(!$("#user-id").val()){
+                alert('이메일을 입력해주세요');
+                $("#user-id").focus();
+                return false;
+            }
 
-		// check email
-		$.ajax({
-			method:'GET',
-			url:'/checkauthcode',
-			data:senddata,
-			success:function(data){
-				if(data){
-					alert('인증되었습니다.');
-					isIdAuthenticated = true;
-				}else{
-					alert('인증번호가 틀립니다. 인증번호를 확인해주세요.');
-					return false;
-				}
-			},
-			error:function(request,status,error){
-				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-			}
-		});
-	});
+            var str = "";
+            var authDiv = $(".auth-div");
+            var senddata = {"email" :$("#user-id").val()};
 
-	$(".chknick").click(function(e){
-		if(!$("#user-nick").val()){
-			alert("닉네임을 입력해주세요.");
-			$("#user-nick").focus();
-			return false;
-		}
+            // check email
+            $.ajax({
+                method:'POST',
+                url:'/sendauthemail',
+                data:senddata,
+                success:function(data){
+                    if(data){
+                        alert('이미 등록된 이메일입니다.');
+                        return false;
+                    }else{
+                        alert('인증메일을 전송하였습니다.');
+                        str += "";
+                        authDiv.append(str);
+                        isidcheck = true;
+                    }
+                },
+                error:function(request,status,error){
+                    console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+        });
 
-		var senddata = {"nickname" :$("#user-nick").val()}
-		//check email
-		$.ajax({
-			method:'GET',
-			url:'/user/nicknameduplecheck',
-			data:senddata,
-			success:function(data){
-				console.log(data);
-				if(data){
-					alert('이미 등록된 닉네임입니다.');
-					return false;
-				}else{
-					alert("사용할 수 있는 닉네임입니다.");
-					isnicknamecheck = true;
-				}
-			},
-			error:function(request,status,error){
-				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-			}
-		});
-	});
+        // 인증 번호 확인 버튼 이벤트
+        $(".chkauth").click(function(e){
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
 
-	$(".cancel").click(function(e){
-		location.href='index.php';
-	});
+            if(!$("#auth-code").val()){
+                alert('인증 번호를 입력해주세요');
+                $("#auth-code").focus();
+                return false;
+            }
+            var senddata = {"authCode" :$("#auth-code").val()};
 
-    $(".auth-div").on("click", "button[class='chkauth']", function(){
-        console.log("clicked");
+            // check email
+            $.ajax({
+                method:'POST',
+                url:'/checkauthcode',
+                data:senddata,
+                success:function(data){
+                    if(data){
+                        alert('인증되었습니다.');
+                        isIdAuthenticated = true;
+                    }else{
+                        alert('인증번호가 틀립니다. 인증번호를 확인해주세요.');
+                        return false;
+                    }
+                },
+                error:function(request,status,error){
+                    console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+        });
+
+        // 닉네임 확인 버튼 이벤트
+        $(".chknick").click(function(e){
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            if(!$("#user-nick").val()){
+                alert("닉네임을 입력해주세요.");
+                $("#user-nick").focus();
+                return false;
+            }
+            var senddata = {"nickname" :$("#user-nick").val()}
+
+            $.ajax({
+                method:'POST',
+                url:'/user/nicknameduplecheck',
+                data:senddata,
+                success:function(data){
+                    console.log(data);
+                    if(data){
+                        alert('이미 등록된 닉네임입니다.');
+                        return false;
+                    }else{
+                        alert("사용할 수 있는 닉네임입니다.");
+                        isnicknamecheck = true;
+                    }
+                },
+                error:function(request,status,error){
+                    console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+        });
+
+        $(".cancel").click(function(e){
+            location.href='/';
+        });
+
+        function uploadProfileImg(){
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            var formData = new FormData();
+            var files = inputFile[0].files;
+            var str = "";
+
+            formData.set("profileimg", files[0]);
+
+            $.ajax({
+                type: "POST",
+                url: "/uploadFile",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    str += "<input type='hidden' name='ProfileDto.fileName' value='" + data.fileName + "'>";
+                    str += "<input type='hidden' name='ProfileDto.uuid' value='" + data.uuid + "'>";
+                    str += "<input type='hidden' name='ProfileDto.uploadPath' value='" + data.uploadPath + "'>";
+
+                    f1.append(str);
+                    f1.submit();
+                },
+                err: function (err) {
+                    alert(err.status);
+                }
+            });
+        }
     });
-});
 </script>
 </body>
 </html>

@@ -1,12 +1,12 @@
 package com.samplesecurity.controller;
 
-import com.samplesecurity.domain.Member;
+import com.samplesecurity.dto.MemberDto;
 import com.samplesecurity.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -18,12 +18,18 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/signup")
-    public String signupGet(){
+    public String getSignupPage(){
         return "/member/signup";
     }
 
-    @GetMapping("login")
-    public String loginForm() {
+    @GetMapping("/login")
+    public String loginForm(String error, Model model) {
+        log.info("login page loading done.");
+
+        if (error != null) {
+            model.addAttribute("error", "계정을 다시 확인해주세요.");
+        }
+
         return "/member/login";
     }
 
@@ -40,7 +46,7 @@ public class MemberController {
     }
 
     @ResponseBody
-    @GetMapping("/nicknameduplecheck")
+    @PostMapping("/nicknameduplecheck")
     public ResponseEntity<Boolean> verifyNickName(String nickName) {
         boolean isNickNameExisted = memberService.nickNameChecker(nickName);
         if (isNickNameExisted) {
@@ -49,15 +55,9 @@ public class MemberController {
         return ResponseEntity.ok().body(false);
     }
 
-    //    @ResponseBody
-//    @GetMapping("/emailduplecheck")
-//    public ResponseEntity<Boolean> verifyEmail(String email) {
-//        boolean isEmailExisted = memberService.emailChecker(email);
-//        if (isEmailExisted) {
-//            return ResponseEntity.ok().body(true);
-//        }
-//        return ResponseEntity.ok().body(false);
-//    }
-
-
+    @PostMapping("/signup")
+    public String grantSignup(MemberDto memberDto) {
+        memberService.store(memberDto);
+        return "redirect:/user/login";
+    }
 }

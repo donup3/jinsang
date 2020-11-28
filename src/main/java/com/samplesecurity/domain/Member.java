@@ -18,7 +18,7 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 100, nullable = false)
     private String email;
 
     @Column(length = 100, nullable = false)
@@ -26,13 +26,15 @@ public class Member {
 
     private String nickName;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @OneToMany(mappedBy = "member")
+    private List<MemberAuth> roles;
 
     @OneToMany(mappedBy = "member")
     private List<Board> boards;
 
-    @OneToOne
-    @JoinColumn(name = "email_auth_id")
+    @OneToOne(mappedBy = "member")
+    private Profile profile;
+
+    @OneToOne(mappedBy = "member")
     private EmailAuth emailAuth;
 }

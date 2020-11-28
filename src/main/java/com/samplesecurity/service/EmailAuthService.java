@@ -1,7 +1,6 @@
 package com.samplesecurity.service;
 
 import com.samplesecurity.domain.EmailAuth;
-import com.samplesecurity.domain.Member;
 import com.samplesecurity.repository.EmailAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,17 +15,16 @@ import java.util.Random;
 public class EmailAuthService {
 
     private final JavaMailSender sender;
-
     private final EmailAuthRepository emailAuthRepository;
 
     private static final String FROM_ADDRESS = "java.email.sender020@gmail.com";
 
     public boolean emailChecker(String email) {
-        Optional<EmailAuth> emailAuth = emailAuthRepository.findByEmail(email);
-        if (emailAuth.isPresent()){
-            return true;
-        }
-        return false;
+        return emailAuthRepository.findByEmail(email).isPresent();
+    }
+
+    public boolean authCodeChecker(String authCode) {
+        return emailAuthRepository.findByAuthCode(authCode).isPresent();
     }
 
     public void storeAuthCode(String email) {
@@ -68,11 +66,5 @@ public class EmailAuthService {
         return stringBuffer.toString();
     }
 
-    public boolean authCodeChecker(String authCode) {
-        Optional<EmailAuth> emailAuth = emailAuthRepository.findByAuthCode(authCode);
-        if(emailAuth.isPresent()) {
-            return true;
-        }
-        return false;
-    }
+
 }

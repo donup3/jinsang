@@ -2,43 +2,67 @@ package com.samplesecurity.service;
 
 import com.samplesecurity.domain.EmailAuth;
 import com.samplesecurity.domain.Member;
-import com.samplesecurity.domain.Role;
+import com.samplesecurity.domain.MemberAuth;
 import com.samplesecurity.dto.MemberDto;
 import com.samplesecurity.repository.EmailAuthRepository;
+import com.samplesecurity.repository.MemberAuthRepository;
 import com.samplesecurity.repository.MemberRepository;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class MemberService{
 
+    private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+    private final EmailAuthRepository emailAuthRepository;
+    private final MemberAuthRepository memberAuthRepository;
 
     public boolean nickNameChecker(String nickName) {
-        Optional<Member> member = memberRepository.findByNickName(nickName);
-        if (member.isPresent()){
-            return true;
-        }
-        return false;
+         return memberRepository.findByNickName(nickName).isPresent();
+    }
+
+    public Member saveMember(MemberDto memberDto) {
+        Member member = Member.builder()
+                .email(memberDto.getEmail())
+                .password(passwordEncoder.encode(memberDto.getPassword()))
+                .nickName(memberDto.getNickName())
+                .build();
+
+        return memberRepository.save(member);
+    }
+
+    public void store(MemberDto memberDto) {
+        Member member = saveMember(memberDto);
+        log.info("memberId : " + member.getId());
+
+        EmailAuth emailAuth = emailAuthRepository.findByEmail(memberDto.getEmail()).get();
+        emailAuth.setMember(member);
+        emailAuthRepository.save(emailAuth);
+
+        List<MemberAuth> roles = new ArrayList<>();
+        MemberAuth memberAuth = MemberAuth.builder().role("ROLE_MEMBER").build();
+        roles.add(memberAuth);
+
+        memberAuth.setMember(member);
+
+        memberAuthRepository.save(memberAuth);
+    }
+
+    public void saveProfileImg() {
+
+    }
+
+    public void saveRoles() {
+
     }
 }

@@ -8,22 +8,18 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Data
-@Builder
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-public class EmailAuth {
+@Builder
+public class MemberAuth {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "email_auth_id")
+    @Column(name = "member_auth_id")
     private Long id;
 
-    private String email;
+    private String role;
 
-    private String authCode;
-
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 }

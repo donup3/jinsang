@@ -12,18 +12,19 @@
         <h3 class="sub-title">
             로그인
         </h3>
-        <form name="f1" action="login_proc.php" method="post">
+        <form id="f1" th:action="@{/user/login}" method="post">
             <div class="login-wrap">
+                <p th:text="${error}"></p>
                 <div class="field">
                     <div class="control">
                         <span class="ico-person-2"></span>
-                        <input class="input" type="text" placeholder="아이디(이메일)" name="userid">
+                        <input class="input" type="text" placeholder="아이디(이메일)" name="username">
                     </div>
                 </div>
                 <div class="field">
                     <div class="control">
                         <span class="ico-lock-o"></span>
-                        <input class="input" type="password" placeholder="비밀번호" name="userpass">
+                        <input class="input" type="password" placeholder="비밀번호" name="password">
                     </div>
                 </div>
 
@@ -50,16 +51,18 @@
 
 </script><script>
 $(function(){
+    var f1 = $("#f1");
+
 	//비밀번호 찾기
 	$(".pwsearch").click(function(){
 		if(confirm("비밀번호를 재발급 받으시겠습니까?")){
-			if(!$("input[name='userid']").val()){
+			if(!$("input[name='username']").val()){
 				alert("아이디를 입력해주세요");
-				$("input[name='userid']").focus();
+				$("input[name='username']").focus();
 				return false;
 			}
 
-			var param = {id:$("input[name='userid']").val()};
+			var param = {id:$("input[name='username']").val()};
 			$.ajax({
 				url:'./ajax/resetpass.php',
 				data:param,
@@ -78,14 +81,14 @@ $(function(){
 
 	//login
 	$(".login-btn").click(function(){
-		if(!$("input[name='userid']").val()){
+		if(!$("input[name='username']").val()){
 			alert("아이디를 입력해주세요");
-			$("input[name='userid']").focus();
+			$("input[name='username']").focus();
 			return false;
 		}
-		if(!$("input[name='userpass']").val()){
+		if(!$("input[name='password']").val()){
 			alert("비밀번호를 입력해주세요");
-			$("input[name='userpass']").focus();
+			$("input[name='password']").focus();
 			return false;
 		}
 		f1.submit();
