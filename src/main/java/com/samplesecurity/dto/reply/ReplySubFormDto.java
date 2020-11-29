@@ -6,23 +6,27 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class ReplyFormDto {
+public class ReplySubFormDto {
 
-//    private String memberName; controller에서 로그인한 유저 받음
+    private Long replyId;
 
     private String contents;
 
-    //board,member 세팅은 service에서 함
-    //Ref 값은 service에서 +1
+    private int ref;
+
+    private int level;
+
+    private int refOrder;
+
     public Reply toEntity(){
         return Reply.builder()
                 .contents(contents)
                 .createdDate(LocalDate.now())
                 .agreeCount(0)
                 .disagreeCount(0)
-                .level(0)
-                .refOrder(0)
+                .level(level)
+                .refOrder(refOrder)
+                .ref(ref)
                 .build();
     }
-
 }

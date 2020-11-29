@@ -1,5 +1,4 @@
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/mainHeader :: mainHeader"></head>
 
 <body class="jsdotcom vsc-initialized">
@@ -73,7 +72,8 @@
                     <div class="field">
                         <label class="label">댓글달기</label>
                         <div class="control">
-                            <textarea class="textarea comment-write" placeholder="댓글을 작성해주세요."></textarea>
+                            <textarea class="textarea comment-write" id="replyContent"
+                                      placeholder="댓글을 작성해주세요."></textarea>
                         </div>
                     </div>
                     <div class="buttons-group">
@@ -83,7 +83,7 @@
                         </div>
                         <div class="fr">
                             <div class="buttons">
-                                <button type="button" class="button is-link regReply">
+                                <button type="button" class="button is-link regReply" id="replyRegBtn">
                                     댓글등록
                                 </button>
                             </div>
@@ -174,9 +174,6 @@
                     xmlHttpRequest.setRequestHeader("AJAX", "true");
                 },
                 success: function (result) {
-                    if (result == -1) {
-                        self.location = "/user/login";
-                    }
                     countValue.text(result);
                 },
                 error: function (request, status, error) {
@@ -186,13 +183,12 @@
         });
 
         $(document).ajaxError(function (event, request, settings, thrownError) {
-            if (request.status == 401) {
+            if (request.status === 401) {
                 alert('로그인 해주세요.');
                 location.href = '/user/login';
             }
         })
     });
-
 
     $(document).on("keyup", ".comment-write", function () {
         var content = $(this).val();
@@ -206,13 +202,6 @@
             $num.html($(this).val().length);
             return false;
         }
-    });
-
-    $(document).on("click", ".showreply", function () {
-        $(".input-comment").hide();
-        $(".show").show();
-        $txt = $(this).closest(".cmt-content").find(".input-comment");
-        $txt.show();
     });
 </script>
 <script th:inline="javascript" th:src="@{'/js/reply.js'}"></script>
@@ -234,23 +223,20 @@
                     "               <div class='cmt-h'>" +
                     "                                <div class='writer-nm'> " +
                     "                                    <span class='cmt-writer'>" + replyObj.memberName + "</span> " +
-                    "                                    <span class='cmt-date'>" + replyObj.createdDate +
-                    "                                    </span>" +
+                    "                                    <span class='cmt-date'>" + replyObj.createdDate + "</span>" +
                     "                                    <span class='cmt-del'>" +
                     "                                        <button data-replyId='" + replyObj.replyId + "' type='button' class='delbtn' title='삭제'>" +
                     "                                            <span class='ico-cross-thin'></span>" +
                     "                                        </button> " +
-                    "           </span>" +
+                    "                                   </span>" +
                     "                                </div> " +
                     "                            </div> " +
                     "                            <p class='board-comment'> " +
-                    "                                <span class='cmt-body'>" +
-                    replyObj.contents +
-                    "                                </span> " +
+                    "                                <span class='cmt-body'>" + replyObj.contents + "</span> " +
                     "                            </p>" +
                     "                            <div class='comment-btns'>" +
                     "                                <div class='fl'>" +
-                    "                                    <button type='button' class='button showreply'>댓글달기</button>" +
+                    "                                    <button type='button' class='button showreply' id='subReplyBtn'>댓글달기</button>" +
                     "                                </div>" +
                     "                                <div class='fr'>" +
                     "                                    <button type='button' class='button cmt-agree'><span class='ico-like-1'></span>0" +
@@ -260,27 +246,29 @@
                     "                                </div>" +
                     "                            </div>" +
 
-                    // "                            <div class='input-comment'>" +
-                    // "                                <div class='field'>" +
-                    // "                                    <div class='control'>" +
-                    // "                                        <textarea class='textarea comment-write' placeholder='댓글을 작성해주세요'></textarea>" +
-                    // "                                    </div>" +
-                    // "                                </div>" +
-                    // "                                <div class='buttons-group'>" +
-                    // "                                    <div class='fl byte-info'>" +
-                    // "                                        <span class='num'>0</span><span> / 2000 Byte</span>" +
-                    // "                                    </div>" +
-                    // "                                    <div class='fr'>" +
-                    // "                                        <div class='buttons'>" +
-                    // "                                            <button type='button' class='button is-link regReply'>" +
-                    // "                                                댓글등록" +
-                    // "                                            </button>" +
-                    // "                                        </div>" +
-                    // "                                    </div>" +
-                    // "                                </div>" +
-                    // "                            </div>" +
-                    // "                        </div>" +
-                    // "                        <ul>" +
+                    "                            <div class='input-comment' id='sub-comment' style='display: none'>" +
+                    "                                <div class='field'>" +
+                    "                                    <div class='control'>" +
+                    "                                        <textarea class='textarea comment-write' id='subReplyContent' placeholder='댓글을 작성해주세요'></textarea>" +
+                    "                                    </div>" +
+                    "                                </div>" +
+                    "                                <div class='buttons-group'>" +
+                    "                                    <div class='fl byte-info'>" +
+                    "                                        <span class='num'>0</span><span> / 2000 Byte</span>" +
+                    "                                    </div>" +
+                    "                                    <div class='fr'>" +
+                    "                                        <div class='buttons'>" +
+                    "                                            <button type='button' id='subReplyRegBtn' class='button is-link regReply' " +
+                    "                                               data-idx='" + replyObj.replyId + "' data-ref='" + replyObj.ref + "' " +
+                    "                                               data-level='" + replyObj.level + "' data-reforder='" + replyObj.refOrder + "'>" +
+                    "                                                댓글등록" +
+                    "                                            </button>" +
+                    "                                        </div>" +
+                    "                                    </div>" +
+                    "                                </div>" +
+                    "                            </div>" +
+                    "                        </div>" +
+                    "                        <ul>" +
                     "                            <li id='subReply'>" +
                     "                            </li>" +
                     "                        </ul>" +
@@ -291,9 +279,9 @@
             }
         }
 
-        $(document).on("click", ".regReply", function () {
+        $(document).on("click", "#replyRegBtn", function () {
             var $cmtcontent = $(this).parent().parent().parent().parent();
-            var contents = $(".comment-write").val();
+            var contents = $("#replyContent").val();
             var param = {contents: contents, boardId: id}
 
             $(document).ajaxSend(function (e, xhr, options) {
@@ -315,6 +303,37 @@
                 return false;
             }
         });
+        // $("#subReplyContent").val()
+        $(document).on("click", "#subReplyRegBtn", function () {
+            console.log("subReply register!!!")
+            console.log($(this));
+            var subReplyRegBtn = $(this);
+            var contents = $(this).closest(".input-comment").find("#subReplyContent").val();
+            var replyId=subReplyRegBtn.data("idx");
+            var ref = subReplyRegBtn.data("ref");
+            var level = subReplyRegBtn.data("level");
+            var refOrder = subReplyRegBtn.data("reforder");
+            console.log("ref: " + ref + " level: " + level, " refOrder: " + refOrder);
+            var param = {contents: contents, boardId: id,
+                ref: ref, level: level, refOrder: refOrder,
+                replyId:replyId};
+
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            replyManger.subAdd(param, function (list) {
+                printList(list);
+            });
+        });
+
+        $(document).on("click", "#subReplyBtn", function () {
+            $(".input-comment").hide();
+            $(".show").show();
+            var txt = $(this).closest(".cmt-content").find(".input-comment");
+            txt.show();
+        });
+
         $(document).on("click", ".delbtn", function () {
             var replyId = $(this).data("replyid");
             console.log("reId" + replyId);

@@ -19,6 +19,22 @@ var replyManger = (function () {
         })
     };
 
+
+    var subAdd = function (obj, callback) {
+        console.log("subAdd reply!!!")
+        $.ajax({
+            type: 'post',
+            url: '/jinsang/reply/write/subReply/' + obj.boardId,
+            data: JSON.stringify(obj),
+            beforeSend: function (xmlHttpRequest) {
+                xmlHttpRequest.setRequestHeader("AJAX", "true");
+            },
+            dataType: 'json',
+            contentType: 'application/json',
+            success: callback
+        })
+    };
+
     var remove = function (obj, callback) {
         console.log("remove reply!!!")
         $.ajax({
@@ -36,6 +52,7 @@ var replyManger = (function () {
     return {
         getAll: getAll,
         add: add,
+        subAdd:subAdd,
         remove: remove
     }
 })();

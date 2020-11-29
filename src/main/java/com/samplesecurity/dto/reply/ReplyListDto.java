@@ -11,11 +11,11 @@ public class ReplyListDto {
 
     private String contents;
 
-    private int refidx;
+    private int ref;
 
-    private int step;
+    private int level;
 
-    private int orders;
+    private int refOrder;
 
     private String memberName;
 
@@ -28,12 +28,12 @@ public class ReplyListDto {
     private int disagreeCount;
 
     @QueryProjection
-    public ReplyListDto(Long replyId, String contents, int refidx, int step, int orders, String memberName, String toMemberName, LocalDate createdDate, int agreeCount, int disagreeCount) {
+    public ReplyListDto(Long replyId, String contents, int ref, int level, int orders, String memberName, String toMemberName, LocalDate createdDate, int agreeCount, int disagreeCount) {
         this.replyId = replyId;
         this.contents = contents;
-        this.refidx = refidx;
-        this.step = step;
-        this.orders = orders;
+        this.ref = ref;
+        this.level = level;
+        this.refOrder = orders;
         this.memberName = memberName;
         this.toMemberName = toMemberName;
         this.createdDate = createdDate;

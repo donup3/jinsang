@@ -22,9 +22,9 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
         return queryFactory.select(new QReplyListDto(
                 reply.id.as("replyId"),
                 reply.contents,
-                reply.refidx,
-                reply.step,
-                reply.orders,
+                reply.ref,
+                reply.level,
+                reply.refOrder,
                 member.name,
                 reply.toMemberName,
                 reply.createdDate,
@@ -33,6 +33,8 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
                 .from(reply)
                 .leftJoin(reply.member, member)
                 .where(reply.board.id.eq(boardId))
+                .orderBy(reply.ref.desc())
+                .orderBy(reply.refOrder.asc())
                 .fetch();
     }
 }

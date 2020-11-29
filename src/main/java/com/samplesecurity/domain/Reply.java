@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
+@ToString(exclude = {"board","member"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "js_reply")
@@ -20,11 +21,13 @@ public class Reply {
 
     private String contents;
 
-    private int refidx;
+    private int ref; //댓글 그룹번호
 
-    private int step;
+    private int level; // depth
 
-    private int orders;
+    private int refOrder; // 같은 댓글 그룹안에서 순서
+
+    private int answerNum; // 댓글의 댓글 수
 
     private LocalDate createdDate;
 
