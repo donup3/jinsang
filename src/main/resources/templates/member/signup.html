@@ -147,13 +147,12 @@
                 return false;
             }
 
-            f1.submit();
-
             // 파일이 존재하면 파일과 함께 submit
-<!--            if (inputFile[0].files != null) {-->
-<!--                uploadProfileImg()-->
-<!--            } else {-->
-<!--            }-->
+            if (inputFile[0].files.length > 0) {
+                uploadProfileImg()
+            } else {
+                f1.submit();
+            }
         });
 
         // 인증 번호 발송 이벤트
@@ -282,9 +281,9 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    str += "<input type='hidden' name='ProfileDto.fileName' value='" + data.fileName + "'>";
-                    str += "<input type='hidden' name='ProfileDto.uuid' value='" + data.uuid + "'>";
-                    str += "<input type='hidden' name='ProfileDto.uploadPath' value='" + data.uploadPath + "'>";
+                    str += "<input type='hidden' name='profile.fileName' value='" + data.fileName + "'>";
+                    str += "<input type='hidden' name='profile.uuid' value='" + data.uuid + "'>";
+                    str += "<input type='hidden' name='profile.uploadPath' value='" + data.uploadPath + "'>";
 
                     f1.append(str);
                     f1.submit();

@@ -25,11 +25,9 @@ public class MemberController {
     @GetMapping("/login")
     public String loginForm(String error, Model model) {
         log.info("login page loading done.");
-
         if (error != null) {
             model.addAttribute("error", "계정을 다시 확인해주세요.");
         }
-
         return "/member/login";
     }
 

@@ -31,6 +31,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new CustomUserDetailsService();
     }
 
+    @Bean
+    public AuthenticationSuccessHandler loginSuccessHandler() {
+        return new CustomLoginSuccessHandler();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(customUserService()).passwordEncoder(passwordEncoder());
+    }
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/lib/**");
@@ -55,16 +65,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().accessDeniedPage("/user/denied");
     }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customUserService()).passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler loginSuccessHandler() {
-        return new CustomLoginSuccessHandler();
-    }
-
-
 }

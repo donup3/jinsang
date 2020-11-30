@@ -26,9 +26,9 @@ public class Board {
 
     private int agreeCount;
 
-    private float latitude; //위도
+    private Float latitude; //위도
 
-    private float longitude; //경도
+    private Float longitude; //경도
 
     private String address;
 
@@ -56,5 +56,4 @@ public class Board {
     public void setCategory(Category category) {
         this.category = category;
     }
-
 }

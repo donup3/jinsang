@@ -10,6 +10,8 @@ import javax.persistence.*;
 @Data
 @Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberAuth {
 
     @Id
@@ -19,7 +21,7 @@ public class MemberAuth {
 
     private String role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
     private Member member;
 }

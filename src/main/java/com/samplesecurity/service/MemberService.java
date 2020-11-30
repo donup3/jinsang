@@ -3,12 +3,16 @@ package com.samplesecurity.service;
 import com.samplesecurity.domain.EmailAuth;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.domain.MemberAuth;
+import com.samplesecurity.domain.Profile;
+import com.samplesecurity.dto.MemberAuthDto;
 import com.samplesecurity.dto.MemberDto;
 import com.samplesecurity.repository.EmailAuthRepository;
 import com.samplesecurity.repository.MemberAuthRepository;
 import com.samplesecurity.repository.MemberRepository;
+import com.samplesecurity.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +30,23 @@ public class MemberService{
     private final MemberRepository memberRepository;
     private final EmailAuthRepository emailAuthRepository;
     private final MemberAuthRepository memberAuthRepository;
+    private final ProfileRepository profileRepository;
 
     public boolean nickNameChecker(String nickName) {
          return memberRepository.findByNickName(nickName).isPresent();
+    }
+
+    public void store(MemberDto memberDto) {
+        Member member = saveMember(memberDto);
+        log.info("memberId : " + member.getId());
+
+        saveRoles(member);
+        saveEmailAuth(memberDto, member);
+
+        log.info("profile is null? : " + memberDto.getProfile());
+        if (memberDto.getProfile() != null) {
+            saveProfile(memberDto, member);
+        }
     }
 
     public Member saveMember(MemberDto memberDto) {
@@ -41,28 +59,26 @@ public class MemberService{
         return memberRepository.save(member);
     }
 
-    public void store(MemberDto memberDto) {
-        Member member = saveMember(memberDto);
-        log.info("memberId : " + member.getId());
+    private void saveProfile(MemberDto memberDto, Member member) {
+        Profile profile = memberDto.getProfile();
+        profile.setMember(member);
 
+        profileRepository.save(profile);
+    }
+
+    private void saveEmailAuth(MemberDto memberDto, Member member) {
         EmailAuth emailAuth = emailAuthRepository.findByEmail(memberDto.getEmail()).get();
         emailAuth.setMember(member);
-        emailAuthRepository.save(emailAuth);
 
+        emailAuthRepository.save(emailAuth);
+    }
+
+    private void saveRoles(Member member) {
         List<MemberAuth> roles = new ArrayList<>();
         MemberAuth memberAuth = MemberAuth.builder().role("ROLE_MEMBER").build();
         roles.add(memberAuth);
-
         memberAuth.setMember(member);
 
         memberAuthRepository.save(memberAuth);
-    }
-
-    public void saveProfileImg() {
-
-    }
-
-    public void saveRoles() {
-
     }
 }
