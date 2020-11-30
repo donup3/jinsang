@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -30,9 +31,16 @@ public class FileController {
     private final FileService fileService;
 
     @ResponseBody
-    @PostMapping("/uploadFile")
-    public ResponseEntity<AttachFileDto> uploadFile(@RequestParam(value = "profileimg") MultipartFile uploadFile) {
+    @PostMapping("/uploadProfile")
+    public ResponseEntity<AttachFileDto> uploadProfileImg(@RequestParam(value = "profileimg") MultipartFile uploadFile) {
         AttachFileDto attachFileDto = fileService.uploadSingleFile(uploadFile);
+        return new ResponseEntity<>(attachFileDto, HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @PostMapping("/uploadFile")
+    public ResponseEntity<List<AttachFileDto>> uploadFile(MultipartFile[] uploadFile) {
+        List<AttachFileDto> attachFileDto = fileService.uploadFiles(uploadFile);
         return new ResponseEntity<>(attachFileDto, HttpStatus.OK);
     }
 

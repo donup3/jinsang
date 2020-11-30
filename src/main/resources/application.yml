@@ -12,11 +12,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      show_sql: true
+      format_sql: true
 
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
+#    properties:
+#      hibernate:
 
   mail:
     host: smtp.gmail.com
