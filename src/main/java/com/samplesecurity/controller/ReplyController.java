@@ -49,10 +49,10 @@ public class ReplyController {
 
     @DeleteMapping("/delete/{boardId}/{replyId}")
     public ResponseEntity<?> remove(@PathVariable("boardId") Long boardId,
-                                    @PathVariable("replyId") Long replyId) {
+                                    @PathVariable("replyId") Long replyId,
+                                    Authentication authentication) {
         log.info("delete reply...");
-        //TODO : 자신글만 지울 수 있도록 해야함
-        replyService.delete(replyId);
+        replyService.delete(replyId, authentication);
 
         return new ResponseEntity<>(replyService.getReplyList(boardId), HttpStatus.CREATED);
     }

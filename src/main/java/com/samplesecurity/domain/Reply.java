@@ -27,8 +27,6 @@ public class Reply {
 
     private int refOrder; // 같은 댓글 그룹안에서 순서
 
-    private int answerNum; // 댓글의 댓글 수
-
     private LocalDate createdDate;
 
     private int agreeCount;

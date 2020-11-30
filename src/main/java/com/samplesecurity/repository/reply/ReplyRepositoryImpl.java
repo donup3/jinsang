@@ -1,6 +1,8 @@
 package com.samplesecurity.repository.reply;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.samplesecurity.domain.QReply;
+import com.samplesecurity.domain.Reply;
 import com.samplesecurity.dto.reply.QReplyListDto;
 import com.samplesecurity.dto.reply.ReplyListDto;
 
@@ -8,6 +10,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.samplesecurity.domain.QMember.member;
+import static com.samplesecurity.domain.QReply.*;
 import static com.samplesecurity.domain.QReply.reply;
 
 public class ReplyRepositoryImpl implements ReplyCustomRepository {
@@ -33,8 +36,38 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
                 .from(reply)
                 .leftJoin(reply.member, member)
                 .where(reply.board.id.eq(boardId))
-                .orderBy(reply.ref.desc())
+                .orderBy(reply.ref.asc())
                 .orderBy(reply.refOrder.asc())
                 .fetch();
+    }
+
+//    @SuppressWarnings("ConstantConditions") //int -> integer로 바꿔야안전 null일수도 있어서 warning 표시가 뜸
+    @Override
+    public int findBottom(Reply parentReply) {
+        Integer minRef = queryFactory.select(reply.refOrder.min())
+                .from(reply)
+                .where(reply.level.loe(parentReply.getLevel())
+                        .and(reply.refOrder.gt(parentReply.getRefOrder()))
+                        .and(reply.ref.eq(parentReply.getRef())))
+                .fetchOne();
+
+        if(minRef!=null){
+            return minRef;
+        }
+        return -1;
+    }
+
+    @Override
+    public int findMaxRefOrder(Reply parentReply) {
+        Integer maxRef = queryFactory.select(reply.refOrder.max())
+                .from(reply)
+                .where(reply.level.goe(parentReply.getLevel())
+                        .and(reply.refOrder.goe(parentReply.getRefOrder()))
+                        .and(reply.ref.eq(parentReply.getRef())))
+                .fetchOne();
+        if(maxRef!=null){
+            return maxRef;
+        }
+        return -1;
     }
 }
