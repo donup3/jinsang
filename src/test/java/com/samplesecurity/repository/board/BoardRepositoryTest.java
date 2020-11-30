@@ -1,10 +1,9 @@
 package com.samplesecurity.repository.board;
 
-import com.samplesecurity.domain.Board;
-import com.samplesecurity.domain.Category;
+import com.samplesecurity.domain.board.Board;
+import com.samplesecurity.domain.board.Category;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.Board.BoardListDto;
-import com.samplesecurity.repository.CategoryRepository;
 import com.samplesecurity.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

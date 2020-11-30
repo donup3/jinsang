@@ -1,6 +1,7 @@
-package com.samplesecurity.domain;
+package com.samplesecurity.domain.board;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.samplesecurity.domain.board.Board;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,6 +1,6 @@
 package com.samplesecurity.dto.Board;
 
-import com.samplesecurity.domain.AttachFile;
+import com.samplesecurity.domain.board.AttachFile;
 import lombok.Data;
 
 @Data

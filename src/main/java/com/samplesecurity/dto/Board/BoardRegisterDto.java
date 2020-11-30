@@ -1,7 +1,7 @@
 package com.samplesecurity.dto.Board;
 
-import com.samplesecurity.domain.Board;
-import com.samplesecurity.domain.Category;
+import com.samplesecurity.domain.board.Board;
+import com.samplesecurity.domain.board.Category;
 import com.samplesecurity.domain.Member;
 import lombok.Data;
 

@@ -1,5 +1,6 @@
-package com.samplesecurity.domain;
+package com.samplesecurity.domain.board;
 
+import com.samplesecurity.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;

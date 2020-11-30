@@ -1,5 +1,6 @@
-package com.samplesecurity.domain;
+package com.samplesecurity.domain.board;
 
+import com.samplesecurity.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,4 +27,5 @@ public class AgreeCheck {
     private Board board;
 
     private boolean agreeChecked; // 진상 인정 버튼 눌렀는지
+
 }

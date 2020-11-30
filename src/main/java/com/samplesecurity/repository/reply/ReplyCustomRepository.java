@@ -1,6 +1,6 @@
 package com.samplesecurity.repository.reply;
 
-import com.samplesecurity.domain.Reply;
+import com.samplesecurity.domain.reply.Reply;
 import com.samplesecurity.dto.reply.ReplyListDto;
 
 import java.util.List;

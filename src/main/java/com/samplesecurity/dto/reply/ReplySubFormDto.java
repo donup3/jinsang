@@ -1,6 +1,6 @@
 package com.samplesecurity.dto.reply;
 
-import com.samplesecurity.domain.Reply;
+import com.samplesecurity.domain.reply.Reply;
 import lombok.Data;
 
 import java.time.LocalDate;

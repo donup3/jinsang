@@ -1,15 +1,19 @@
-package com.samplesecurity.domain;
+package com.samplesecurity.domain.reply;
 
+import com.samplesecurity.domain.Member;
+import com.samplesecurity.domain.board.Board;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @Builder
-@ToString(exclude = {"board","member"})
+@ToString(exclude = {"board", "member"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "js_reply")
@@ -43,4 +47,7 @@ public class Reply {
     private Member member;    //보내는 사람
 
     private String toMemberName;  //받는 사람
+
+    @OneToMany(mappedBy = "reply", cascade = CascadeType.REMOVE)
+    private List<ReplyAgreeCheck> replyAgreeChecks = new ArrayList<>();
 }

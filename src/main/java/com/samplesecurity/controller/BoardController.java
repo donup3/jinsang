@@ -1,22 +1,20 @@
 package com.samplesecurity.controller;
 
-import com.samplesecurity.domain.AttachFile;
-import com.samplesecurity.domain.Board;
-import com.samplesecurity.domain.Category;
+import com.samplesecurity.domain.board.AttachFile;
+import com.samplesecurity.domain.board.Board;
+import com.samplesecurity.domain.board.Category;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.BoardPageDto;
 import com.samplesecurity.dto.Board.BoardRegisterDto;
 import com.samplesecurity.dto.PageMaker;
-import com.samplesecurity.exception.SampleException;
-import com.samplesecurity.repository.CategoryRepository;
+import com.samplesecurity.repository.board.CategoryRepository;
 import com.samplesecurity.repository.MemberRepository;
-import com.samplesecurity.repository.AttachFileRepository;
+import com.samplesecurity.repository.board.AttachFileRepository;
 import com.samplesecurity.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package com.samplesecurity.controller;
 
-import com.samplesecurity.domain.Reply;
+import com.samplesecurity.domain.reply.Reply;
 import com.samplesecurity.dto.reply.ReplyFormDto;
 import com.samplesecurity.dto.reply.ReplySubFormDto;
 import com.samplesecurity.service.ReplyService;
@@ -55,5 +55,19 @@ public class ReplyController {
         replyService.delete(replyId, authentication);
 
         return new ResponseEntity<>(replyService.getReplyList(boardId), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/addAgree/{replyId}")
+    public int addAgree(@PathVariable("replyId") Long replyId,
+                        Authentication authentication) {
+
+        return replyService.addAgree(replyId, authentication);
+    }
+
+    @PostMapping("/disAgree/{replyId}")
+    public int disAgree(@PathVariable("replyId") Long replyId,
+                        Authentication authentication) {
+
+        return replyService.disAgree(replyId, authentication);
     }
 }

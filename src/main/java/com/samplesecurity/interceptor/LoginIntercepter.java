@@ -15,7 +15,9 @@ public class LoginIntercepter implements HandlerInterceptor {
     public List<String> loginEssential = Arrays.asList(
             "/jinsang/addAgree",
             "/jinsang/reply/write/*",
-            "/jinsang/reply/delete/**"
+            "/jinsang/reply/delete/**",
+            "/jinsang/reply/addAgree/**",
+            "/jinsang/reply/disAgree/**"
     ); //로그인 필요한 url
     public List loginInessential = Arrays.asList(); //로그인 필요없는 url
 

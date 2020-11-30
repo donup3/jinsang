@@ -1,13 +1,13 @@
 package com.samplesecurity.service;
 
-import com.samplesecurity.domain.AgreeCheck;
-import com.samplesecurity.domain.AttachFile;
-import com.samplesecurity.domain.Board;
+import com.samplesecurity.domain.board.AgreeCheck;
+import com.samplesecurity.domain.board.AttachFile;
+import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
-import com.samplesecurity.repository.AgreeCheckRepository;
-import com.samplesecurity.repository.AttachFileRepository;
+import com.samplesecurity.repository.board.AgreeCheckRepository;
+import com.samplesecurity.repository.board.AttachFileRepository;
 import com.samplesecurity.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

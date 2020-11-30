@@ -1,11 +1,13 @@
 package com.samplesecurity.service;
 
-import com.samplesecurity.domain.Board;
+import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.domain.Member;
-import com.samplesecurity.domain.Reply;
+import com.samplesecurity.domain.reply.Reply;
+import com.samplesecurity.domain.reply.ReplyAgreeCheck;
 import com.samplesecurity.dto.reply.ReplyListDto;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.BoardRepository;
+import com.samplesecurity.repository.reply.ReplyAgreeCheckRepository;
 import com.samplesecurity.repository.reply.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class ReplyService {
     private final ReplyRepository replyRepository;
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final ReplyAgreeCheckRepository replyAgreeCheckRepository;
 
     public List<ReplyListDto> getReplyList(Long boardId) {
         return replyRepository.findAllDtoByBoardId(boardId);
@@ -76,6 +79,7 @@ public class ReplyService {
     }
 
     public void delete(Long replyId, Authentication authentication) {
+        // 부모글이 삭제되면 자식글들도 삭제되도록 구현필요
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Reply reply = replyRepository.findById(replyId).get();
         if (userDetails.getUsername().equals(reply.getMember().getEmail())) {
@@ -85,9 +89,74 @@ public class ReplyService {
         }
     }
 
+    public int addAgree(Long replyId, Authentication authentication) {
+        ReplyAgreeCheck agreeCheck;
+        Reply reply = replyRepository.findById(replyId).get();
+        Member findMember = findMember(authentication);
+
+        ReplyAgreeCheck findAgreeCheck = replyAgreeCheckRepository.findByMemberIdAndReplyId(findMember.getId(), replyId);
+        agreeCheck = findAgreeCheck;
+
+        if (findAgreeCheck == null) {
+            agreeCheck = createAgreeCheck(findMember, reply);
+        }
+
+        int count = reply.getAgreeCount();
+        if (!agreeCheck.isAgreeChecked()) {
+            count++;
+            agreeCheck.setAgreeChecked(true);
+        } else {
+            count--;
+            agreeCheck.setAgreeChecked(false);
+        }
+        reply.setAgreeCount(count);
+
+        return count;
+    }
+
+    public int disAgree(Long replyId, Authentication authentication) {
+        ReplyAgreeCheck agreeCheck;
+        Reply reply = replyRepository.findById(replyId).get();
+        Member findMember = findMember(authentication);
+
+        ReplyAgreeCheck findAgreeCheck = replyAgreeCheckRepository.findByMemberIdAndReplyId(findMember.getId(), replyId);
+        agreeCheck = findAgreeCheck;
+
+        if (findAgreeCheck == null) {
+            agreeCheck = createAgreeCheck(findMember, reply);
+        }
+
+        int count = reply.getDisagreeCount();
+        if (!agreeCheck.isDisAgreeChecked()) {
+            count++;
+            agreeCheck.setDisAgreeChecked(true);
+        } else {
+            count--;
+            agreeCheck.setDisAgreeChecked(false);
+        }
+        reply.setDisagreeCount(count);
+
+        return count;
+    }
+
     private Member findMember(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
         return memberRepository.findByEmail(username).get();
     }
+
+    private ReplyAgreeCheck createAgreeCheck(Member findMember, Reply reply) {
+
+        ReplyAgreeCheck replyAgreeCheck = ReplyAgreeCheck
+                .builder()
+                .reply(reply)
+                .member(findMember)
+                .agreeChecked(false)
+                .agreeChecked(false)
+                .disAgreeChecked(false)
+                .build();
+
+        return replyAgreeCheckRepository.save(replyAgreeCheck);
+    }
+
 }

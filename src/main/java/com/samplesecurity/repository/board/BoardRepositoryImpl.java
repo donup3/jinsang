@@ -3,6 +3,8 @@ package com.samplesecurity.repository.board;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.samplesecurity.domain.board.QBoard;
+import com.samplesecurity.domain.board.QCategory;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.QBoardListDto;
 import org.springframework.data.domain.Page;
@@ -12,9 +14,9 @@ import org.springframework.data.domain.Pageable;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.samplesecurity.domain.QBoard.board;
-import static com.samplesecurity.domain.QCategory.category;
 import static com.samplesecurity.domain.QMember.member;
+import static com.samplesecurity.domain.board.QBoard.*;
+import static com.samplesecurity.domain.board.QCategory.*;
 
 public class BoardRepositoryImpl implements BoardCustomRepository {
     private JPAQueryFactory queryFactory;
@@ -25,9 +27,9 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
 
     @Override
     public Page<BoardListDto> findAllByDto(String boardType, Pageable pageable) {
-        BooleanBuilder builder=new BooleanBuilder();
-        if(boardType!=null){
-            switch (boardType){
+        BooleanBuilder builder = new BooleanBuilder();
+        if (boardType != null) {
+            switch (boardType) {
                 case "2":
                     builder.and(board.boardType.eq(boardType));
                     break;

@@ -1,7 +1,7 @@
 package com.samplesecurity.service;
 
-import com.samplesecurity.domain.UploadFile;
-import com.samplesecurity.repository.UploadFileRepository;
+import com.samplesecurity.domain.board.UploadFile;
+import com.samplesecurity.repository.board.UploadFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;

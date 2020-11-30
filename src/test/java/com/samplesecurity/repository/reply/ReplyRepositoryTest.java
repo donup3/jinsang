@@ -1,8 +1,8 @@
 package com.samplesecurity.repository.reply;
 
-import com.samplesecurity.domain.Board;
+import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.domain.Member;
-import com.samplesecurity.domain.Reply;
+import com.samplesecurity.domain.reply.Reply;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.BoardRepository;
 import org.junit.jupiter.api.Test;
@@ -11,8 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
 import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Rollback(value = false)

@@ -1,12 +1,11 @@
 package com.samplesecurity.repository;
 
-import com.samplesecurity.domain.Category;
+import com.samplesecurity.domain.board.Category;
+import com.samplesecurity.repository.board.CategoryRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Rollback(value = false)

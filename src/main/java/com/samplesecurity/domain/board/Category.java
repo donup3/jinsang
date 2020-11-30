@@ -1,4 +1,4 @@
-package com.samplesecurity.domain;
+package com.samplesecurity.domain.board;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

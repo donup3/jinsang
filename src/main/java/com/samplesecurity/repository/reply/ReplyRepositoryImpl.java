@@ -1,8 +1,8 @@
 package com.samplesecurity.repository.reply;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.samplesecurity.domain.QReply;
-import com.samplesecurity.domain.Reply;
+import com.samplesecurity.domain.reply.QReply;
+import com.samplesecurity.domain.reply.Reply;
 import com.samplesecurity.dto.reply.QReplyListDto;
 import com.samplesecurity.dto.reply.ReplyListDto;
 
@@ -10,8 +10,8 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.samplesecurity.domain.QMember.member;
-import static com.samplesecurity.domain.QReply.*;
-import static com.samplesecurity.domain.QReply.reply;
+import static com.samplesecurity.domain.reply.QReply.*;
+
 
 public class ReplyRepositoryImpl implements ReplyCustomRepository {
     private JPAQueryFactory queryFactory;

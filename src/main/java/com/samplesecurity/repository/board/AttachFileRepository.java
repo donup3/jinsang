@@ -1,6 +1,6 @@
-package com.samplesecurity.repository;
+package com.samplesecurity.repository.board;
 
-import com.samplesecurity.domain.AttachFile;
+import com.samplesecurity.domain.board.AttachFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

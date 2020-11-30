@@ -25,7 +25,7 @@ public class ReplyListDto {
 
     private int agreeCount;
 
-    private int disagreeCount;
+    private int disAgreeCount;
 
     @QueryProjection
     public ReplyListDto(Long replyId, String contents, int ref, int level, int orders, String memberName, String toMemberName, LocalDate createdDate, int agreeCount, int disagreeCount) {
@@ -38,6 +38,6 @@ public class ReplyListDto {
         this.toMemberName = toMemberName;
         this.createdDate = createdDate;
         this.agreeCount = agreeCount;
-        this.disagreeCount = disagreeCount;
+        this.disAgreeCount = disagreeCount;
     }
 }

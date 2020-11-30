@@ -218,9 +218,20 @@
             var replyObj;
             for (var i = 0; i < list.length; i++) {
                 replyObj = list[i];
+                var toMemberName = replyObj.toMemberName;
+                var tocmt;
+                var marginLeft = replyObj.level * 5;
+                if (toMemberName == null) {
+                    tocmt = "";
+                } else {
+                    tocmt =
+                        "<span class='to-box' style='margin-bottom: 10px'>to</span>" +
+                        "<span class='cmt-target'>" + toMemberName + "</span>";
+                }
+
                 str += " <li id='cmt-li'>" +
                     "<div class='cmt-content'>" +
-                    "               <div class='cmt-h'>" +
+                    "               <div class='cmt-h'>" + tocmt +
                     "                                <div class='writer-nm'> " +
                     "                                    <span class='cmt-writer'>" + replyObj.memberName + "</span> " +
                     "                                    <span class='cmt-date'>" + replyObj.createdDate + "</span>" +
@@ -239,9 +250,9 @@
                     "                                    <button type='button' class='button showreply' id='subReplyBtn'>댓글달기</button>" +
                     "                                </div>" +
                     "                                <div class='fr'>" +
-                    "                                    <button type='button' class='button cmt-agree'><span class='ico-like-1'></span>0" +
+                    "                                    <button type='button' class='button cmt-agree' data-idx='" + replyObj.replyId + "'>" + "<span class='ico-like-1'></span>" + replyObj.agreeCount +
                     "                                    </button>" +
-                    "                                    <button type='button' class='button cmt-disa'><span class='ico-like-1'></span>0" +
+                    "                                    <button type='button' class='button cmt-disa' data-idx='" + replyObj.replyId + "'>" + "<span class='ico-like-1'></span>" + replyObj.disAgreeCount +
                     "                                    </button>" +
                     "                                </div>" +
                     "                            </div>" +
@@ -268,13 +279,8 @@
                     "                                </div>" +
                     "                            </div>" +
                     "                        </div>" +
-                    "                        <ul>" +
-                    "                            <li id='subReply'>" +
-                    "                            </li>" +
-                    "                        </ul>" +
                     "                    </li>";
                 cmtUL.html(str);
-
                 $(".comment-write").val("");
             }
         }
@@ -303,20 +309,22 @@
                 return false;
             }
         });
-        // $("#subReplyContent").val()
+
         $(document).on("click", "#subReplyRegBtn", function () {
             console.log("subReply register!!!")
             console.log($(this));
             var subReplyRegBtn = $(this);
             var contents = $(this).closest(".input-comment").find("#subReplyContent").val();
-            var replyId=subReplyRegBtn.data("idx");
+            var replyId = subReplyRegBtn.data("idx");
             var ref = subReplyRegBtn.data("ref");
             var level = subReplyRegBtn.data("level");
             var refOrder = subReplyRegBtn.data("reforder");
             console.log("ref: " + ref + " level: " + level, " refOrder: " + refOrder);
-            var param = {contents: contents, boardId: id,
+            var param = {
+                contents: contents, boardId: id,
                 ref: ref, level: level, refOrder: refOrder,
-                replyId:replyId};
+                replyId: replyId
+            };
 
             $(document).ajaxSend(function (e, xhr, options) {
                 xhr.setRequestHeader(header, token);
@@ -326,14 +334,14 @@
                 printList(list);
             });
         });
-
+        //대댓글 작성
         $(document).on("click", "#subReplyBtn", function () {
             $(".input-comment").hide();
             $(".show").show();
             var txt = $(this).closest(".cmt-content").find(".input-comment");
             txt.show();
         });
-
+        //댓글 삭제
         $(document).on("click", ".delbtn", function () {
             var replyId = $(this).data("replyid");
             console.log("reId" + replyId);
@@ -345,9 +353,70 @@
             replyManger.remove(param, function (list) {
                 printList(list);
             });
-
         });
+        //댓글 동의 버튼
+        $(document).on("click", ".cmt-agree", function () {
+            var replyId = $(this).data("idx");
+            var textDom = $(this);
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            $.ajax({
+                url: '/jinsang/reply/addAgree/' + replyId,
+                method: 'post',
+                dataType: 'json',
+                beforeSend: function (xmlHttpRequest) {
+                    xmlHttpRequest.setRequestHeader("AJAX", "true");
+                },
+                success: function (result) {
+                    console.log(result);
+                    textDom.html("<span class='ico-like-1'>" + result + "</span>")
+                },
+                error: function (request, status, error) {
+                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        })
+        //댓글 비동의
+        $(document).on("click", ".cmt-disa", function () {
+            var replyId = $(this).data("idx");
+            var textDom2 = $(this);
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            $.ajax({
+                url: '/jinsang/reply/disAgree/' + replyId,
+                method: 'post',
+                dataType: 'json',
+                beforeSend: function (xmlHttpRequest) {
+                    xmlHttpRequest.setRequestHeader("AJAX", "true");
+                },
+                success: function (result) {
+                    console.log(result);
+                    textDom2.html("<span class='ico-like-1'></span>"+result)
+                },
+                error: function (request, status, error) {
+                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        })
+
     })
 </script>
 </body>
 </html>
+<style>
+    .to-box {
+        background-color: #6c57ce;
+        color: white;
+        width: 25px;
+        display: inline-block;
+        text-align: center;
+        height: 25px;
+        line-height: 24px;
+        font-size: 18px;
+        margin-right: 4px;
+    }
+</style>
