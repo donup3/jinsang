@@ -6,4 +6,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface BoardCustomRepository {
     Page<BoardListDto> findAllByDto(String boardType, Pageable pageable);
+
+    Long findPreBoardId(Long boardId, String boardType);
+
+    Long findNextBoardId(Long boardId, String boardType);
 }

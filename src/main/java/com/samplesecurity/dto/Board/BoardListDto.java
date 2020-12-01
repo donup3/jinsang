@@ -19,13 +19,16 @@ public class BoardListDto {
 
     private int agreeCount;
 
+    private int replyCount;
+
     @QueryProjection
-    public BoardListDto(Long id, String category, String title, LocalDate createdDate, String writer, int agreeCount) {
+    public BoardListDto(Long id, String category, String title, LocalDate createdDate, String writer, int agreeCount, int replyCount) {
         this.id = id;
         this.category = category;
         this.title = title;
         this.createdDate = createdDate;
         this.writer = writer;
         this.agreeCount = agreeCount;
+        this.replyCount = replyCount;
     }
 }

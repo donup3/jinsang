@@ -3,8 +3,6 @@ package com.samplesecurity.repository.board;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.samplesecurity.domain.board.QBoard;
-import com.samplesecurity.domain.board.QCategory;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.QBoardListDto;
 import org.springframework.data.domain.Page;
@@ -15,8 +13,8 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.samplesecurity.domain.QMember.member;
-import static com.samplesecurity.domain.board.QBoard.*;
-import static com.samplesecurity.domain.board.QCategory.*;
+import static com.samplesecurity.domain.board.QBoard.board;
+import static com.samplesecurity.domain.board.QCategory.category;
 
 public class BoardRepositoryImpl implements BoardCustomRepository {
     private JPAQueryFactory queryFactory;
@@ -45,7 +43,8 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                                 board.title,
                                 board.createdDate,
                                 member.name.as("writer"),
-                                board.agreeCount))
+                                board.agreeCount,
+                                board.replies.size()))
                 .from(board)
                 .orderBy(board.id.desc())
                 .leftJoin(board.category, category)
@@ -59,5 +58,26 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
         long total = result.getTotal();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Long findPreBoardId(Long boardId, String boardType) {
+        return queryFactory
+                .select(board.id.max())
+                .from(board)
+                .where(board.id.lt(boardId)
+                        .and(board.boardType.eq(boardType)))
+                .fetchOne();
+
+    }
+
+    @Override
+    public Long findNextBoardId(Long boardId, String boardType) {
+        return queryFactory
+                .select(board.id.min())
+                .from(board)
+                .where(board.id.gt(boardId)
+                        .and(board.boardType.eq(boardType)))
+                .fetchOne();
     }
 }

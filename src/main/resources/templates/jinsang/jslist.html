@@ -40,11 +40,12 @@
                     <tbody>
                     <tr th:each="board:${result.content}">
                         <td class="is-hidden-mobile">[[${board.id}]]</td>
-                        <td class="is-hidden-mobile" >[[${board.category}]]</td>
+                        <td class="is-hidden-mobile">[[${board.category}]]</td>
                         <td class="has-text-left">
                             <a href="#" class="title is-6 text-ellipsis"
-                               th:href="@{/jinsang/{id}/2 (id=${board.id})}" th:text="${board.title}">
-                                [[${board.title}]]</a>
+                               th:href="@{/jinsang/{id}/2 (id=${board.id})}">[[${board.title}]]
+                                <span th:if="${board.replyCount}" th:text="'['+${board.replyCount}+']'"></span>
+                            </a>
                         </td>
                         <td class="is-hidden-480">[[${board.createdDate}]]</td>
                         <td class="is-hidden-mobile">[[${board.writer}]]</td>
@@ -56,9 +57,10 @@
             </div>
 
             <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-                    <a th:if="${boards.prevPage!=null}" class="pagination-previous" th:href="${boards.prevPage.pageNumber}+1">
-                        <i class="ico-angle-left"></i> 이전
-                    </a>
+                <a th:if="${boards.prevPage!=null}" class="pagination-previous"
+                   th:href="${boards.prevPage.pageNumber}+1">
+                    <i class="ico-angle-left"></i> 이전
+                </a>
 
                 <a th:if="${boards.nextPage!=null}" class="pagination-next" th:href="${boards.nextPage.pageNumber}+1">
                     다음 <i class="ico-angle-right"></i>

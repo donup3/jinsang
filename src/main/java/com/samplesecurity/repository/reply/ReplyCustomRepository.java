@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface ReplyCustomRepository {
     List<ReplyListDto> findAllDtoByBoardId(Long boardId);
+
     int findBottom(Reply reply);
+
     int findMaxRefOrder(Reply reply);
+
+    void deleteReply(int level, int ref);
 }

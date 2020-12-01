@@ -64,6 +64,17 @@ public class BoardController {
 
         model.addAttribute("board", findBoard);
 
+        Long preBoardId = boardService.getPreBoard(id, boardPageDto.getBoardType());
+
+        Board findPreBoard = boardService.getBoard(preBoardId);
+        model.addAttribute("preBoard", findPreBoard);
+
+
+        Long nextBoardId = boardService.getNextBoard(id, boardPageDto.getBoardType());
+
+        Board nextBoard = boardService.getBoard(nextBoardId);
+        model.addAttribute("nextBoard", nextBoard);
+
         return "jinsang/jsview";
     }
 
@@ -109,7 +120,7 @@ public class BoardController {
         String username = userDetails.getUsername();
         Member findMember = memberRepository.findByEmail(username).get();
 
-        return boardService.addAgree(findMember,boardId);
+        return boardService.addAgree(findMember, boardId);
     }
 
 }

@@ -20,6 +20,8 @@ public class PageMaker<T> {
     private int totalPageNum;
 
     private Pageable currentPage;
+    private Pageable curPrePage;
+    private Pageable curNextPage;
 
     private List<Pageable> pageList;
 
@@ -37,7 +39,8 @@ public class PageMaker<T> {
         int startNum = tempEndNum - 9;
 
         Pageable startPage = this.currentPage;
-
+        this.curPrePage = this.currentPage.previousOrFirst();
+        this.curNextPage = this.currentPage.next();
         for (int i = startNum; i < this.currentPageNum; i++) {
             startPage = startPage.previousOrFirst();
         }

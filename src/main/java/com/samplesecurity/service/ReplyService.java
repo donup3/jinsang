@@ -79,11 +79,10 @@ public class ReplyService {
     }
 
     public void delete(Long replyId, Authentication authentication) {
-        // 부모글이 삭제되면 자식글들도 삭제되도록 구현필요
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Reply reply = replyRepository.findById(replyId).get();
         if (userDetails.getUsername().equals(reply.getMember().getEmail())) {
-            replyRepository.deleteById(replyId);
+            replyRepository.deleteReply(reply.getLevel(), reply.getRef());
         } else {
             throw new RuntimeException(("자신의 댓글만 삭제할 수 있습니다."));
         }

@@ -1,7 +1,6 @@
 package com.samplesecurity.repository.reply;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.samplesecurity.domain.reply.QReply;
 import com.samplesecurity.domain.reply.Reply;
 import com.samplesecurity.dto.reply.QReplyListDto;
 import com.samplesecurity.dto.reply.ReplyListDto;
@@ -10,7 +9,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.samplesecurity.domain.QMember.member;
-import static com.samplesecurity.domain.reply.QReply.*;
+import static com.samplesecurity.domain.reply.QReply.reply;
 
 
 public class ReplyRepositoryImpl implements ReplyCustomRepository {
@@ -41,7 +40,7 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
                 .fetch();
     }
 
-//    @SuppressWarnings("ConstantConditions") //int -> integer로 바꿔야안전 null일수도 있어서 warning 표시가 뜸
+    //    @SuppressWarnings("ConstantConditions") //int -> integer로 바꿔야안전 null일수도 있어서 warning 표시가 뜸
     @Override
     public int findBottom(Reply parentReply) {
         Integer minRef = queryFactory.select(reply.refOrder.min())
@@ -51,7 +50,7 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
                         .and(reply.ref.eq(parentReply.getRef())))
                 .fetchOne();
 
-        if(minRef!=null){
+        if (minRef != null) {
             return minRef;
         }
         return -1;
@@ -65,9 +64,16 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
                         .and(reply.refOrder.goe(parentReply.getRefOrder()))
                         .and(reply.ref.eq(parentReply.getRef())))
                 .fetchOne();
-        if(maxRef!=null){
+        if (maxRef != null) {
             return maxRef;
         }
         return -1;
+    }
+
+    @Override
+    public void deleteReply(int level, int ref) {
+        queryFactory.delete(reply)
+                .where(reply.level.goe(level).and(reply.ref.eq(ref)))
+                .execute();
     }
 }

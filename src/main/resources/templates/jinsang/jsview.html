@@ -95,12 +95,15 @@
                 </ul>
             </section>
             <!-- e: .section-comment -->
-            <!-- s: .pn-list -->
             <div class="pn-list">
                 <ul>
-                    <li class="prev-num">
+                    <li class="prev-num" th:if="${preBoard!=null}">
                         <i class="ico-chevron-up-thin">이전글</i>
-                        <a href="#" data-idx="412" class="viewArticle">강원도 진상</a>
+                        <a href="#" th:href="@{/jinsang/{id}/2 (id=${preBoard.id})}" class="viewArticle" th:text="${preBoard.title}"></a>
+                    </li>
+                    <li class="next-num" th:if="${nextBoard!=null}">
+                        <i class="ico-chevron-down-thin">다음글</i>
+                        <a href="#" th:href="@{/jinsang/{id}/2 (id=${nextBoard.id})}"  data-idx="415" class="viewArticle" th:text="${nextBoard.title}">test2</a>
                     </li>
                 </ul>
             </div>
@@ -395,7 +398,7 @@
                 },
                 success: function (result) {
                     console.log(result);
-                    textDom2.html("<span class='ico-like-1'></span>"+result)
+                    textDom2.html("<span class='ico-like-1'></span>" + result)
                 },
                 error: function (request, status, error) {
                     console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);

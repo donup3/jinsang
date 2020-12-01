@@ -15,6 +15,7 @@ public class LoginIntercepter implements HandlerInterceptor {
     public List<String> loginEssential = Arrays.asList(
             "/jinsang/addAgree",
             "/jinsang/reply/write/*",
+            "/jinsang/reply/write/subReply/**",
             "/jinsang/reply/delete/**",
             "/jinsang/reply/addAgree/**",
             "/jinsang/reply/disAgree/**"

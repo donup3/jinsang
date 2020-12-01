@@ -1,6 +1,7 @@
 package com.samplesecurity.domain.board;
 
 import com.samplesecurity.domain.Member;
+import com.samplesecurity.domain.reply.Reply;
 import lombok.*;
 
 import javax.persistence.*;
@@ -46,9 +47,11 @@ public class Board {
     private Member member;
 
     //attach 파일들은 단방향 매핑해놓음
-
     @OneToMany(mappedBy = "board")
     private List<UploadFile> uploadFiles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board")
+    private List<Reply> replies = new ArrayList<>();
 
     public void setMember(Member member) {
         this.member = member;

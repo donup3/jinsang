@@ -34,7 +34,7 @@ public class BoardService {
 
     public void register(Board board, List<AttachFileDto> fileDtos) {
         Board saveBoard = boardRepository.save(board);
-        if(fileDtos!=null) {
+        if (fileDtos != null) {
             for (AttachFileDto fileDto : fileDtos) {
                 AttachFile attachFile = fileDto.toEntity();
                 AttachFile saveFile = attachFileRepository.save(attachFile);
@@ -44,7 +44,10 @@ public class BoardService {
     }
 
     public Board getBoard(Long id) {
-        return boardRepository.findById(id).get();
+        if (id != null) {
+            return boardRepository.findById(id).get();
+        }
+        return null;
     }
 
     public int addAgree(Member findMember, Long boardId) {
@@ -80,5 +83,19 @@ public class BoardService {
                 .agreeChecked(false)
                 .build();
         return agreeCheckRepository.save(agreeCheck);
+    }
+
+    public Long getPreBoard(Long boardId, String boardType) {
+        if (boardId != null) {
+            return boardRepository.findPreBoardId(boardId, boardType);
+        }
+        return null;
+    }
+
+    public Long getNextBoard(Long boardId, String boardType) {
+        if (boardId != null) {
+            return boardRepository.findNextBoardId(boardId, boardType);
+        }
+        return null;
     }
 }
