@@ -1,7 +1,7 @@
 spring:
   datasource:
     #    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/sample?useSSL=false&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/jinsang?useSSL=false&serverTimezone=Asia/Seoul
     username: test
     password: test
 
@@ -13,3 +13,5 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+

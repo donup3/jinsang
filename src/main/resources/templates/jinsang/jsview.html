@@ -1,0 +1,425 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/mainHeader :: mainHeader"></head>
+
+<body class="jsdotcom vsc-initialized">
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/nav :: mainNav"></div>
+
+<div class="content sub">
+    <section>
+        <h3 class="sub-title">
+            오늘의 진상 </h3>
+        <div class="board-wrap normal-view">
+            <!-- s: .board-detail -->
+            <article class="board-detail">
+                <div class="detail-header">
+                    <h3 class="title is-4" th:text="${board.title}"></h3>
+                    <div class="board-info">
+                        <span class="wrt-date" th:text="${board.createdDate}"></span>
+                        <span class="wrt-writer" th:text="${board.member.name}"></span>
+                        <span class="wrt-hit" th:text="${board.agreeCount}"></span>
+                    </div>
+                </div>
+                <div class="detail-content">
+                    <div class="board-content">
+                        <div th:utext="${board.contents}" style="margin-top: 25px">
+
+                        </div>
+                    </div>
+                    <section class="section-files">
+                        <h5 class="title is-6"><i class="ico-clip-thin"></i>첨부파일</h5>
+                        <ul class="files-area" id="uploadResult">
+                            <li><a href="#" title="다운로드" class="attachfile"></a></li>
+                        </ul>
+                        <form name="f2" id="f2" action="download.php">
+                            <input type="hidden" name="filename">
+                        </form>
+                    </section>
+                </div>
+                <div>
+                </div>
+                <div class="buttons-group">
+                    <div class="fl">
+                        <div class="buttons">
+                            <a href="#" class="button" id="edit">수정</a>
+                        </div>
+                    </div>
+                    <div class="board-recommend">
+                        <button type="button" id="btnagree">
+                            <span class="btn-txt">진상인정</span>
+                            <span class="ico-like-1"></span>
+                            <span class="agree_num" id="agreeCount" th:text="${board.agreeCount}"></span>
+                        </button>
+                    </div>
+                    <div class="fr">
+                        <div class="buttons">
+                            <a href="#" class="button is-link viewlist" id="listBtn">목록</a>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <form th:action="@{/jinsang/jslist}" method="get" id="goList">
+                <input type="hidden" name="boardType" th:value="${pageDto.boardType}">
+                <input type="hidden" name="page" th:value="${pageDto.page}">
+            </form>
+            <!-- e: .board-detail -->
+
+            <!-- s: .section-comment -->
+            <section class="section-comment box">
+                <h4 class="is-sr-only">댓글등록영역</h4>
+                <div class="input-comment show">
+                    <div class="field">
+                        <label class="label">댓글달기</label>
+                        <div class="control">
+                            <textarea class="textarea comment-write" id="replyContent"
+                                      placeholder="댓글을 작성해주세요."></textarea>
+                        </div>
+                    </div>
+                    <div class="buttons-group">
+                        <div class="fl byte-info">
+                            <span class="num">0</span>
+                            <span> / 2000 Byte</span>
+                        </div>
+                        <div class="fr">
+                            <div class="buttons">
+                                <button type="button" class="button is-link regReply" id="replyRegBtn">
+                                    댓글등록
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul id="cmt-list" class="cmtlist">
+                    <!--                    javascript로 그려줌-->
+                </ul>
+            </section>
+            <!-- e: .section-comment -->
+            <div class="pn-list">
+                <ul>
+                    <li class="prev-num" th:if="${preBoard!=null}">
+                        <i class="ico-chevron-up-thin">이전글</i>
+                        <a href="#" th:href="@{/jinsang/{id}/2 (id=${preBoard.id})}" class="viewArticle" th:text="${preBoard.title}"></a>
+                    </li>
+                    <li class="next-num" th:if="${nextBoard!=null}">
+                        <i class="ico-chevron-down-thin">다음글</i>
+                        <a href="#" th:href="@{/jinsang/{id}/2 (id=${nextBoard.id})}"  data-idx="415" class="viewArticle" th:text="${nextBoard.title}">test2</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- e: .pn-list -->
+
+        </div>
+    </section>
+</div>
+
+
+<footer class="footer">
+    <div class="footer-wrap">
+        <div class="footer-link">
+            <a href="#" class="privacy">개인정보처리방침</a>
+            <a href="#" class="term">서비스이용약관</a>
+        </div>
+        <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+<script>
+
+</script>
+<script>
+    var id = [[${board.id}]];
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    //파일첨부
+    (function () {
+        $.getJSON("/jinsang/getAttachList", {boardId: id}, function (arr) {
+            console.log(arr);
+            var str = "";
+            $(arr).each(function (i, attach) {
+                str += "<li data-path='" + attach.uploadPath + "' data-uuid='" + attach.uuid + "' data-filename='" + attach.fileName + "'>";
+                str += "<a href='#'>" + attach.fileName + "</a>";
+                str += "</li>";
+            });
+            $("#uploadResult").html(str);
+        });
+    })();
+
+    $(document).ready(function () {
+        var goListForm = $("#goList");
+        $("#listBtn").on("click", function (e) {
+            e.preventDefault();
+            goListForm.submit();
+        });
+
+        $("#uploadResult").on("click", "li a", function (e) {
+            e.preventDefault();
+            var liObj = $("#uploadResult li");
+            var path = encodeURIComponent(liObj.data("path") + "/" + liObj.data("uuid") + "_" + liObj.data("filename"));
+
+            self.location = "/download?fileName=" + path;
+        });
+        //진상 인정 버튼
+        $("#btnagree").on("click", function (e) {
+
+            var countValue = $("#agreeCount");
+            var param = {boardId: id};
+
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            $.ajax({
+                url: '/jinsang/addAgree',
+                data: param,
+                method: 'post',
+                dataType: 'json',
+                beforeSend: function (xmlHttpRequest) {
+                    xmlHttpRequest.setRequestHeader("AJAX", "true");
+                },
+                success: function (result) {
+                    countValue.text(result);
+                },
+                error: function (request, status, error) {
+                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        });
+
+        $(document).ajaxError(function (event, request, settings, thrownError) {
+            if (request.status === 401) {
+                alert('로그인 해주세요.');
+                location.href = '/user/login';
+            }
+        })
+    });
+
+    $(document).on("keyup", ".comment-write", function () {
+        var content = $(this).val();
+        var $num = $(this).parent().parent().parent().find(".num");
+
+        $num.html(content.length);
+        if (content.length >= 2000) {
+            alert('2000자 글자수를 초과했습니다.');
+            //글자 자르기.
+            $(this).val(content.substring(0, 2000));
+            $num.html($(this).val().length);
+            return false;
+        }
+    });
+</script>
+<script th:inline="javascript" th:src="@{'/js/reply.js'}"></script>
+<script th:inline="javascript">
+    var tmp;
+    $(document).ready(function (e) {
+        (function () {
+            replyManger.getAll(id, printList);
+        })();
+
+        function printList(list) {
+            var cmtUL = $("#cmt-list");
+            var str = "";
+            var replyObj;
+            for (var i = 0; i < list.length; i++) {
+                replyObj = list[i];
+                var toMemberName = replyObj.toMemberName;
+                var tocmt;
+                var marginLeft = replyObj.level * 5;
+                if (toMemberName == null) {
+                    tocmt = "";
+                } else {
+                    tocmt =
+                        "<span class='to-box' style='margin-bottom: 10px'>to</span>" +
+                        "<span class='cmt-target'>" + toMemberName + "</span>";
+                }
+
+                str += " <li id='cmt-li'>" +
+                    "<div class='cmt-content'>" +
+                    "               <div class='cmt-h'>" + tocmt +
+                    "                                <div class='writer-nm'> " +
+                    "                                    <span class='cmt-writer'>" + replyObj.memberName + "</span> " +
+                    "                                    <span class='cmt-date'>" + replyObj.createdDate + "</span>" +
+                    "                                    <span class='cmt-del'>" +
+                    "                                        <button data-replyId='" + replyObj.replyId + "' type='button' class='delbtn' title='삭제'>" +
+                    "                                            <span class='ico-cross-thin'></span>" +
+                    "                                        </button> " +
+                    "                                   </span>" +
+                    "                                </div> " +
+                    "                            </div> " +
+                    "                            <p class='board-comment'> " +
+                    "                                <span class='cmt-body'>" + replyObj.contents + "</span> " +
+                    "                            </p>" +
+                    "                            <div class='comment-btns'>" +
+                    "                                <div class='fl'>" +
+                    "                                    <button type='button' class='button showreply' id='subReplyBtn'>댓글달기</button>" +
+                    "                                </div>" +
+                    "                                <div class='fr'>" +
+                    "                                    <button type='button' class='button cmt-agree' data-idx='" + replyObj.replyId + "'>" + "<span class='ico-like-1'></span>" + replyObj.agreeCount +
+                    "                                    </button>" +
+                    "                                    <button type='button' class='button cmt-disa' data-idx='" + replyObj.replyId + "'>" + "<span class='ico-like-1'></span>" + replyObj.disAgreeCount +
+                    "                                    </button>" +
+                    "                                </div>" +
+                    "                            </div>" +
+
+                    "                            <div class='input-comment' id='sub-comment' style='display: none'>" +
+                    "                                <div class='field'>" +
+                    "                                    <div class='control'>" +
+                    "                                        <textarea class='textarea comment-write' id='subReplyContent' placeholder='댓글을 작성해주세요'></textarea>" +
+                    "                                    </div>" +
+                    "                                </div>" +
+                    "                                <div class='buttons-group'>" +
+                    "                                    <div class='fl byte-info'>" +
+                    "                                        <span class='num'>0</span><span> / 2000 Byte</span>" +
+                    "                                    </div>" +
+                    "                                    <div class='fr'>" +
+                    "                                        <div class='buttons'>" +
+                    "                                            <button type='button' id='subReplyRegBtn' class='button is-link regReply' " +
+                    "                                               data-idx='" + replyObj.replyId + "' data-ref='" + replyObj.ref + "' " +
+                    "                                               data-level='" + replyObj.level + "' data-reforder='" + replyObj.refOrder + "'>" +
+                    "                                                댓글등록" +
+                    "                                            </button>" +
+                    "                                        </div>" +
+                    "                                    </div>" +
+                    "                                </div>" +
+                    "                            </div>" +
+                    "                        </div>" +
+                    "                    </li>";
+                cmtUL.html(str);
+                $(".comment-write").val("");
+            }
+        }
+
+        $(document).on("click", "#replyRegBtn", function () {
+            var $cmtcontent = $(this).parent().parent().parent().parent();
+            var contents = $("#replyContent").val();
+            var param = {contents: contents, boardId: id}
+
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            replyManger.add(param, function (list) {
+                printList(list);
+            });
+
+            var $commet = $cmtcontent.find(".comment-write");
+            if (!$commet.val()) {
+                alert("댓글을 입력해주세요.");
+                $commet.focus();
+                return false;
+            }
+            if ($commet.val().length > 2000) {
+                alert("댓글이 2000자가 넘었습니다.");
+                return false;
+            }
+        });
+
+        $(document).on("click", "#subReplyRegBtn", function () {
+            console.log("subReply register!!!")
+            console.log($(this));
+            var subReplyRegBtn = $(this);
+            var contents = $(this).closest(".input-comment").find("#subReplyContent").val();
+            var replyId = subReplyRegBtn.data("idx");
+            var ref = subReplyRegBtn.data("ref");
+            var level = subReplyRegBtn.data("level");
+            var refOrder = subReplyRegBtn.data("reforder");
+            console.log("ref: " + ref + " level: " + level, " refOrder: " + refOrder);
+            var param = {
+                contents: contents, boardId: id,
+                ref: ref, level: level, refOrder: refOrder,
+                replyId: replyId
+            };
+
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            replyManger.subAdd(param, function (list) {
+                printList(list);
+            });
+        });
+        //대댓글 작성
+        $(document).on("click", "#subReplyBtn", function () {
+            $(".input-comment").hide();
+            $(".show").show();
+            var txt = $(this).closest(".cmt-content").find(".input-comment");
+            txt.show();
+        });
+        //댓글 삭제
+        $(document).on("click", ".delbtn", function () {
+            var replyId = $(this).data("replyid");
+            console.log("reId" + replyId);
+            var param = {boardId: id, replyId: replyId};
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            replyManger.remove(param, function (list) {
+                printList(list);
+            });
+        });
+        //댓글 동의 버튼
+        $(document).on("click", ".cmt-agree", function () {
+            var replyId = $(this).data("idx");
+            var textDom = $(this);
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            $.ajax({
+                url: '/jinsang/reply/addAgree/' + replyId,
+                method: 'post',
+                dataType: 'json',
+                beforeSend: function (xmlHttpRequest) {
+                    xmlHttpRequest.setRequestHeader("AJAX", "true");
+                },
+                success: function (result) {
+                    console.log(result);
+                    textDom.html("<span class='ico-like-1'>" + result + "</span>")
+                },
+                error: function (request, status, error) {
+                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        })
+        //댓글 비동의
+        $(document).on("click", ".cmt-disa", function () {
+            var replyId = $(this).data("idx");
+            var textDom2 = $(this);
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            $.ajax({
+                url: '/jinsang/reply/disAgree/' + replyId,
+                method: 'post',
+                dataType: 'json',
+                beforeSend: function (xmlHttpRequest) {
+                    xmlHttpRequest.setRequestHeader("AJAX", "true");
+                },
+                success: function (result) {
+                    console.log(result);
+                    textDom2.html("<span class='ico-like-1'></span>" + result)
+                },
+                error: function (request, status, error) {
+                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        })
+
+    })
+</script>
+</body>
+</html>
+<style>
+    .to-box {
+        background-color: #6c57ce;
+        color: white;
+        width: 25px;
+        display: inline-block;
+        text-align: center;
+        height: 25px;
+        line-height: 24px;
+        font-size: 18px;
+        margin-right: 4px;
+    }
+</style>

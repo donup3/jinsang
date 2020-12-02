@@ -1,6 +1,6 @@
 package com.samplesecurity.controller;
 
-import com.samplesecurity.domain.UploadFile;
+import com.samplesecurity.domain.board.UploadFile;
 import com.samplesecurity.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +46,5 @@ public class ImageController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-
     }
 }

@@ -1,0 +1,357 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/mainHeader :: mainHeader"></head>
+
+<body class="jsdotcom vsc-initialized">
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/nav :: mainNav"></div>
+
+<div class="content sub">
+    <section>
+        <h3 class="sub-title">
+            오늘의 진상 </h3>
+        <div class="board-wrap normal-view write">
+            <form id="f1" th:action="@{/jinsang/write}" method="post" enctype="multipart/form-data">
+                <!-- s: .board-detail -->
+                <article class="board-detail">
+                    <h3 class="is-sr-only">쓰기 페이지</h3>
+
+                    <div class="detail-content">
+                        <div class="add-info">
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <label for="w-category" class="label">분류</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field control">
+                                        <div class="select">
+                                            <select id="w-category" name="category" class="is-hovered">
+                                                <option value="">----선택----</option>
+                                                <option value="1">연인</option>
+                                                <option value="2">가족</option>
+                                                <option value="3">버릇</option>
+                                                <option value="4">음식점</option>
+                                                <option value="5">자동차</option>
+                                                <option value="6">층간소음</option>
+                                                <option value="7">블랙박스</option>
+                                                <option value="8">회사생활</option>
+                                                <option value="9">공공장소</option>
+                                                <option value="10">중고거래</option>
+                                                <option value="11">편의점</option>
+                                                <option value="12">패스트푸드</option>
+                                                <option value="13">상담원</option>
+                                                <option value="14">카페</option>
+                                                <option value="15">술집</option>
+                                                <option value="16">쇼핑몰</option>
+                                                <option value="17">기타</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <label for="w-title" class="label">제목</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <p class="control is-expanded">
+                                            <input type="text" id="w-title" class="input is-hovered" name="title">
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <label for="address" class="label">진상발생지</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field is-grouped control">
+                                        <p class="control is-expanded">
+                                            <input type="text" id="address" placeholder="진상발생 주소지" name="address"
+                                                   class="input is-hovered " readonly="">
+                                        </p>
+                                        <p class="control">
+                                            <input type="button" onclick="sample5_execDaumPostcode()" value="주소검색"
+                                                   class="button is-link"><br>
+                                            <input type="hidden" id="latitude" name="latitude">
+                                            <input type="hidden" id="longitude" name="longitude">
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="map" style="width:100%;height:500px;margin-top:10px;display:none"></div>
+                            <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+                            <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=32519abbf2740e177af7221aa1c38b81&libraries=services"></script>
+                            <script>
+                                var addr;
+                                var latitude;//위도
+                                var longitude;//경도
+                                var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                                    mapOption = {
+                                        center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
+                                        level: 2
+                                    };
+
+                                //지도를 미리 생성
+                                var map = new daum.maps.Map(mapContainer, mapOption);
+                                //주소-좌표 변환 객체를 생성
+                                var geocoder = new daum.maps.services.Geocoder();
+                                //마커를 미리 생성
+                                var marker = new daum.maps.Marker({
+                                    position: new daum.maps.LatLng(37.537187, 127.005476),
+                                    map: map
+                                });
+
+                                function sample5_execDaumPostcode() {
+                                    new daum.Postcode({
+                                        oncomplete: function (data) {
+                                            addr = data.address; // 최종 주소 변수
+
+                                            // 주소 정보를 해당 필드에 넣는다.
+                                            document.getElementById("address").value = addr;
+                                            // 주소로 상세 정보를 검색
+                                            geocoder.addressSearch(data.address, function (results, status) {
+                                                // 정상적으로 검색이 완료됐으면
+                                                if (status === daum.maps.services.Status.OK) {
+                                                    var result = results[0]; //첫번째 결과의 값을 활용
+                                                    // 해당 주소에 대한 좌표를 받아서
+                                                    var coords = new daum.maps.LatLng(result.y, result.x);
+                                                    latitude = result.y;
+                                                    longitude = result.x;
+
+                                                    $("#latitude").val(result.y);
+                                                    $("#longitude").val(result.x);
+
+                                                    // 지도를 보여준다.
+                                                    mapContainer.style.display = "block";
+                                                    map.relayout();
+                                                    // 지도 중심을 변경한다.
+                                                    map.setCenter(coords);
+                                                    // 마커를 결과값으로 받은 위치로 옮긴다.
+                                                    marker.setPosition(coords)
+                                                }
+                                            });
+                                        }
+                                    }).open();
+                                }
+                            </script>
+
+                        </div>
+
+                        <textarea id="summernote" name="contents" style="display: none;"></textarea>
+
+
+                        <section class="section-files attach first-w">
+                            <h4 class="is-sr-only">
+                                첨부파일 영역
+                            </h4>
+
+                            <div class="file-list">
+                                <div class="field">
+                                    <div class="file has-name is-fullwidth">
+                                        <label class="file-label">
+                                            <input type="file" name="files" class="file-input" id="fileupload"
+                                                   multiple="">
+                                            <span class="file-cta">
+                                                <span class="file-icon">
+                                                    <i class="ico-upload-1"></i>
+                                                </span>
+                                                <span class="file-label">
+                                                    파일선택
+                                                </span>
+                                            </span>
+                                            <span class="file-name"></span>
+                                        </label>
+                                    </div>
+                                    <div id="fileList"></div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="buttons-group">
+                        <!-- s: .btn-group -->
+                        <div class="buttons is-centered">
+                            <a href="#" class="button is-link btninsert" id="insertBtn">등록</a>
+                            <a href="#" class="button btncancel" id="cancelBtn">취소</a>
+                        </div>
+                        <!-- s: .btn-group -->
+                    </div>
+                </article>
+                <!-- e: .board-detail -->
+                <input type="hidden" name="boardType" th:value="${pageDto.boardType}">
+            </form>
+
+            <form th:action="@{/jinsang/jslist}" method="get" id="goList">
+                <input type="hidden" name="boardType" th:value="${pageDto.boardType}">
+                <input type="hidden" name="page" th:value="${pageDto.page}">
+            </form>
+
+        </div>
+    </section>
+</div>
+
+<footer class="footer">
+    <div class="footer-wrap">
+        <div class="footer-link">
+            <a href="#" class="privacy">개인정보처리방침</a>
+            <a href="#" class="term">서비스이용약관</a>
+        </div>
+        <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+<script>
+
+</script>
+<script>
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    var f1 = $("#f1");
+    var filesTempArr = [];
+
+    $(document).ready(function () {
+        var goListForm = $("#goList");
+        $("#cancelBtn").on("click", function (e) {
+            e.preventDefault();
+            goListForm.submit();
+        })
+    })
+
+    // 파일 추가
+    function addFiles(e) {
+        var files = e.target.files;
+        var filesArr = Array.prototype.slice.call(files);
+        var filesArrLen = filesArr.length;
+        var filesTempArrLen = filesTempArr.length;
+
+        for (var i = 0; i < filesArrLen; i++) {
+            filesTempArr.push(filesArr[i]);
+            $("#fileList").append("<div>" + filesArr[i].name + "<a href='#' onclick=\"deleteFile(event, " + (filesTempArrLen + i) + ");\">[삭제]</a></div>");
+        }
+        $(this).val('');
+    }
+    //파일업로드
+    function allFileUpload() {
+        var formData = new FormData();
+        var str = "";
+        for (var i = 0, filesTempArrLen = filesTempArr.length; i < filesTempArrLen; i++) {
+            formData.append("uploadFile", filesTempArr[i]);
+        }
+
+        $(document).ajaxSend(function (e, xhr, options) {
+            xhr.setRequestHeader(header, token);
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "/uploadFile",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    str += "<input type='hidden' name='fileDtos[" + i + "].fileName' value='" + data[i].fileName + "'>";
+                    str += "<input type='hidden' name='fileDtos[" + i + "].uuid' value='" + data[i].uuid + "'>";
+                    str += "<input type='hidden' name='fileDtos[" + i + "].uploadPath' value='" + data[i].uploadPath + "'>";
+                }
+                f1.append(str);
+                f1.submit();
+            },
+            err: function (err) {
+                alert(err.status);
+            }
+        });
+    }
+
+    // 파일 삭제
+    function deleteFile(eventParam, orderParam) {
+        eventParam.preventDefault();
+        filesTempArr.splice(orderParam, 1);
+        var innerHtmlTemp = "";
+        var filesTempArrLen = filesTempArr.length;
+        for (var i = 0; i < filesTempArrLen; i++) {
+            innerHtmlTemp += "<div>" + filesTempArr[i].name + "<a href='#' onclick=\"deleteFile(event, " + i + ");\">[삭제]</a></div>"
+        }
+        $("#fileList").html(innerHtmlTemp);
+    }
+
+    $(document).ready(function () {
+        $("input[name='hidden']").change(function () {
+            $("#isshow").val($("input[name='hidden']:checked").val());
+        });
+
+        // $("#w-category").load("./ajax/loadcategory.php");
+
+        //파일추가
+        $("#fileupload").on("change", addFiles);
+
+        $('#summernote').summernote({
+            height: 400,
+            minHeight: null,
+            maxHeight: null,
+            focus: true,
+            callbacks: {
+                onImageUpload: function (files, editor, welEditable) {
+                    for (var i = 0; i < files.length; i++) {
+                        sendFile(files[i], this);
+                    }
+                }
+            }
+        });
+
+        function sendFile(file, el) {
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            var form_data = new FormData();
+            form_data.append('file', file);
+
+            $.ajax({
+                data: form_data,
+                type: "POST",
+                url: '/image',
+                cache: false,
+                contentType: false,
+                enctype: 'multipart/form-data',
+                processData: false,
+                success: function (url) {
+                    $(el).summernote('insertImage', url, function ($image) {
+                        $image.css('width', "50%");
+                    });
+                }
+            });
+        }
+
+        $("#insertBtn").on("click", function (e) {
+            e.preventDefault();
+            if (!$("#w-category option:selected").val()) {
+                alert("분류를 선택해주세요.");
+                $("#w-category").focus();
+                return false;
+            }
+
+            if (!$("#w-title").val()) {
+                alert("제목을 입력해주세요.");
+                $("#w-title").focus();
+                return false;
+            }
+            if (!latitude && !longitude) {
+                alert("진상발생지를 선택해주세요");
+                return false;
+            }
+            if (!$("#summernote").val()) {
+                alert("본문을 입력해주세요.");
+                $("#summernote").focus();
+                return false;
+            }
+            if (filesTempArr.length > 0) {
+                allFileUpload();
+            } else {
+                f1.submit();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

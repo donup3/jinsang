@@ -1,0 +1,126 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/mainHeader :: mainHeader"></head>
+
+<body class="jsdotcom vsc-initialized">
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/nav :: mainNav"></div>
+
+<div class="content sub">
+    <section>
+        <div class="h3-wrap">
+            <h3 class="sub-title">
+                오늘의 진상　
+                <span class="write">
+                    <a href="/jinsang/write?boardType=2" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
+        </div>
+        <div class="board-wrap normal-list">
+            <div class="bbs-list" th:with="result=${boards.result}">
+                <table class="table is-fullwidth is-hoverable" style="font-size: 16px">
+                    <caption class="is-sr-only">오늘의 진상 게시물</caption>
+                    <colgroup>
+                        <col style="width:65px;" class="is-hidden-mobile">
+                        <col style="width:100px;" class="is-hidden-mobile">
+                        <col style="width: auto;">
+                        <col style="width:135px;" class="is-hidden-480">
+                        <col style="width:120px;" class="is-hidden-mobile">
+                        <col style="width:80px;" class="is-hidden-mobile">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th scope="col" class="is-hidden-mobile">번호</th>
+                        <th scope="col" class="is-hidden-mobile">분류</th>
+                        <th scope="col">제목</th>
+                        <th scope="col" class="is-hidden-480">작성일</th>
+                        <th scope="col" class="is-hidden-mobile">작성자</th>
+                        <th scope="col" class="is-hidden-mobile">공감</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="board:${result.content}">
+                        <td class="is-hidden-mobile">[[${board.id}]]</td>
+                        <td class="is-hidden-mobile">[[${board.category}]]</td>
+                        <td class="has-text-left">
+                            <a href="#" class="title is-6 text-ellipsis"
+                               th:href="@{/jinsang/{id}/2 (id=${board.id})}">[[${board.title}]]
+                                <span th:if="${board.replyCount}" th:text="'['+${board.replyCount}+']'"></span>
+                            </a>
+                        </td>
+                        <td class="is-hidden-480">[[${board.createdDate}]]</td>
+                        <td class="is-hidden-mobile">[[${board.writer}]]</td>
+                        <td class="is-hidden-mobile">[[${board.agreeCount}]]</td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+            <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+                <a th:if="${boards.prevPage!=null}" class="pagination-previous"
+                   th:href="${boards.prevPage.pageNumber}+1">
+                    <i class="ico-angle-left"></i> 이전
+                </a>
+
+                <a th:if="${boards.nextPage!=null}" class="pagination-next" th:href="${boards.nextPage.pageNumber}+1">
+                    다음 <i class="ico-angle-right"></i>
+                </a>
+                <ul class="pagination-list">
+                    <li><a class="pagination-link" th:each="p:${boards.pageList}"
+                           th:classappend="${p.pageNumber==boards.currentPageNum-1}?is-current:''"
+                           th:href="${p.pageNumber}+1">[[${p.pageNumber}+1]]</a></li>
+
+                    <li><span class="pagination-ellipsis">…</span></li>
+                    <li><a class="pagination-link" title="마지막 페이지"
+                           href="?page=11&amp;searchtype=&amp;searchtext=&amp;type=T&amp;menu=2">&gt;&gt;</a></li>
+                </ul>
+            </nav>
+            <form id="listForm" th:action="@{jslist}" method="get">
+                <input type="hidden" name="page" th:value="${boards.currentPageNum}">
+                <input type="hidden" name="size" th:value="${boards.currentPage.pageSize}">
+                <input type="hidden" name="boardType" th:value="${pageDto.boardType}">
+            </form>
+        </div>
+    </section>
+</div>
+
+<footer class="footer">
+    <div class="footer-wrap">
+        <div class="footer-link">
+            <a href="#" class="privacy">개인정보처리방침</a>
+            <a href="#" class="term">서비스이용약관</a>
+        </div>
+        <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+<script>
+
+</script>
+<script>
+    $(document).ready(function () {
+        var formObj = $("#listForm");
+
+        $(".pagination a").on("click", function (e) {
+            e.preventDefault();
+            formObj.find('[name="page"]').val($(this).attr('href'));
+            formObj.submit();
+        });
+    })
+</script>
+
+</body>
+</html>
+<style>
+    .button {
+        background-color: white;
+        border-color: #dbdbdb;
+        border-width: 2px;
+        color: #363636;
+        cursor: pointer;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+    }
+</style>

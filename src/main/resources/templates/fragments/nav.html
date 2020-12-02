@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<nav th:fragment="mainNav">
+    <h2 class="blind">메인 네비게이션</h2>
+    <div class="for-mob">
+        <button type="button" title="메뉴 토글">
+            <i></i>
+            <i></i>
+            <i></i>
+        </button>
+    </div>
+    <div class="menu-wrap">
+        <ul class="menu-list">
+            <li>
+                <a href="/jinsang/jslist.php?type=J&amp;menu=1" class="">
+                    <span>진상of진상</span>
+                </a>
+            </li>
+            <li>
+                <a href="/jinsang/jslist?boardType=2">
+                    <span>오늘의 진상</span>
+                </a>
+            </li>
+            <li>
+                <a href="/jinsang/jslist.php?type=K&amp;menu=3" class="">
+                    <span>진상대응노하우</span>
+                </a>
+            </li>
+            <li>
+                <a href="/jinsang/map.php?menu=4" class="">
+                    <span>진상출몰지역</span>
+                </a>
+            </li>
+            <li>
+                <a href="/jinsang/jslist.php?type=S&amp;menu=5" class="">
+                    <span>인실진</span>
+                </a>
+            </li>
+            <li>
+                <div class="login-box">
+                    <a href="/jinsang/login.php" class="login-proc">
+                        <span>로그인</span>
+                    </a>
+                </div>
+            </li>
+            <li class="register-box">
+                <div class="login-box">
+                    <a href="/jinsang/register.php" class="register-proc">
+                        <span>회원가입</span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<script>
+    $(function () {
+        $(".logout").click(function () {
+            //ajax
+            $.ajax({
+                url: 'logout.php',
+                method: 'post',
+                dataType: 'json',
+                success: function (result) {
+                    location.href = "./index.php";
+                },
+                error: function (request, status, error) {
+                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        });
+    });
+</script>

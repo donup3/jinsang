@@ -1,5 +1,6 @@
 package com.samplesecurity.domain;
 
+import com.samplesecurity.domain.board.Board;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,8 +31,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany
+    @OneToMany(mappedBy = "member")
     private List<Board> boards = new ArrayList<>();
 
-    private boolean agreeCheck;
 }
