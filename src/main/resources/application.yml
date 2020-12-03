@@ -1,19 +1,17 @@
-server:
-  port: 8090
-
----
 spring:
   datasource:
     #    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/test?useSSL=false&serverTimezone=Asia/Seoul
-    username: root
+    url: jdbc:mysql://localhost:3307/jinsang?useSSL=false&serverTimezone=Asia/Seoul
+    username: test
     password: test
 
   jpa:
     hibernate:
       ddl-auto: update
-      show_sql: true
-      format_sql: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
 
 #    properties:
 #      hibernate:
@@ -21,8 +19,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: java.email.sender020@gmail.com
-    password: "haha1122!@"
+    username:
+    password:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true

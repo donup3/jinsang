@@ -6,6 +6,7 @@ import com.samplesecurity.domain.Member;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Float.parseFloat;
@@ -19,7 +20,7 @@ public class BoardRegisterDto {
     private String latitude; //위도
     private String boardType;
     private String longitude; //경도
-    private List<AttachFileDto> fileDtos;
+    private List<AttachFileDto> fileDtos = new ArrayList<>();
 
     public Board toEntity(Member member, Category category) {
         Board board = Board.builder()

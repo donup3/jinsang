@@ -11,8 +11,4 @@ public class SampleSecurityApplication {
 		SpringApplication.run(SampleSecurityApplication.class, args);
 	}
 
-	@Bean(name = "uploadPath")
-	public String uploadPath() {
-		return "c:/upload/";
-	}
 }
