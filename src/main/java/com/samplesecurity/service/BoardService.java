@@ -11,6 +11,10 @@ import com.samplesecurity.dto.Board.BoardUpdateDto;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.*;
 import com.samplesecurity.repository.reply.ReplyRepository;
+import com.samplesecurity.dto.Board.BoardMapDto;
+import com.samplesecurity.repository.board.AgreeCheckRepository;
+import com.samplesecurity.repository.board.AttachFileRepository;
+import com.samplesecurity.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Float.*;
@@ -47,6 +52,7 @@ public class BoardService {
 
     public void register(Board board, List<AttachFileDto> fileDtos) {
         Board saveBoard = boardRepository.save(board);
+
         if (fileDtos != null) {
             for (AttachFileDto fileDto : fileDtos) {
                 AttachFile attachFile = fileDto.toEntity();
@@ -127,7 +133,7 @@ public class BoardService {
         Long newCategoryId = parseLong(boardUpdateDto.getCategory());
         Category newCategory = categoryRepository.findById(newCategoryId).get();
 
-        if (findMember.getName().equals(board.getMember().getName())) {
+        if (findMember.getNickName().equals(board.getMember().getNickName())) {
             attachFileRepository.deleteByBoardId(boardId);
             //게시물 업데이트
             board.setTitle(boardUpdateDto.getTitle());
@@ -148,7 +154,7 @@ public class BoardService {
 
     public void delete(Long boardId,Member findMember) {
         Board board = boardRepository.findById(boardId).get();
-        if (findMember.getName().equals(board.getMember().getName())) {
+        if (findMember.getNickName().equals(board.getMember().getNickName())) {
             List<AttachFile> attachFiles = attachFileRepository.findAllByBoardId(boardId);
             deleteFiles(attachFiles);
 
@@ -175,5 +181,22 @@ public class BoardService {
                 log.error("delete file error " + e.getMessage());
             }
         });
+    }
+
+    public List<BoardMapDto> getBoardInfoForMap() {
+        List<Board> board = boardRepository.findAll();
+        List<BoardMapDto> boardMapDtos = new ArrayList<>();
+
+        board.forEach(item -> {
+            BoardMapDto boardItemForMap = BoardMapDto.builder()
+                    .id(item.getId())
+                    .title(item.getTitle())
+                    .latitude(item.getLatitude())
+                    .longitude(item.getLongitude())
+                    .build();
+            boardMapDtos.add(boardItemForMap);
+        });
+
+        return boardMapDtos;
     }
 }

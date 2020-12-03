@@ -27,7 +27,7 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
                 reply.ref,
                 reply.level,
                 reply.refOrder,
-                member.name,
+                member.nickName,
                 reply.toMemberName,
                 reply.createdDate,
                 reply.agreeCount,

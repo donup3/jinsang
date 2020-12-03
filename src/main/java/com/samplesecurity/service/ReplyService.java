@@ -73,7 +73,7 @@ public class ReplyService {
         reply.setLevel(reply.getLevel() + 1);
         reply.setBoard(board);
         reply.setMember(findMember);
-        reply.setToMemberName(parentReply.getMember().getName());
+        reply.setToMemberName(parentReply.getMember().getNickName());
 
         replyRepository.save(reply);
     }

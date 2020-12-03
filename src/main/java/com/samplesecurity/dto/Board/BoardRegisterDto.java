@@ -12,21 +12,13 @@ import static java.lang.Float.parseFloat;
 
 @Data
 public class BoardRegisterDto {
-
     private String title;
-
     private String address;
-
     private String contents;
-
     private String category;
-
     private String latitude; //위도
-
     private String boardType;
-
     private String longitude; //경도
-
     private List<AttachFileDto> fileDtos;
 
     public Board toEntity(Member member, Category category) {

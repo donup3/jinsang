@@ -28,9 +28,9 @@ public class Board {
 
     private int agreeCount;
 
-    private float latitude; //위도
+    private Float latitude; //위도
 
-    private float longitude; //경도
+    private Float longitude; //경도
 
     private String address;
 
@@ -48,10 +48,10 @@ public class Board {
 
     //attach 파일들은 단방향 매핑해놓음
     @OneToMany(mappedBy = "board")
-    private List<UploadFile> uploadFiles = new ArrayList<>();
+    private List<UploadFile> uploadFiles;
 
     @OneToMany(mappedBy = "board")
-    private List<Reply> replies = new ArrayList<>();
+    private List<Reply> replies;
 
     public void setMember(Member member) {
         this.member = member;
@@ -61,5 +61,4 @@ public class Board {
     public void setCategory(Category category) {
         this.category = category;
     }
-
 }

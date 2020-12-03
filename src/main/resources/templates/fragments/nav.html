@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <nav th:fragment="mainNav">
     <h2 class="blind">메인 네비게이션</h2>
     <div class="for-mob">
@@ -27,7 +27,7 @@
                 </a>
             </li>
             <li>
-                <a href="/jinsang/map.php?menu=4" class="">
+                <a href="/jinsang/map" class="">
                     <span>진상출몰지역</span>
                 </a>
             </li>
@@ -36,17 +36,24 @@
                     <span>인실진</span>
                 </a>
             </li>
-            <li>
+            <li sec:authorize="isAnonymous()">
                 <div class="login-box">
-                    <a href="/jinsang/login.php" class="login-proc">
+                    <a href="/user/login" class="login-proc">
                         <span>로그인</span>
                     </a>
                 </div>
             </li>
-            <li class="register-box">
+            <li sec:authorize="isAnonymous()" class="register-box">
                 <div class="login-box">
-                    <a href="/jinsang/register.php" class="register-proc">
+                    <a href="/user/signup" class="register-proc">
                         <span>회원가입</span>
+                    </a>
+                </div>
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <div class="login-box">
+                    <a href="/user/logout" class="login-proc">
+                        <span>로그아웃</span>
                     </a>
                 </div>
             </li>

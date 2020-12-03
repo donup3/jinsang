@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageController {
 
     private final ImageService imageService;
-
     private final ResourceLoader resourceLoader;
 
     @PostMapping("/image")

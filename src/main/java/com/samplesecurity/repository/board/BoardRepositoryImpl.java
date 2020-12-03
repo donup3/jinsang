@@ -42,7 +42,7 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                                 category.name.as("category"),
                                 board.title,
                                 board.createdDate,
-                                member.name.as("writer"),
+                                member.nickName.as("writer"),
                                 board.agreeCount,
                                 board.replies.size()))
                 .from(board)

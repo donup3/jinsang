@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/mainHeader :: mainHeader"></head>
+
+<body class="jsdotcom vsc-initialized">
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/nav :: mainNav"></div>
+
+<div class="content sub login">
+
+    <section>
+        <h3 class="sub-title">
+            로그인
+        </h3>
+        <form id="f1" th:action="@{/user/login}" method="post">
+            <div class="login-wrap">
+                <p th:text="${error}"></p>
+                <div class="field">
+                    <div class="control">
+                        <span class="ico-person-2"></span>
+                        <input class="input" type="text" placeholder="아이디(이메일)" name="username">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <span class="ico-lock-o"></span>
+                        <input class="input" type="password" placeholder="비밀번호" name="password">
+                        <p class="newPassword"></p>
+                    </div>
+                </div>
+
+                <div class="login-btns">
+                    <button type="button" class="button login-btn">로그인</button>
+                    <button type="button" class="button register-btn">회원가입</button>
+                    <a href="#" title="비밀번호 찾기" class="pwsearch">비밀번호 분실</a>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+
+<footer class="footer">
+    <div class="footer-wrap">
+        <div class="footer-link">
+            <a href="#" class="privacy">개인정보처리방침</a>
+            <a href="#" class="term">서비스이용약관</a>
+        </div>
+        <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+<script>
+
+</script><script>
+$(function(){
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+
+    var f1 = $("#f1");
+
+	//비밀번호 찾기
+	$(".pwsearch").click(function(){
+		if(confirm("비밀번호를 재발급 받으시겠습니까?")){
+            if(!$("input[name='username']").val()) {
+                alert("아이디를 입력해주세요");
+                $("input[name='username']").focus();
+                return false;
+		    }
+
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            var senddata = {"email":$("input[name='username']").val()};
+
+            $.ajax({
+                method:'POST',
+                url:'/user/password',
+                data:senddata,
+                success:function(data){
+                    console.log(data);
+                    if(data){
+                        alert(data);
+                        $(".newPassword").text("인증코드로 로그인해 주세요.");
+                    }
+                },
+                error:function(request,status,error){
+                    console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+		}
+	});
+
+	//login
+	$(".login-btn").click(function(){
+		if(!$("input[name='username']").val()) {
+			alert("아이디를 입력해주세요");
+			$("input[name='username']").focus();
+			return false;
+		}
+		if(!$("input[name='password']").val()) {
+			alert("비밀번호를 입력해주세요");
+			$("input[name='password']").focus();
+			return false;
+		}
+		f1.submit();
+	});
+	//register
+	$(".register-btn").click(function(){
+		location.href= '/user/signup';
+	});
+});
+</script>
+</body>
+</html>

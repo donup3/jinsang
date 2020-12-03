@@ -4,49 +4,31 @@ import com.samplesecurity.dto.MemberDto;
 import com.samplesecurity.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequiredArgsConstructor
 @Slf4j
+@Controller
+@RequestMapping("/user")
+@RequiredArgsConstructor
 public class MemberController {
+
     private final MemberService memberService;
 
-    @GetMapping("/")
-    public String index(){
-        return "/index";
+    @GetMapping("/signup")
+    public String getSignupPage(){
+        return "/member/signup";
     }
 
-    @GetMapping("/user/signup")
-    public String signupGet(){
-        return "/signup";
-    }
-
-    @PostMapping("/user/signup")
-    public String signupPost(MemberDto memberDto){
-        memberService.joinUser(memberDto);
-
-        return "redirect:/user/login";
-    }
-
-    @GetMapping("/user/login")
-    public String loginForm() {
-        return "/login";
-    }
-
-
-    @GetMapping("/user/login/result")
-    public String dispLoginResult() {
-
-        return "/loginSuccess";
-    }
-
-    // 로그아웃 결과 페이지
-    @GetMapping("/user/logout/result")
-    public String dispLogout() {
-        return "/logout";
+    @GetMapping("/login")
+    public String loginForm(String error, Model model) {
+        log.info("login page loading done.");
+        if (error != null) {
+            model.addAttribute("error", "계정을 다시 확인해주세요.");
+        }
+        return "/member/login";
     }
 
     // 접근 거부 페이지
@@ -61,9 +43,25 @@ public class MemberController {
         return "/myinfo";
     }
 
-    // 어드민 페이지
-    @GetMapping("/admin")
-    public String dispAdmin() {
-        return "/admin";
+    @ResponseBody
+    @PostMapping("/checkNickName")
+    public ResponseEntity<Boolean> verifyNickName(String nickName) {
+        boolean isNickNameExisted = memberService.nickNameChecker(nickName);
+        if (isNickNameExisted) {
+            return ResponseEntity.ok().body(true);
+        }
+        return ResponseEntity.ok().body(false);
+    }
+
+    @PostMapping("/signup")
+    public String grantSignup(MemberDto memberDto) {
+        memberService.store(memberDto);
+        return "redirect:/user/login";
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<String> resetPassword(String email) {
+        memberService.resetPassword(email);
+        return ResponseEntity.ok().body("인증코드 전송 완료");
     }
 }

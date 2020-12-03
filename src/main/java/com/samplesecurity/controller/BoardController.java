@@ -40,6 +40,11 @@ public class BoardController {
     private final CategoryRepository categoryRepository;
     private final AttachFileRepository attachFileRepository;
 
+    @GetMapping("/")
+    public String index(){
+        return "/index";
+    }
+
     @GetMapping("/jslist")
     public String list(@ModelAttribute("pageDto") BoardPageDto boardPageDto, Model model) {
         log.info("ss" + boardPageDto);
@@ -91,6 +96,7 @@ public class BoardController {
         Member findMember = findMember(authentication);
         Category category = categoryRepository.findById(parseLong(boardRegisterDto.getCategory())).get();
         Board board = boardRegisterDto.toEntity(findMember, category);
+
         List<AttachFileDto> fileDtos = boardRegisterDto.getFileDtos();
 
         boardService.register(board, fileDtos);
@@ -163,9 +169,22 @@ public class BoardController {
         return boardService.addAgree(findMember, boardId);
     }
 
+
     private Member findMember(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
         return memberRepository.findByEmail(username).get();
+    }
+
+    @GetMapping("/map")
+    public String getMap() {
+        return "/jinsang/map";
+    }
+
+    @ResponseBody
+    @GetMapping("/listToMap")
+    public ResponseEntity<List<BoardMapDto>> boardItemsToMap() {
+        List<BoardMapDto> boardMapDto = boardService.getBoardInfoForMap();
+        return ResponseEntity.ok().body(boardMapDto);
     }
 }

@@ -49,5 +49,5 @@ public class Reply {
     private String toMemberName;  //받는 사람
 
     @OneToMany(mappedBy = "reply", cascade = CascadeType.REMOVE)
-    private List<ReplyAgreeCheck> replyAgreeChecks = new ArrayList<>();
+    private List<ReplyAgreeCheck> replyAgreeChecks;
 }
