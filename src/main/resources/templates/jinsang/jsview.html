@@ -22,7 +22,7 @@
                 </div>
                 <div class="detail-content">
                     <div class="board-content">
-                        <div th:utext="${board.contents}" style="margin-top: 25px">
+                        <div th:utext="${board.contents}">
 
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                 <div class="buttons-group">
                     <div class="fl">
                         <div class="buttons">
-                            <a href="#" class="button" id="edit">수정</a>
+                            <a href="#" th:href="@{/jinsang/modify/{id} (id=${board.id})}" class="button" id="edit">수정</a>
                         </div>
                     </div>
                     <div class="board-recommend">

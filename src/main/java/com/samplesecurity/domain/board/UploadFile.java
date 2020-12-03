@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-public class UploadFile {
+public class UploadFile { //summbernote의 이미지파일
     @Id
     @GeneratedValue
     private Long id;
