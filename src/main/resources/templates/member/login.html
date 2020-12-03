@@ -25,6 +25,7 @@
                     <div class="control">
                         <span class="ico-lock-o"></span>
                         <input class="input" type="password" placeholder="비밀번호" name="password">
+                        <p class="newPassword"></p>
                     </div>
                 </div>
 
@@ -51,42 +52,52 @@
 
 </script><script>
 $(function(){
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+
     var f1 = $("#f1");
 
 	//비밀번호 찾기
 	$(".pwsearch").click(function(){
 		if(confirm("비밀번호를 재발급 받으시겠습니까?")){
-			if(!$("input[name='username']").val()){
-				alert("아이디를 입력해주세요");
-				$("input[name='username']").focus();
-				return false;
-			}
+            if(!$("input[name='username']").val()) {
+                alert("아이디를 입력해주세요");
+                $("input[name='username']").focus();
+                return false;
+		    }
 
-			var param = {id:$("input[name='username']").val()};
-			$.ajax({
-				url:'./ajax/resetpass.php',
-				data:param,
-				dataType:'json',
-				method:'post',
-				success:function(data){
-					alert(data.msg);
-					sendMail('resetpass',$("input[name='userid']").val());
-				},
-				error:function(request,status,error){
-					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-				}
-			});
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            var senddata = {"email":$("input[name='username']").val()};
+
+            $.ajax({
+                method:'POST',
+                url:'/user/password',
+                data:senddata,
+                success:function(data){
+                    console.log(data);
+                    if(data){
+                        alert(data);
+                        $(".newPassword").text("인증코드로 로그인해 주세요.");
+                    }
+                },
+                error:function(request,status,error){
+                    console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
 		}
 	});
 
 	//login
 	$(".login-btn").click(function(){
-		if(!$("input[name='username']").val()){
+		if(!$("input[name='username']").val()) {
 			alert("아이디를 입력해주세요");
 			$("input[name='username']").focus();
 			return false;
 		}
-		if(!$("input[name='password']").val()){
+		if(!$("input[name='password']").val()) {
 			alert("비밀번호를 입력해주세요");
 			$("input[name='password']").focus();
 			return false;

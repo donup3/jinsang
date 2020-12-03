@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +40,7 @@ public class EmailAuthService {
 
     public String sendAuthCode(String email) {
         SimpleMailMessage simpleMailMessage;
-        String authCode = getAuthCode();
+        String authCode = "haha1122@@";
         try {
             simpleMailMessage =  new SimpleMailMessage();
             simpleMailMessage.setFrom(FROM_ADDRESS);
@@ -66,5 +67,12 @@ public class EmailAuthService {
         return stringBuffer.toString();
     }
 
+    private String getCode() {
+        UUID uuid = UUID.randomUUID();
+        String pieceOfUUID = uuid.toString().substring(0, 8);
 
+
+
+        return pieceOfUUID + "!!";
+    }
 }

@@ -4,10 +4,7 @@ import com.samplesecurity.domain.AttachFile;
 import com.samplesecurity.domain.Board;
 import com.samplesecurity.domain.Category;
 import com.samplesecurity.domain.Member;
-import com.samplesecurity.dto.Board.AttachFileDto;
-import com.samplesecurity.dto.Board.BoardListDto;
-import com.samplesecurity.dto.Board.BoardPageDto;
-import com.samplesecurity.dto.Board.BoardRegisterDto;
+import com.samplesecurity.dto.Board.*;
 import com.samplesecurity.dto.PageMaker;
 import com.samplesecurity.exception.SampleException;
 import com.samplesecurity.repository.CategoryRepository;
@@ -91,6 +88,7 @@ public class BoardController {
         Member findMember = memberRepository.findByEmail(username).get();
         Category category = categoryRepository.findById(parseLong(boardRegisterDto.getCategory())).get();
         Board board = boardRegisterDto.toEntity(findMember, category);
+
         List<AttachFileDto> fileDtos = boardRegisterDto.getFileDtos();
 
         boardService.register(board, fileDtos);
@@ -119,4 +117,15 @@ public class BoardController {
         return boardService.addAgree(findMember,boardId);
     }
 
+    @GetMapping("/map")
+    public String getMap() {
+        return "/jinsang/map";
+    }
+
+    @ResponseBody
+    @GetMapping("/listToMap")
+    public ResponseEntity<List<BoardMapDto>> boardItemsToMap() {
+        List<BoardMapDto> boardMapDto = boardService.getBoardInfoForMap();
+        return ResponseEntity.ok().body(boardMapDto);
+    }
 }

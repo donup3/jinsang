@@ -6,6 +6,7 @@ import com.samplesecurity.domain.Board;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
+import com.samplesecurity.dto.Board.BoardMapDto;
 import com.samplesecurity.repository.AgreeCheckRepository;
 import com.samplesecurity.repository.AttachFileRepository;
 import com.samplesecurity.repository.board.BoardRepository;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,10 +37,12 @@ public class BoardService {
     public void register(Board board, List<AttachFileDto> fileDtos) {
         Board saveBoard = boardRepository.save(board);
 
-        for (AttachFileDto fileDto : fileDtos) {
-            AttachFile attachFile = fileDto.toEntity();
-            AttachFile saveFile = attachFileRepository.save(attachFile);
-            saveFile.setBoard(saveBoard);
+        if (fileDtos != null) {
+            for (AttachFileDto fileDto : fileDtos) {
+                AttachFile attachFile = fileDto.toEntity();
+                AttachFile saveFile = attachFileRepository.save(attachFile);
+                saveFile.setBoard(saveBoard);
+            }
         }
     }
 
@@ -79,5 +83,22 @@ public class BoardService {
                 .agreeChecked(false)
                 .build();
         return agreeCheckRepository.save(agreeCheck);
+    }
+
+    public List<BoardMapDto> getBoardInfoForMap() {
+        List<Board> board = boardRepository.findAll();
+        List<BoardMapDto> boardMapDtos = new ArrayList<>();
+
+        board.forEach(item -> {
+            BoardMapDto boardItemForMap = BoardMapDto.builder()
+                    .id(item.getId())
+                    .title(item.getTitle())
+                    .latitude(item.getLatitude())
+                    .longitude(item.getLongitude())
+                    .build();
+            boardMapDtos.add(boardItemForMap);
+        });
+
+        return boardMapDtos;
     }
 }

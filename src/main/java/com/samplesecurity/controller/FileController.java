@@ -1,6 +1,7 @@
 package com.samplesecurity.controller;
 
 import com.samplesecurity.dto.Board.AttachFileDto;
+import com.samplesecurity.dto.ProfileDto;
 import com.samplesecurity.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +32,17 @@ public class FileController {
     private final FileService fileService;
 
     @ResponseBody
-    @PostMapping("/uploadProfile")
-    public ResponseEntity<AttachFileDto> uploadProfileImg(@RequestParam(value = "profileimg") MultipartFile uploadFile) {
-        AttachFileDto attachFileDto = fileService.uploadSingleFile(uploadFile);
-        return new ResponseEntity<>(attachFileDto, HttpStatus.OK);
-    }
-
-    @ResponseBody
     @PostMapping("/uploadFile")
     public ResponseEntity<List<AttachFileDto>> uploadFile(MultipartFile[] uploadFile) {
         List<AttachFileDto> attachFileDto = fileService.uploadFiles(uploadFile);
         return new ResponseEntity<>(attachFileDto, HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @PostMapping("/uploadProfile")
+    public ResponseEntity<ProfileDto> uploadProfileImg(@RequestParam(value = "profileimg") MultipartFile uploadFile) {
+        ProfileDto profileDto = fileService.uploadSingleFile(uploadFile);
+        return new ResponseEntity<>(profileDto, HttpStatus.OK);
     }
 
     @GetMapping("/display")

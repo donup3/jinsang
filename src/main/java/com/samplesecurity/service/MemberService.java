@@ -19,31 +19,34 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberService{
+public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
+
+    private final EmailAuthService emailAuthService;
+
     private final MemberRepository memberRepository;
     private final EmailAuthRepository emailAuthRepository;
     private final MemberAuthRepository memberAuthRepository;
     private final ProfileRepository profileRepository;
 
+
     public boolean nickNameChecker(String nickName) {
-         return memberRepository.findByNickName(nickName).isPresent();
+        return memberRepository.findByNickName(nickName).isPresent();
     }
 
     public void store(MemberDto memberDto) {
         Member member = saveMember(memberDto);
-        log.info("memberId : " + member.getId());
 
         saveRoles(member);
         saveEmailAuth(memberDto, member);
 
-        log.info("profile is null? : " + memberDto.getProfile());
         if (memberDto.getProfile() != null) {
             saveProfile(memberDto, member);
         }
@@ -80,5 +83,15 @@ public class MemberService{
         memberAuth.setMember(member);
 
         memberAuthRepository.save(memberAuth);
+    }
+
+    public void resetPassword(String email) {
+        String generatedPassword = emailAuthService.sendAuthCode(email);
+
+        memberRepository.findByEmail(email)
+                .ifPresent(member -> {
+                    member.setPassword(passwordEncoder.encode(generatedPassword));
+                    memberRepository.save(member);
+                });
     }
 }

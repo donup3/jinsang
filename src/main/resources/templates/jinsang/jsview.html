@@ -16,7 +16,7 @@
                     <h3 class="title is-4" th:text="${board.title}"></h3>
                     <div class="board-info">
                         <span class="wrt-date" th:text="${board.createdDate}"></span>
-                        <span class="wrt-writer" th:text="${board.member.name}"></span>
+                        <span class="wrt-writer" th:text="${board.member.nickName}"></span>
                         <span class="wrt-hit" th:text="${board.agreeCount}"></span>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                     <div class="field">
                         <label class="label" for="comment-write">댓글달기</label>
                         <div class="control">
-                            <textarea class="textarea comment-write" placeholder="댓글을 작성해주세요."></textarea>
+                            <textarea class="textarea comment-write" id="comment-write" placeholder="댓글을 작성해주세요."></textarea>
                         </div>
                     </div>
                     <div class="buttons-group">

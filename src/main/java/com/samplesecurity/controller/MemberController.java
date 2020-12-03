@@ -44,7 +44,7 @@ public class MemberController {
     }
 
     @ResponseBody
-    @PostMapping("/nicknameduplecheck")
+    @PostMapping("/checkNickName")
     public ResponseEntity<Boolean> verifyNickName(String nickName) {
         boolean isNickNameExisted = memberService.nickNameChecker(nickName);
         if (isNickNameExisted) {
@@ -57,5 +57,11 @@ public class MemberController {
     public String grantSignup(MemberDto memberDto) {
         memberService.store(memberDto);
         return "redirect:/user/login";
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<String> resetPassword(String email) {
+        memberService.resetPassword(email);
+        return ResponseEntity.ok().body("인증코드 전송 완료");
     }
 }

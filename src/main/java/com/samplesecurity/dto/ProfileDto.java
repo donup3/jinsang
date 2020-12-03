@@ -1,6 +1,7 @@
 package com.samplesecurity.dto;
 
 import com.samplesecurity.domain.Profile;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -9,11 +10,10 @@ public class ProfileDto {
     private String uploadPath;
     private String fileName;
 
-    public Profile toEntity() {
-        return Profile.builder()
-                .uuid(uuid)
-                .uploadPath(uploadPath)
-                .fileName(fileName)
-                .build();
+    @Builder
+    public ProfileDto(String uuid, String uploadPath, String fileName) {
+        this.uuid = uuid;
+        this.uploadPath = uploadPath;
+        this.fileName = fileName;
     }
 }

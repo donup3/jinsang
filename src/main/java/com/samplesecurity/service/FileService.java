@@ -1,6 +1,7 @@
 package com.samplesecurity.service;
 
 import com.samplesecurity.dto.Board.AttachFileDto;
+import com.samplesecurity.dto.ProfileDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,33 +18,7 @@ import java.util.UUID;
 public class FileService {
 
     private final static String rootDirectory = "C:\\upload";
-
-    public AttachFileDto uploadSingleFile(MultipartFile uploadFile) {
-        String directoryPathByDate = getDirectoryPathByDate();
-        File uploadPath = new File(rootDirectory, directoryPathByDate);
-
-        createDirectory(uploadPath);
-
-        String fileName = uploadFile.getOriginalFilename();
-
-        String uuid = UUIDGenerator();
-        fileName = uuid + "_" + fileName;
-
-        File saveFile = new File(uploadPath, fileName);
-
-        AttachFileDto attachFileDTO = AttachFileDto.builder()
-                .fileName(fileName)
-                .uploadPath(directoryPathByDate)
-                .uuid(uuid)
-                .build();
-
-        try {
-            uploadFile.transferTo(saveFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return attachFileDTO;
-    }
+    private final static String rootProfileDirectory = "C:\\upload\\profile";
 
     public List<AttachFileDto> uploadFiles(MultipartFile[] uploadFiles) {
         List<AttachFileDto> listOfAttachments = new ArrayList<>();
@@ -73,7 +48,33 @@ public class FileService {
             }
             listOfAttachments.add(attachFileDTO);
         }
+        log.info("보드에 들어오는 파일들 : " + listOfAttachments);
         return listOfAttachments;
+    }
+
+    public ProfileDto uploadSingleFile(MultipartFile uploadFile) {
+        String directoryPathByDate = getDirectoryPathByDate();
+        File uploadPath = new File(rootProfileDirectory, directoryPathByDate);
+
+        createDirectory(uploadPath);
+        String fileName = uploadFile.getOriginalFilename();
+
+        String uuid = UUIDGenerator();
+        fileName = uuid + "_" + fileName;
+
+        File saveFile = new File(uploadPath, fileName);
+        ProfileDto profileDto = ProfileDto.builder()
+                .fileName(fileName)
+                .uploadPath(directoryPathByDate)
+                .uuid(uuid)
+                .build();
+
+        try {
+            uploadFile.transferTo(saveFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return profileDto;
     }
 
     private String getDirectoryPathByDate() {
