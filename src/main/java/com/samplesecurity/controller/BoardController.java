@@ -4,14 +4,12 @@ import com.samplesecurity.domain.board.AttachFile;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.domain.board.Category;
 import com.samplesecurity.domain.Member;
-import com.samplesecurity.dto.Board.AttachFileDto;
-import com.samplesecurity.dto.Board.BoardListDto;
-import com.samplesecurity.dto.Board.BoardPageDto;
-import com.samplesecurity.dto.Board.BoardRegisterDto;
+import com.samplesecurity.dto.Board.*;
 import com.samplesecurity.dto.PageMaker;
 import com.samplesecurity.repository.board.CategoryRepository;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.AttachFileRepository;
+import com.samplesecurity.repository.board.UploadFileRepository;
 import com.samplesecurity.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,9 +88,7 @@ public class BoardController {
                            Authentication authentication,
                            RedirectAttributes rttr) {
         log.info("boardDto: " + boardRegisterDto);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
-        Member findMember = memberRepository.findByEmail(username).get();
+        Member findMember = findMember(authentication);
         Category category = categoryRepository.findById(parseLong(boardRegisterDto.getCategory())).get();
         Board board = boardRegisterDto.toEntity(findMember, category);
         List<AttachFileDto> fileDtos = boardRegisterDto.getFileDtos();
@@ -100,6 +96,52 @@ public class BoardController {
         boardService.register(board, fileDtos);
 
         rttr.addAttribute("boardType", boardRegisterDto.getBoardType());
+
+        return "redirect:/jinsang/jslist";
+    }
+
+    @GetMapping("/modify/{boardId}")
+    @Secured({"ROLE_MEMBER", "ROLE_ADMIN"})
+    public String modifyForm(@PathVariable("boardId") Long boardId,
+                             Authentication authentication,
+                             @ModelAttribute("pageDto") BoardPageDto boardPageDto,
+                             Model model) {
+        Board findBoard = boardService.getBoardByLoginCheck(boardId, authentication);
+
+        model.addAttribute("board", findBoard);
+        model.addAttribute("categoryList", categoryRepository.findAll());
+        model.addAttribute("files", attachFileRepository.findAllByBoardId(boardId));
+        return "jinsang/modifyForm";
+    }
+
+    @PostMapping("/modify/{boardId}")
+    @Secured({"ROLE_MEMBER", "ROLE_ADMIN"})
+    public String modify(@PathVariable("boardId") Long boardId,
+                         BoardUpdateDto boardUpdateDto,
+                         Authentication authentication,
+                         RedirectAttributes rttr) {
+        log.info("modify boardUpdateDto: " + boardUpdateDto);
+        log.info("boardType: " + boardUpdateDto.getBoardType());
+        Member findMember = findMember(authentication);
+
+        boardService.update(findMember, boardId, boardUpdateDto);
+
+        rttr.addAttribute("boardType", boardUpdateDto.getBoardType());
+
+        return "redirect:/jinsang/jslist";
+    }
+
+    @PostMapping("/delete/{boardId}")
+    @Secured({"ROLE_MEMBER", "ROLE_ADMIN"})
+    public String delete(@PathVariable("boardId") Long boardId,
+                         BoardPageDto boardPageDto,
+                         Authentication authentication,
+                         RedirectAttributes rttr) {
+        Member findMember = findMember(authentication);
+        boardService.delete(boardId, findMember);
+
+        rttr.addAttribute("page", boardPageDto.getPage());
+        rttr.addAttribute("boardType", boardPageDto.getBoardType());
 
         return "redirect:/jinsang/jslist";
     }
@@ -116,11 +158,14 @@ public class BoardController {
     @PostMapping("/addAgree")
     @ResponseBody
     public int agree(Long boardId, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
-        Member findMember = memberRepository.findByEmail(username).get();
+        Member findMember = findMember(authentication);
 
         return boardService.addAgree(findMember, boardId);
     }
 
+    private Member findMember(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        return memberRepository.findByEmail(username).get();
+    }
 }

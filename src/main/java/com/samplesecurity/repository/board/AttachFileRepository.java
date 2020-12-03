@@ -8,4 +8,7 @@ import java.util.List;
 public interface AttachFileRepository extends JpaRepository<AttachFile, String> {
     List<AttachFile> findByBoardId(Long boardId);
 
+    List<AttachFile> findAllByBoardId(Long boardId);
+
+    void deleteByBoardId(Long boardId);
 }

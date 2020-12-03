@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ReplyRepository extends JpaRepository<Reply, Long> ,ReplyCustomRepository{
 
-    List<Reply>  findAllByBoardId(Long boardId);
-
     List<Reply> findAllByRefOrderGreaterThanEqualAndRef(int setRefOrder, int ref);
+
+    void deleteByBoardId(Long boardId);
 }

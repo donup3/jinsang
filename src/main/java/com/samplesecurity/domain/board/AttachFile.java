@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @ToString(exclude = "board")
-public class AttachFile {
+public class AttachFile {  //게시글 아래 첨부파일
     @Id
     @Column(name = "board_attachFile_uuid", nullable = false)
     private String uuid;

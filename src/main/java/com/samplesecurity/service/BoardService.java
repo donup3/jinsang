@@ -4,19 +4,29 @@ import com.samplesecurity.domain.board.AgreeCheck;
 import com.samplesecurity.domain.board.AttachFile;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.domain.Member;
+import com.samplesecurity.domain.board.Category;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
-import com.samplesecurity.repository.board.AgreeCheckRepository;
-import com.samplesecurity.repository.board.AttachFileRepository;
-import com.samplesecurity.repository.board.BoardRepository;
+import com.samplesecurity.dto.Board.BoardUpdateDto;
+import com.samplesecurity.repository.MemberRepository;
+import com.samplesecurity.repository.board.*;
+import com.samplesecurity.repository.reply.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+
+import static java.lang.Float.*;
+import static java.lang.Long.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +37,9 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
     private final AgreeCheckRepository agreeCheckRepository;
+    private final CategoryRepository categoryRepository;
+    private final ReplyRepository replyRepository;
+    private final UploadFileRepository uploadFileRepository;
 
     public Page<BoardListDto> getBoardList(String boardType, Pageable pageable) {
         return boardRepository.findAllByDto(boardType, pageable);
@@ -97,5 +110,70 @@ public class BoardService {
             return boardRepository.findNextBoardId(boardId, boardType);
         }
         return null;
+    }
+
+    public Board getBoardByLoginCheck(Long boardId, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Board board = boardRepository.findById(boardId).get();
+        if (userDetails.getUsername().equals(board.getMember().getEmail())) {
+            return board;
+        } else {
+            throw new RuntimeException("자신의 글만 수정할 수 있습니다.");
+        }
+    }
+
+    public void update(Member findMember, Long boardId, BoardUpdateDto boardUpdateDto) {
+        Board board = boardRepository.findById(boardId).get();
+        Long newCategoryId = parseLong(boardUpdateDto.getCategory());
+        Category newCategory = categoryRepository.findById(newCategoryId).get();
+
+        if (findMember.getName().equals(board.getMember().getName())) {
+            attachFileRepository.deleteByBoardId(boardId);
+            //게시물 업데이트
+            board.setTitle(boardUpdateDto.getTitle());
+            board.setContents(boardUpdateDto.getContents());
+            board.setAddress(boardUpdateDto.getAddress());
+            board.setLatitude(parseFloat(boardUpdateDto.getLatitude()));
+            board.setLongitude(parseFloat(boardUpdateDto.getLongitude()));
+            board.setCategory(newCategory);
+            //파일 업데이트
+            if (boardUpdateDto.getFileDtos() != null) {
+                boardUpdateDto.getFileDtos().forEach(attachFile -> {
+                    attachFile.setBoard(board);
+                    attachFileRepository.save(attachFile);
+                });
+            }
+        }
+    }
+
+    public void delete(Long boardId,Member findMember) {
+        Board board = boardRepository.findById(boardId).get();
+        if (findMember.getName().equals(board.getMember().getName())) {
+            List<AttachFile> attachFiles = attachFileRepository.findAllByBoardId(boardId);
+            deleteFiles(attachFiles);
+
+            replyRepository.deleteByBoardId(boardId);
+            attachFileRepository.deleteByBoardId(boardId);
+            uploadFileRepository.deleteByBoardId(boardId);
+
+            boardRepository.deleteById(boardId);
+        }
+    }
+    private void deleteFiles(List<AttachFile> attachList) {
+        if (attachList == null || attachList.size() == 0) {
+            return;
+        }
+        attachList.forEach(attach -> {
+            try {
+                Path file = Paths.get("C:\\upload\\" + attach.getUploadPath() + "\\" + attach.getUuid() + "_" + attach.getFileName());
+                Files.deleteIfExists(file);
+                if (Files.probeContentType(file).startsWith("image")) {
+                    Path thumbNail = Paths.get("C:\\upload\\" + attach.getUploadPath() + "\\s_" + attach.getUuid() + "_" + attach.getFileName());
+                    Files.delete(thumbNail);
+                }
+            } catch (Exception e) {
+                log.error("delete file error " + e.getMessage());
+            }
+        });
     }
 }

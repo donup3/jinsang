@@ -69,10 +69,6 @@
                     <li><a class="pagination-link" th:each="p:${boards.pageList}"
                            th:classappend="${p.pageNumber==boards.currentPageNum-1}?is-current:''"
                            th:href="${p.pageNumber}+1">[[${p.pageNumber}+1]]</a></li>
-
-                    <li><span class="pagination-ellipsis">…</span></li>
-                    <li><a class="pagination-link" title="마지막 페이지"
-                           href="?page=11&amp;searchtype=&amp;searchtext=&amp;type=T&amp;menu=2">&gt;&gt;</a></li>
                 </ul>
             </nav>
             <form id="listForm" th:action="@{jslist}" method="get">
@@ -93,9 +89,6 @@
         <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
     </div>
 </footer>
-<script>
-
-</script>
 <script>
     $(document).ready(function () {
         var formObj = $("#listForm");
