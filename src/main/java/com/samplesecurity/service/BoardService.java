@@ -5,11 +5,13 @@ import com.samplesecurity.domain.board.AttachFile;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.domain.board.Category;
+import com.samplesecurity.domain.reply.Reply;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.BoardUpdateDto;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.*;
+import com.samplesecurity.repository.reply.ReplyAgreeCheckRepository;
 import com.samplesecurity.repository.reply.ReplyRepository;
 import com.samplesecurity.dto.Board.BoardMapDto;
 import com.samplesecurity.repository.board.AgreeCheckRepository;
@@ -45,6 +47,7 @@ public class BoardService {
     private final CategoryRepository categoryRepository;
     private final ReplyRepository replyRepository;
     private final UploadFileRepository uploadFileRepository;
+    private ReplyAgreeCheckRepository replyAgreeCheckRepository;
 
     public Page<BoardListDto> getBoardList(String boardType, Pageable pageable) {
         return boardRepository.findAllByDto(boardType, pageable);
@@ -90,7 +93,9 @@ public class BoardService {
             agreeCheck.setAgreeChecked(false);
             board.setAgreeCount(count);
         }
-
+        if (board.getAgreeCount() >= 50 && board.getBoardType().equals("2")) {
+            board.setBoardType("1");
+        }
         return count;
     }
 
@@ -138,9 +143,12 @@ public class BoardService {
             //게시물 업데이트
             board.setTitle(boardUpdateDto.getTitle());
             board.setContents(boardUpdateDto.getContents());
-            board.setAddress(boardUpdateDto.getAddress());
-            board.setLatitude(parseFloat(boardUpdateDto.getLatitude()));
-            board.setLongitude(parseFloat(boardUpdateDto.getLongitude()));
+            //주소 위도 경도 업데이트
+            if (boardUpdateDto.getAddress() != null && boardUpdateDto.getLatitude() != null && boardUpdateDto.getLongitude() != null) {
+                board.setAddress(boardUpdateDto.getAddress());
+                board.setLatitude(parseFloat(boardUpdateDto.getLatitude()));
+                board.setLongitude(parseFloat(boardUpdateDto.getLongitude()));
+            }
             board.setCategory(newCategory);
             //파일 업데이트
             if (boardUpdateDto.getFileDtos() != null) {
@@ -152,19 +160,21 @@ public class BoardService {
         }
     }
 
-    public void delete(Long boardId,Member findMember) {
+    public void delete(Long boardId, Member findMember) {
         Board board = boardRepository.findById(boardId).get();
         if (findMember.getNickName().equals(board.getMember().getNickName())) {
+            //댓글 삭제
+            replyRepository.deleteByBoardId(boardId);
+            //파일 삭제
             List<AttachFile> attachFiles = attachFileRepository.findAllByBoardId(boardId);
             deleteFiles(attachFiles);
-
-            replyRepository.deleteByBoardId(boardId);
             attachFileRepository.deleteByBoardId(boardId);
             uploadFileRepository.deleteByBoardId(boardId);
-
+            //게시글 삭제
             boardRepository.deleteById(boardId);
         }
     }
+
     private void deleteFiles(List<AttachFile> attachList) {
         if (attachList == null || attachList.size() == 0) {
             return;

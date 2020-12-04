@@ -3,6 +3,7 @@ package com.samplesecurity.dto.Board;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Data
 public class BoardPageDto {
@@ -37,5 +38,13 @@ public class BoardPageDto {
 
     public Pageable makePageable() {
         return PageRequest.of(this.page - 1, this.size);
+    }
+
+    public String getListLink(){
+        UriComponentsBuilder builder=UriComponentsBuilder.fromPath("")
+                .queryParam("page",this.page)
+                .queryParam("boardType",this.getBoardType());
+
+        return builder.toUriString();
     }
 }

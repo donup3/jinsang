@@ -41,7 +41,7 @@ public class BoardController {
     private final AttachFileRepository attachFileRepository;
 
     @GetMapping("/")
-    public String index(){
+    public String index() {
         return "/index";
     }
 
@@ -84,6 +84,7 @@ public class BoardController {
     @GetMapping("/write")
     @Secured({"ROLE_MEMBER", "ROLE_ADMIN"})
     public String register(@ModelAttribute("pageDto") BoardPageDto boardPageDto) {
+        log.info("register pageDto: " + boardPageDto);
         return "jinsang/write";
     }
 
@@ -91,19 +92,22 @@ public class BoardController {
     @Secured({"ROLE_MEMBER", "ROLE_ADMIN"})
     public String register(BoardRegisterDto boardRegisterDto,
                            Authentication authentication,
-                           RedirectAttributes rttr) {
+                           BoardPageDto boardPageDto) {
         log.info("boardDto: " + boardRegisterDto);
         Member findMember = findMember(authentication);
         Category category = categoryRepository.findById(parseLong(boardRegisterDto.getCategory())).get();
-        Board board = boardRegisterDto.toEntity(findMember, category);
+        Board board;
+        if (boardRegisterDto.getBoardType().equals("2")) {
+            board = boardRegisterDto.toEntity(findMember, category);
+        } else {
+            board = boardRegisterDto.toEntityOfKnow(findMember, category);
+        }
 
         List<AttachFileDto> fileDtos = boardRegisterDto.getFileDtos();
 
         boardService.register(board, fileDtos);
 
-        rttr.addAttribute("boardType", boardRegisterDto.getBoardType());
-
-        return "redirect:/jinsang/jslist";
+        return "redirect:/jinsang/jslist"+boardPageDto.getListLink();
     }
 
     @GetMapping("/modify/{boardId}")
@@ -112,11 +116,13 @@ public class BoardController {
                              Authentication authentication,
                              @ModelAttribute("pageDto") BoardPageDto boardPageDto,
                              Model model) {
+        log.info("modify pageDto: " + boardPageDto);
         Board findBoard = boardService.getBoardByLoginCheck(boardId, authentication);
 
         model.addAttribute("board", findBoard);
         model.addAttribute("categoryList", categoryRepository.findAll());
         model.addAttribute("files", attachFileRepository.findAllByBoardId(boardId));
+
         return "jinsang/modifyForm";
     }
 
@@ -125,31 +131,27 @@ public class BoardController {
     public String modify(@PathVariable("boardId") Long boardId,
                          BoardUpdateDto boardUpdateDto,
                          Authentication authentication,
-                         RedirectAttributes rttr) {
+                         BoardPageDto boardPageDto) {
         log.info("modify boardUpdateDto: " + boardUpdateDto);
-        log.info("boardType: " + boardUpdateDto.getBoardType());
+        log.info("modify boardPageDto boarType: "+boardPageDto.getBoardType()); // 수정시 boardType에 ,가 생기는 문제 ex) 3 -> 3,3
         Member findMember = findMember(authentication);
+        String[] type = boardPageDto.getBoardType().split("");
+        boardPageDto.setBoardType(type[0]);
 
         boardService.update(findMember, boardId, boardUpdateDto);
 
-        rttr.addAttribute("boardType", boardUpdateDto.getBoardType());
-
-        return "redirect:/jinsang/jslist";
+        return "redirect:/jinsang/jslist" + boardPageDto.getListLink();
     }
 
     @PostMapping("/delete/{boardId}")
     @Secured({"ROLE_MEMBER", "ROLE_ADMIN"})
     public String delete(@PathVariable("boardId") Long boardId,
                          BoardPageDto boardPageDto,
-                         Authentication authentication,
-                         RedirectAttributes rttr) {
+                         Authentication authentication) {
         Member findMember = findMember(authentication);
         boardService.delete(boardId, findMember);
 
-        rttr.addAttribute("page", boardPageDto.getPage());
-        rttr.addAttribute("boardType", boardPageDto.getBoardType());
-
-        return "redirect:/jinsang/jslist";
+        return "redirect:/jinsang/jslist"+boardPageDto.getListLink();
     }
 
     @GetMapping("/getAttachList")
@@ -169,13 +171,6 @@ public class BoardController {
         return boardService.addAgree(findMember, boardId);
     }
 
-
-    private Member findMember(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
-        return memberRepository.findByEmail(username).get();
-    }
-
     @GetMapping("/map")
     public String getMap() {
         return "/jinsang/map";
@@ -186,5 +181,11 @@ public class BoardController {
     public ResponseEntity<List<BoardMapDto>> boardItemsToMap() {
         List<BoardMapDto> boardMapDto = boardService.getBoardInfoForMap();
         return ResponseEntity.ok().body(boardMapDto);
+    }
+
+    private Member findMember(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        return memberRepository.findByEmail(username).get();
     }
 }

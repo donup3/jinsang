@@ -38,4 +38,18 @@ public class BoardRegisterDto {
 
         return board;
     }
+
+    public Board toEntityOfKnow(Member member, Category category) {
+        Board board = Board.builder()
+                .title(title)
+                .contents(contents)
+                .boardType(boardType)
+                .category(category)
+                .agreeCount(0)
+                .createdDate(LocalDate.now())
+                .build();
+        board.setMember(member);
+
+        return board;
+    }
 }

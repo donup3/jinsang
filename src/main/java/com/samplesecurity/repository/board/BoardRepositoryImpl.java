@@ -28,8 +28,17 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
         BooleanBuilder builder = new BooleanBuilder();
         if (boardType != null) {
             switch (boardType) {
+                case "1":
+                    builder.and(board.boardType.eq("1"));
+                    break;
                 case "2":
-                    builder.and(board.boardType.eq(boardType));
+                    builder.and(board.boardType.eq("1").or(board.boardType.eq("2")));
+                    break;
+                case "3":
+                    builder.and(board.boardType.eq("3"));
+                    break;
+                case "4":
+                    builder.and(board.boardType.eq("4"));
                     break;
                 default:
                     break;

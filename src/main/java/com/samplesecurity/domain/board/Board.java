@@ -53,6 +53,9 @@ public class Board {
     @OneToMany(mappedBy = "board")
     private List<Reply> replies;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<AgreeCheck> agreeChecks;
+
     public void setMember(Member member) {
         this.member = member;
         member.getBoards().add(this);

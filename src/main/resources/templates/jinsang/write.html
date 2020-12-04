@@ -7,8 +7,12 @@
 
 <div class="content sub">
     <section>
-        <h3 class="sub-title">
-            오늘의 진상 </h3>
+        <h3 th:if="${pageDto.boardType eq '2'}" class="sub-title">
+            오늘의 진상　
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '3'}" class="sub-title">
+            진상 대응 노하우　
+        </h3>
         <div class="board-wrap normal-view write">
             <form id="f1" th:action="@{/jinsang/write}" method="post" enctype="multipart/form-data">
                 <!-- s: .board-detail -->
@@ -60,7 +64,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="field is-horizontal">
+                            <div class="field is-horizontal" th:if="${pageDto.boardType eq '2'}">
                                 <div class="field-label is-normal">
                                     <label for="address" class="label">진상발생지</label>
                                 </div>
@@ -197,10 +201,7 @@
         <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
     </div>
 </footer>
-<script>
-
-</script>
-<script>
+<script th:inline="javascript">
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
     var f1 = $("#f1");
@@ -333,7 +334,8 @@
                 $("#w-title").focus();
                 return false;
             }
-            if (!latitude && !longitude) {
+            var boardType=[[${pageDto.boardType}]];
+            if (!latitude && !longitude &&boardType =='2') {
                 alert("진상발생지를 선택해주세요");
                 return false;
             }

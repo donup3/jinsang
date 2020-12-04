@@ -41,7 +41,9 @@
                 <div class="buttons-group">
                     <div class="fl">
                         <div class="buttons">
-                            <a href="#" th:href="@{/jinsang/modify/{id} (id=${board.id})}" class="button" id="edit">수정</a>
+                            <a href="#"
+                               th:href="@{/jinsang/modify/{id} (id=${board.id},boardType=${pageDto.boardType})}"
+                               class="button" id="edit">수정</a>
                         </div>
                     </div>
                     <div class="board-recommend">
@@ -99,11 +101,15 @@
                 <ul>
                     <li class="prev-num" th:if="${preBoard!=null}">
                         <i class="ico-chevron-up-thin">이전글</i>
-                        <a href="#" th:href="@{/jinsang/{id}/2 (id=${preBoard.id})}" class="viewArticle" th:text="${preBoard.title}"></a>
+                        <a href="#"
+                           th:href="@{/jinsang/{id}/{boardType} (id=${preBoard.id},boardType=${pageDto.boardType})}"
+                           class="viewArticle" th:text="${preBoard.title}"></a>
                     </li>
                     <li class="next-num" th:if="${nextBoard!=null}">
                         <i class="ico-chevron-down-thin">다음글</i>
-                        <a href="#" th:href="@{/jinsang/{id}/2 (id=${nextBoard.id})}"  data-idx="415" class="viewArticle" th:text="${nextBoard.title}">test2</a>
+                        <a href="#"
+                           th:href="@{/jinsang/{id}/{boardType} (id=${nextBoard.id},boardType=${pageDto.boardType})}"
+                           data-idx="415" class="viewArticle" th:text="${nextBoard.title}">test2</a>
                     </li>
                 </ul>
             </div>

@@ -8,10 +8,19 @@
 <div class="content sub">
     <section>
         <div class="h3-wrap">
-            <h3 class="sub-title">
+            <h3 th:if="${pageDto.boardType eq '1'}" class="sub-title">
+                진상 of 진상　
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '2'}" class="sub-title">
                 오늘의 진상　
                 <span class="write">
                     <a href="/jinsang/write?boardType=2" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '3'}" class="sub-title">
+                진상 대응 노하우　
+                <span class="write">
+                    <a href="/jinsang/write?boardType=3" class="button" style="margin-top: 30%">글쓰기</a>
                 </span>
             </h3>
         </div>
@@ -43,7 +52,7 @@
                         <td class="is-hidden-mobile">[[${board.category}]]</td>
                         <td class="has-text-left">
                             <a href="#" class="title is-6 text-ellipsis"
-                               th:href="@{/jinsang/{id}/2 (id=${board.id})}">[[${board.title}]]
+                               th:href="@{/jinsang/{id}/{boardType} (id=${board.id},boardType=${pageDto.boardType})}">[[${board.title}]]
                                 <span th:if="${board.replyCount}" th:text="'['+${board.replyCount}+']'"></span>
                             </a>
                         </td>
