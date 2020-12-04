@@ -349,42 +349,25 @@
                                         <col style="width:130px;" class="is-hidden-480">
                                     </colgroup>
                                     <tbody>
-                                    <tr>
+                                    <tr th:each="board1:${board1}">
                                         <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                편의점 알바 진상 고객들 어떻게 대처해야하나요ㅠㅠ </a>
+                                            <a href="#"
+                                               th:href="@{/jinsang/{id}/{boardType} (id=${board1.id},boardType=${board1.boardType})}"
+                                               class="title is-6 text-ellipsis">
+                                                [[${board1.title}]]
+                                            </a>
                                         </td>
-                                        <td class="is-hidden-480">2019.07.29</td>
+                                        <td class="is-hidden-480">[[${board1.createdDate}]]</td>
                                     </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                알바 고민하는 애들 꼭 봐 진상 썰 푼다 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.29</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                1년넘게 일한곳 진상때문에 그만둡니다. </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.29</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                진상글이 대세인가요. 호프집에서 꽤오래 일하면서 본 유형들 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.29</td>
-                                    </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <!-- e: .bbs-list -->
                         </div>
-                        <a href="#" class="read-more" title="진상of진상 더보기"><i class="blind">더보기</i><span
-                                class="ico-plus-thick1"></span></a>
+                        <a href="/jinsang/jslist?boardType=1" class="read-more" title="진상of진상 더보기">
+                            <i class="blind">더보기</i>
+                            <span class="ico-plus-thick1"></span>
+                        </a>
                     </section>
                 </div>
             </li>
@@ -402,47 +385,29 @@
                                         <col style="width:130px;" class="is-hidden-480">
                                     </colgroup>
                                     <tbody>
-                                    <tr>
+                                    <tr th:each="board2:${board2}">
                                         <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                유튜브 테스트 </a>
+                                            <a href="#"
+                                               th:href="@{/jinsang/{id}/{boardType} (id=${board2.id},boardType=${board2.boardType})}"
+                                               class="title is-6 text-ellipsis">
+                                                [[${board2.title}]]
+                                            </a>
                                         </td>
-                                        <td class="is-hidden-480">2020.11.22</td>
+                                        <td class="is-hidden-480">[[${board2.createdDate}]]</td>
                                     </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                강원도 진상 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2020.11.22</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                진상 때문에 장사 접고싶은거111 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2020.11.18</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                직원이 실업급여를 요청할경우...? </a>
-                                        </td>
-                                        <td class="is-hidden-480">2020.03.02</td>
-                                    </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <!-- e: .bbs-list -->
                         </div>
-                        <a href="#" class="read-more" title="오늘의 진상 더보기"><i class="blind">더보기</i><span
-                                class="ico-plus-thick1"></span></a>
+                        <a href="/jinsang/jslist?boardType=2" class="read-more" title="오늘의 진상 더보기">
+                            <i class="blind">더보기</i>
+                            <span class="ico-plus-thick1"></span>
+                        </a>
                     </section>
                 </div>
             </li>
             <li class="inbox">
-
                 <div class="cont-wrap">
                     <section class="knowhow">
                         <h3>진상대응노하우</h3>
@@ -455,42 +420,23 @@
                                         <col style="width:130px;" class="is-hidden-480">
                                     </colgroup>
                                     <tbody>
-                                    <tr>
+                                    <tr th:each="board3:${board3}">
                                         <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                중고나라 사기 대응 일지 </a>
+                                            <a href="#" th:href="@{/jinsang/{id}/{boardType} (id=${board3.id},boardType=${board3.boardType})}" class="title is-6 text-ellipsis">
+                                                [[${board3.title}]]
+                                            </a>
                                         </td>
-                                        <td class="is-hidden-480">2019.11.01</td>
+                                        <td class="is-hidden-480">[[${board3.createdDate}]]</td>
                                     </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                진상 인실진 방법 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.09.12</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                테스트116 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.11</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                테스트115 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.11</td>
-                                    </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <!-- e: .bbs-list -->
                         </div>
-                        <a href="#" class="read-more" title="진상대응노하우 더보기"><i class="blind">더보기</i><span
-                                class="ico-plus-thick1"></span></a>
+                        <a href="/jinsang/jslist?boardType=3" class="read-more" title="진상대응노하우 더보기">
+                            <i class="blind">더보기</i>
+                            <span class="ico-plus-thick1"></span>
+                        </a>
                     </section>
                 </div>
             </li>
@@ -508,21 +454,23 @@
                                         <col style="width:130px;" class="is-hidden-480">
                                     </colgroup>
                                     <tbody>
-                                    <tr>
+                                    <tr th:each="board4:${board4}">
                                         <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                편의점 진상 대응요령 </a>
+                                            <a href="#" th:href="@{/jinsang/{id}/{boardType} (id=${board4.id},boardType=${board4.boardType})}" class="title is-6 text-ellipsis">
+                                                [[${board4.title}]]
+                                            </a>
                                         </td>
-                                        <td class="is-hidden-480">2019.08.07</td>
+                                        <td class="is-hidden-480">[[${board4.createdDate}]]</td>
                                     </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <!-- e: .bbs-list -->
                         </div>
-                        <a href="#" class="read-more" title="인생은 실전이야 진상아 더보기"><i class="blind">더보기</i><span
-                                class="ico-plus-thick1"></span></a>
+                        <a href="/jinsang/jslist?boardType=4" class="read-more" title="인생은 실전이야 진상아 더보기">
+                            <i class="blind">더보기</i>
+                            <span class="ico-plus-thick1"></span>
+                        </a>
                     </section>
                 </div>
             </li>

@@ -2,7 +2,10 @@ package com.samplesecurity.repository.board;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.QBoardListDto;
 import org.springframework.data.domain.Page;
@@ -87,5 +90,50 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                 .where(board.id.gt(boardId)
                         .and(board.boardType.eq(boardType)))
                 .fetchOne();
+    }
+
+    @Override
+    public List<Board> findAllByType1() {
+        return queryFactory.selectFrom(board)
+                .where(board.boardType.eq("1"))
+                .orderBy(board.id.desc())
+                .limit(4)
+                .fetch();
+    }
+
+    @Override
+    public List<Board> findAllByType2() {
+        return queryFactory.selectFrom(board)
+                .where(board.boardType.eq("2").or(board.boardType.eq("1")))
+                .orderBy(board.id.desc())
+                .limit(4)
+                .fetch();
+    }
+
+    @Override
+    public List<Board> findAllByType3() {
+        return queryFactory.selectFrom(board)
+                .where(board.boardType.eq("3"))
+                .orderBy(board.id.desc())
+                .limit(4)
+                .fetch();
+    }
+
+    @Override
+    public List<Board> findAllByType4() {
+        return queryFactory.selectFrom(board)
+                .where(board.boardType.eq("4"))
+                .orderBy(board.id.desc())
+                .limit(4)
+                .fetch();
+    }
+
+    public List<Tuple> findCountByAddress(){
+        StringExpression substring = board.address.substring(0, 2);
+        System.out.println(substring);
+        return queryFactory.select(board.address.substring(0,2),board.count())
+                .from(board)
+                .groupBy(substring)
+                .fetch();
     }
 }

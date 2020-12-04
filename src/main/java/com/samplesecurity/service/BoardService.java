@@ -5,11 +5,9 @@ import com.samplesecurity.domain.board.AttachFile;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.domain.board.Category;
-import com.samplesecurity.domain.reply.Reply;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.BoardUpdateDto;
-import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.*;
 import com.samplesecurity.repository.reply.ReplyAgreeCheckRepository;
 import com.samplesecurity.repository.reply.ReplyRepository;
@@ -47,7 +45,6 @@ public class BoardService {
     private final CategoryRepository categoryRepository;
     private final ReplyRepository replyRepository;
     private final UploadFileRepository uploadFileRepository;
-    private ReplyAgreeCheckRepository replyAgreeCheckRepository;
 
     public Page<BoardListDto> getBoardList(String boardType, Pageable pageable) {
         return boardRepository.findAllByDto(boardType, pageable);
@@ -209,4 +206,5 @@ public class BoardService {
 
         return boardMapDtos;
     }
+
 }

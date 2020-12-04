@@ -9,7 +9,6 @@ import com.samplesecurity.dto.PageMaker;
 import com.samplesecurity.repository.board.CategoryRepository;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.AttachFileRepository;
-import com.samplesecurity.repository.board.UploadFileRepository;
 import com.samplesecurity.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -39,11 +37,6 @@ public class BoardController {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final AttachFileRepository attachFileRepository;
-
-    @GetMapping("/")
-    public String index() {
-        return "/index";
-    }
 
     @GetMapping("/jslist")
     public String list(@ModelAttribute("pageDto") BoardPageDto boardPageDto, Model model) {
