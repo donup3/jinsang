@@ -26,6 +26,7 @@
                                     <div class="field control">
                                         <div class="select">
                                             <select id="w-category" name="category" class="is-hovered">
+                                                <option value="">----선택----</option>
                                                 <option th:each="category:${categoryList}" th:value="${category.id}"
                                                         th:text="${category.name}"></option>
                                             </select>

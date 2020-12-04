@@ -51,6 +51,8 @@ public class BoardController {
         Pageable pageable = boardPageDto.makePageable();
 
         Page<BoardListDto> boards = boardService.getBoardList(boardPageDto.getBoardType(), pageable);
+        List<BoardListDto> content = boards.getContent();
+        boardPageDto.calBno(content); //글번호 계산
 
         model.addAttribute("boards", new PageMaker<>(boards));
 
@@ -83,8 +85,13 @@ public class BoardController {
 
     @GetMapping("/write")
     @Secured({"ROLE_MEMBER", "ROLE_ADMIN"})
-    public String register(@ModelAttribute("pageDto") BoardPageDto boardPageDto) {
+    public String register(@ModelAttribute("pageDto") BoardPageDto boardPageDto,
+                           Model model) {
         log.info("register pageDto: " + boardPageDto);
+        List<Category> category = categoryRepository.findAll();
+
+        model.addAttribute("categoryList", category);
+
         return "jinsang/write";
     }
 
@@ -107,7 +114,7 @@ public class BoardController {
 
         boardService.register(board, fileDtos);
 
-        return "redirect:/jinsang/jslist"+boardPageDto.getListLink();
+        return "redirect:/jinsang/jslist" + boardPageDto.getListLink();
     }
 
     @GetMapping("/modify/{boardId}")
@@ -133,7 +140,7 @@ public class BoardController {
                          Authentication authentication,
                          BoardPageDto boardPageDto) {
         log.info("modify boardUpdateDto: " + boardUpdateDto);
-        log.info("modify boardPageDto boarType: "+boardPageDto.getBoardType()); // 수정시 boardType에 ,가 생기는 문제 ex) 3 -> 3,3
+        log.info("modify boardPageDto boarType: " + boardPageDto.getBoardType()); // 수정시 boardType에 ,가 생기는 문제 ex) 3 -> 3,3
         Member findMember = findMember(authentication);
         String[] type = boardPageDto.getBoardType().split("");
         boardPageDto.setBoardType(type[0]);
@@ -151,7 +158,7 @@ public class BoardController {
         Member findMember = findMember(authentication);
         boardService.delete(boardId, findMember);
 
-        return "redirect:/jinsang/jslist"+boardPageDto.getListLink();
+        return "redirect:/jinsang/jslist" + boardPageDto.getListLink();
     }
 
     @GetMapping("/getAttachList")

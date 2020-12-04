@@ -13,6 +13,9 @@
         <h3 th:if="${pageDto.boardType eq '3'}" class="sub-title">
             진상 대응 노하우　
         </h3>
+        <h3 th:if="${pageDto.boardType eq '4'}" class="sub-title">
+            인생은 실전이야 진상아
+        </h3>
         <div class="board-wrap normal-view write">
             <form id="f1" th:action="@{/jinsang/write}" method="post" enctype="multipart/form-data">
                 <!-- s: .board-detail -->
@@ -30,23 +33,8 @@
                                         <div class="select">
                                             <select id="w-category" name="category" class="is-hovered">
                                                 <option value="">----선택----</option>
-                                                <option value="1">연인</option>
-                                                <option value="2">가족</option>
-                                                <option value="3">버릇</option>
-                                                <option value="4">음식점</option>
-                                                <option value="5">자동차</option>
-                                                <option value="6">층간소음</option>
-                                                <option value="7">블랙박스</option>
-                                                <option value="8">회사생활</option>
-                                                <option value="9">공공장소</option>
-                                                <option value="10">중고거래</option>
-                                                <option value="11">편의점</option>
-                                                <option value="12">패스트푸드</option>
-                                                <option value="13">상담원</option>
-                                                <option value="14">카페</option>
-                                                <option value="15">술집</option>
-                                                <option value="16">쇼핑몰</option>
-                                                <option value="17">기타</option>
+                                                <option th:each="category:${categoryList}" th:value="${category.id}"
+                                                        th:text="${category.name}"></option>
                                             </select>
                                         </div>
                                     </div>

@@ -4,24 +4,6 @@
 <body class="jsdotcom vsc-initialized">
 <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 <div th:replace="fragments/nav :: mainNav"></div>
-<script>
-    $(function () {
-        $(".logout").click(function () {
-            //ajax
-            $.ajax({
-                url: 'logout.php',
-                method: 'post',
-                dataType: 'json',
-                success: function (result) {
-                    location.href = "./index.php";
-                },
-                error: function (request, status, error) {
-                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
-                }
-            });
-        });
-    });
-</script>
 <div class="content">
     <div class="cont-wrap">
         <section class="area" id="status">

@@ -23,6 +23,12 @@
                     <a href="/jinsang/write?boardType=3" class="button" style="margin-top: 30%">글쓰기</a>
                 </span>
             </h3>
+            <h3 th:if="${pageDto.boardType eq '4'}" class="sub-title">
+                인생은 실전이야 진상아
+                <span class="write">
+                    <a href="/jinsang/write?boardType=4" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
         </div>
         <div class="board-wrap normal-list">
             <div class="bbs-list" th:with="result=${boards.result}">

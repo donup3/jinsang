@@ -5,6 +5,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @Data
 public class BoardPageDto {
     private static final int DEFAULT_MIN_SIZE = 1;
@@ -40,10 +42,19 @@ public class BoardPageDto {
         return PageRequest.of(this.page - 1, this.size);
     }
 
-    public String getListLink(){
-        UriComponentsBuilder builder=UriComponentsBuilder.fromPath("")
-                .queryParam("page",this.page)
-                .queryParam("boardType",this.getBoardType());
+
+    public void calBno(List<BoardListDto> content) {
+        long number = ((long) this.getSize() * (this.getPage() - 1)); // page에서 가장 큰 번호
+
+        for (int i = 0; i < content.size(); i++) {
+            content.get(i).setId(number + i + 1);
+        }
+    }
+
+    public String getListLink() {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath("")
+                .queryParam("page", this.page)
+                .queryParam("boardType", this.getBoardType());
 
         return builder.toUriString();
     }

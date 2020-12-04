@@ -77,7 +77,6 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                 .where(board.id.lt(boardId)
                         .and(board.boardType.eq(boardType)))
                 .fetchOne();
-
     }
 
     @Override
