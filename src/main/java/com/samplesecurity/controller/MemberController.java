@@ -5,9 +5,11 @@ import com.samplesecurity.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -18,7 +20,9 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/signup")
-    public String getSignupPage(){
+    public String getSignupPage(@RequestParam(required = false) String type, Model model){
+        log.info("type : " + type);
+        model.addAttribute("type", type);
         return "/member/signup";
     }
 
@@ -38,9 +42,10 @@ public class MemberController {
     }
 
     // 내 정보 페이지
-    @GetMapping("/user/info")
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/myinfo")
     public String dispMyInfo() {
-        return "/myinfo";
+        return "/member/myinfo";
     }
 
     @ResponseBody

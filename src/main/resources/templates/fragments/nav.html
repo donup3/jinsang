@@ -57,6 +57,13 @@
                     </a>
                 </div>
             </li>
+            <li sec:authorize="isAuthenticated()">
+                <div class="login-box">
+                    <a href="/user/myinfo" class="login-proc">
+                        <span>내 정보</span>
+                    </a>
+                </div>
+            </li>
         </ul>
     </div>
 </nav>

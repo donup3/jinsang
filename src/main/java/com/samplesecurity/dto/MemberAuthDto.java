@@ -1,6 +1,7 @@
 package com.samplesecurity.dto;
 
 import com.samplesecurity.domain.MemberAuth;
+import com.samplesecurity.domain.Role;
 import lombok.Builder;
 import lombok.Data;
 

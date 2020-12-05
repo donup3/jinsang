@@ -1,8 +1,8 @@
 spring:
   datasource:
     #    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/jinsang?useSSL=false&serverTimezone=Asia/Seoul
-    username: test
+    url: jdbc:mysql://localhost:3307/test?useSSL=false&serverTimezone=Asia/Seoul
+    username: root
     password: test
 
   jpa:
@@ -13,16 +13,19 @@ spring:
         show_sql: true
         format_sql: true
 
-#    properties:
-#      hibernate:
-
   mail:
     host: smtp.gmail.com
     port: 587
-    username:
-    password:
+    username: java.email.sender020@gmail.com
+    password: haha112233!@#
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+
+  devtools:
+    livereload:
+      enabled: true
+    thymeleaf:
+      cashe: false
 
 

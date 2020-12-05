@@ -1,9 +1,6 @@
 package com.samplesecurity.service;
 
-import com.samplesecurity.domain.EmailAuth;
-import com.samplesecurity.domain.Member;
-import com.samplesecurity.domain.MemberAuth;
-import com.samplesecurity.domain.Profile;
+import com.samplesecurity.domain.*;
 import com.samplesecurity.dto.MemberAuthDto;
 import com.samplesecurity.dto.MemberDto;
 import com.samplesecurity.repository.EmailAuthRepository;
@@ -78,7 +75,8 @@ public class MemberService {
 
     private void saveRoles(Member member) {
         List<MemberAuth> roles = new ArrayList<>();
-        MemberAuth memberAuth = MemberAuth.builder().role("ROLE_MEMBER").build();
+
+        MemberAuth memberAuth = MemberAuth.builder().role(Role.MEMBER.getValue()).build();
         roles.add(memberAuth);
         memberAuth.setMember(member);
 

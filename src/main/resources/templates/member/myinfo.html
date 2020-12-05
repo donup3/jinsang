@@ -1,11 +1,271 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>내정보</title>
-</head>
-<body>
-<h1>내정보 확인 페이지입니다.</h1>
-<hr>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/mainHeader :: mainHeader"></head>
+
+<body class="jsdotcom vsc-initialized">
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/nav :: mainNav"></div>
+
+<div class="content sub ">
+    <section>
+        <h3 class="sub-title">
+            내 정보 수정
+        </h3>
+        <div class="register-wrap">
+            <div class="input-fl-field">
+                <span class="input-tit">비밀번호 변경</span>
+                <div class="input-multi">
+                    <div class="inner-wrap">
+						<span>
+							<input class="input" type="password" id="cur-user-pw" placeholder="현재 비밀번호">
+						</span>
+                        <span>
+							<input class="input" type="password" id="edit-user-pw" placeholder="새 비밀번호">
+						</span>
+                        <span>
+							<input class="input" type="password" id="conf-user-pw" placeholder="새 비밀번호 확인">
+						</span>
+                    </div>
+                </div>
+                <button type="button" class="button btnpass">수정완료</button>
+
+            </div>
+            <div class="input-fl-field">
+                <label class="input-tit" for="user-nick">닉네임 변경</label>
+                <div class="input-multi duo">
+                    <div class="inner-wrap">
+                        <span class="ell">jang</span>
+                        <span>
+							<span class="with-conf">
+								<input class="input base-input" type="text" id="user-nick" placeholder="새 닉네임">
+								<button type="button" class="button btnchecknick">중복확인</button>
+							</span>
+						</span>
+                    </div>
+                </div>
+                <button type="button" class="button btnsavenick">수정완료</button>
+            </div>
+            <div class="input-fl-field">
+                <span class="input-tit">프로필 변경</span>
+                <div class="input-multi duo">
+                    <div class="inner-wrap">
+                            <span>
+                                <span class="with-conf">
+                                    <span class="base-input">
+                                        <img src='./userprofile/azanghs@naver.com.png'>                                    </span>
+                                    <button type="button" class="button delprofile">삭제</button>
+                                </span>
+                            </span>
+                        <span>
+							<span class="file">
+								<label class="file-label" for="user-prof">
+									<input id="user-prof" name="user-prof" class="file-input" type="file">
+									<span class="file-name">선택된 파일 없음</span>
+									<span class="file-cta">
+										<span>파일선택</span>
+									</span>
+								</label>
+							</span>
+						</span>
+                    </div>
+                </div>
+                <button type="button" class="button btnsaveprofile">수정완료</button>
+            </div>
+            <script>
+				// File upload 를 위한 스크립트
+				$(function () {
+					$(document).on('change','.file-input',function () {
+						if ($(this).length > 0) {
+							$(this).closest('.file').find('.file-name').text($(this)[0].files[0].name);
+						}
+					});
+				});
+			</script>
+        </div>
+    </section>
+</div>
+
+<footer class="footer">
+    <div class="footer-wrap">
+        <div class="footer-link">
+            <a href="#" class="privacy">개인정보처리방침</a>
+            <a href="#" class="term">서비스이용약관</a>
+        </div>
+        <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+<script>
+var isnicknamecheck = false;//nick check
+
+$(function(){
+	var userid = "azanghs@naver.com";
+	$(".btnpass").click(function(){
+		if(!$("#cur-user-pw").val()){
+			alert("비밀번호를 입력해주세요");
+			$("#cur-user-pw").focus();
+			return false;
+		}
+		if(!$("#edit-user-pw").val()){
+			alert("새 비밀번호를 입력해주세요");
+			$("#edit-user-pw").focus();
+			return false;
+		}
+		if(!$("#conf-user-pw").val()){
+			alert("새 비밀번호 확인을 입력해주세요");
+			$("#conf-user-pw").focus();
+			return false;
+		}
+
+		if($("#edit-user-pw").val() != $("#conf-user-pw").val()){
+			alert("새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+			return false;
+		}
+
+		//비밀번호타입체크.
+		//비밀번호 복잡도 10자이상 20이하, 영문숫자특수문자 혼합.
+		if(!check.test($("#cur-user-pw").val()) || !check.test($("#edit-user-pw").val()) || !check.test($("#conf-user-pw").val())){
+			alert("비밀번호는 10자이상 20자이하, 영문, 숫자, 특수문자를 혼합해야 합니다.");
+			return false;
+		}
+
+		//ajax
+		var param = {id:userid,pwd:$("#cur-user-pw").val(),newpwd:$("#edit-user-pw").val() };
+		$.ajax({
+			url:'./ajax/usercheck.php',
+			data:param,
+			dataType:'json',
+			method:'post',
+			success:function(data){
+				if(data.result =='E'){
+					alert(data.msg);
+				}
+			},
+			error:function(request,status,error){
+				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			}
+		});
+	});
+
+	$(".btnsavenick").click(function(){
+		if(!$("#user-nick").val()){
+			alert("닉네임을 입력해주세요");
+			$("#user-nick").focus();
+			return false;
+		}
+		if(!isnicknamecheck){
+			alert("닉네임중복체크를 해주세요");
+			return false;
+		}
+		if(nickcheck()){
+			//닉네임 수정 전송.
+			var senddata = {nickname :$("#user-nick").val()}
+			//check email
+			$.ajax({
+				url:'./ajax/updatenick.php',
+				method:'post',
+				dataType:'json',
+				data:senddata,
+				async:false,
+				success:function(data){
+					console.log(data);
+					alert(data.msg);
+				},
+				error:function(request,status,error){
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+					return false;
+				}
+			});
+		}
+	});
+	$(".btnchecknick").click(function(){
+		nickcheck();
+	});
+
+	//닉네임 중복체크.
+	function nickcheck(){
+		var senddata = {nickname :$("#user-nick").val()}
+		//check email
+		$.ajax({
+			url:'./ajax/nicknameduplecheck.php',
+			method:'post',
+			dataType:'json',
+			data:senddata,
+			async:false,
+			success:function(data){
+				console.log(data);
+				if(data.result == 'DUPLE'){
+					alert('이미 등록된 닉네임입니다.');
+					return false;
+				}else{
+					isnicknamecheck = true;
+					return true;
+				}
+			},
+			error:function(request,status,error){
+				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				return false;
+			}
+		});
+	}
+
+	$(".delprofile").click(function(){
+		var userprofile = "azanghs@naver.com.png";
+		if(!userprofile){
+			alert("삭제할 프로필이 없습니다.");
+			return false;
+		}
+
+		if(confirm("프로필을 삭제하시겠습니까?")){
+			$.ajax({
+				url:'./ajax/delprofile.php',
+				method:'post',
+				dataType:'json',
+				async:false,
+				success:function(data){
+					alert(data.msg);
+				},
+				error:function(request,status,error){
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+					return false;
+				}
+			});
+		}
+	});
+
+	//fileupload
+	$(".btnsaveprofile").click(function(){
+		//validation
+		if(!$("#user-prof").val()){
+			alert("프로필이 업로드되지 않았습니다.");
+			return false;
+		}
+
+		var formData = new FormData();
+		formData.append("myprofile", $("#user-prof")[0].files[0]);
+
+		$(".loading-container").show();
+
+		$.ajax({
+			url: './ajax/savefile.php',
+			data: formData,
+			contentType: 'multipart/form-data',
+			mimeType: 'multipart/form-data',
+			processData: false,
+			contentType: false,
+			type: 'POST',
+			dataType:'json',
+			success: function(data){
+				alert(data.msg);
+				$(".loading-container").hide();
+			},
+			error:function(data){
+				console.log(data);
+				alert("데이터 처리 중 오류가 발생했습니다.");
+				$(".loading-container").hide();
+			}
+		});
+	});
+});
+</script>
 </body>
 </html>

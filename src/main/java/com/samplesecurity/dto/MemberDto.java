@@ -18,6 +18,7 @@ import java.util.List;
         private String nickName;
         private List<MemberAuth> roles;
         private Profile profile;
+        private String type;  // 회원가입시, 변소사, cs 상담사, 심리상담사 구분
         private LocalDateTime createdDate;
         private LocalDateTime modifiedDate;
 
