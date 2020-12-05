@@ -18,7 +18,7 @@ input.width65 { width: 65%; }
 
 .hide, .blind, caption, legend { opacity: 0; text-indent: -999em; overflow: hidden; position: absolute; top: 0; left: 0; width: 0; height: 0; font-size: 0; line-height: 0; }
 
-.jsdotcom { color: #000; width: 1000px; margin: auto; }
+.jsdotcom { color: #000; width: 1050px; margin: auto; }
 
 .jsdotcom > nav { margin-top: 10px; }
 

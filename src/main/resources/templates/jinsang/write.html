@@ -16,6 +16,9 @@
         <h3 th:if="${pageDto.boardType eq '4'}" class="sub-title">
             인생은 실전이야 진상아
         </h3>
+        <h3 th:if="${pageDto.boardType eq '5'}" class="sub-title">
+            변호사 상담
+        </h3>
         <div class="board-wrap normal-view write">
             <form id="f1" th:action="@{/jinsang/write}" method="post" enctype="multipart/form-data">
                 <!-- s: .board-detail -->
@@ -52,6 +55,24 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="field is-horizontal" th:if="${pageDto.boardType eq '5'}">
+                                <div class="field-label is-normal">
+                                    <label class="label">공개설정</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field is-normal">
+                                        <div class="control radio-list" style="margin-top: 5px">
+                                                <input type="radio" name="hidden" value="Y" >
+                                                <label class="radio">공개</label>
+
+                                                <input type="radio" name="hidden" value="N" style="margin-left: 7px">
+                                                <label class="radio">비공개</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="field is-horizontal" th:if="${pageDto.boardType eq '2'}">
                                 <div class="field-label is-normal">
                                     <label for="address" class="label">진상발생지</label>
@@ -71,9 +92,11 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div id="map" style="width:100%;height:500px;margin-top:10px;display:none"></div>
                             <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-                            <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8c652b5a26b0e5a0c4f28c04363c2076&libraries=services"></script>
+                            <script type="text/javascript"
+                                    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8c652b5a26b0e5a0c4f28c04363c2076&libraries=services"></script>
                             <script>
                                 var addr;
                                 var latitude;//위도
@@ -216,6 +239,7 @@
         }
         $(this).val('');
     }
+
     //파일업로드
     function allFileUpload() {
         var formData = new FormData();
@@ -322,8 +346,8 @@
                 $("#w-title").focus();
                 return false;
             }
-            var boardType=[[${pageDto.boardType}]];
-            if (!latitude && !longitude &&boardType =='2') {
+            var boardType = [[${pageDto.boardType}]];
+            if (!latitude && !longitude && boardType == '2') {
                 alert("진상발생지를 선택해주세요");
                 return false;
             }
@@ -343,3 +367,21 @@
 
 </body>
 </html>
+<style>
+    input[type='radio'],
+    input[type='radio']:checked {
+        appearance: none;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 100%;
+        margin-right: 0.1rem;
+    }
+
+    input[type='radio'] {
+        background-color: white;
+        border: 1px solid black;
+    }
+    input[type='radio']:checked {
+        background-color: #9281e3;
+    }
+</style>

@@ -48,12 +48,15 @@ public class BoardService {
     }
 
     public void register(Board board, List<AttachFileDto> fileDtos, String address) {
-        String cityName = address.substring(0, 2);
-        log.info("cityName: " + cityName);
-        Address findAddress = addressRepository.findByCityName(cityName);
-        if (findAddress != null) {
-            findAddress.setBoardCount(findAddress.getBoardCount() + 1);
-            board.setCityNameOfAddress(findAddress);
+        if (address != null) {
+            String cityName = address.substring(0, 2);
+            log.info("cityName: " + cityName);
+            Address findAddress = addressRepository.findByCityName(cityName);
+
+            if (findAddress != null) {
+                findAddress.setBoardCount(findAddress.getBoardCount() + 1);
+                board.setCityNameOfAddress(findAddress);
+            }
         }
         Board saveBoard = boardRepository.save(board);
 
@@ -139,14 +142,16 @@ public class BoardService {
         Long newCategoryId = parseLong(boardUpdateDto.getCategory());
         Category newCategory = categoryRepository.findById(newCategoryId).get();
         //주소 업데이트
-        String cityName = boardUpdateDto.getAddress().substring(0, 2);
-        Address originAddress = addressRepository.findByCityName(board.getCityNameOfAddress().getCityName());
-        Address findAddress = addressRepository.findByCityName(cityName);
-        if (findAddress != null) {
-            originAddress.setBoardCount(originAddress.getBoardCount() - 1);
-            findAddress.setBoardCount(findAddress.getBoardCount() + 1);
-        }
+        if (boardUpdateDto.getAddress() != null) {
+            String cityName = boardUpdateDto.getAddress().substring(0, 2);
+            Address originAddress = addressRepository.findByCityName(board.getCityNameOfAddress().getCityName());
+            Address findAddress = addressRepository.findByCityName(cityName);
 
+            if (findAddress != null) {
+                originAddress.setBoardCount(originAddress.getBoardCount() - 1);
+                findAddress.setBoardCount(findAddress.getBoardCount() + 1);
+            }
+        }
         if (findMember.getNickName().equals(board.getMember().getNickName())) {
             attachFileRepository.deleteByBoardId(boardId);
             //게시물 업데이트
@@ -173,8 +178,10 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).get();
         if (findMember.getNickName().equals(board.getMember().getNickName())) {
             //주소 boardCount -1
-            Address address = addressRepository.findByCityName(board.getCityNameOfAddress().getCityName());
-            address.setBoardCount(address.getBoardCount() - 1);
+            if (board.getCityNameOfAddress() != null) {
+                Address address = addressRepository.findByCityName(board.getCityNameOfAddress().getCityName());
+                address.setBoardCount(address.getBoardCount() - 1);
+            }
             //댓글 삭제
             replyRepository.deleteByBoardId(boardId);
             //파일 삭제

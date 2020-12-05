@@ -2,7 +2,7 @@
 - application.yml
     - application.yml에 개인 정보(이메일관련)가 담겨 있어서 gitignore 했습니다.
     - 실행시 applicaion.yml을 추가해서 실행하세요.
-
+    - category, address 미리 추가하고 실행하세요(test파일 이용).
 <br>
 
 ```java

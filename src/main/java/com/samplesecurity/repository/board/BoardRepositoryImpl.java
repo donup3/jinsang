@@ -43,6 +43,9 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                 case "4":
                     builder.and(board.boardType.eq("4"));
                     break;
+                case "5":
+                    builder.and(board.boardType.eq("5"));
+                    break;
                 default:
                     break;
             }
@@ -57,7 +60,8 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                                 board.createdDate,
                                 member.nickName.as("writer"),
                                 board.agreeCount,
-                                board.replies.size()))
+                                board.replies.size(),
+                                board.hidden))
                 .from(board)
                 .orderBy(board.id.desc())
                 .leftJoin(board.category, category)
@@ -130,7 +134,7 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
     }
 
     @Override
-    public List<Address> findCountByAddress(){
+    public List<Address> findCountByAddress() {
         return queryFactory.selectFrom(address)
                 .fetch();
     }

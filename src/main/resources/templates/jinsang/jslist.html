@@ -29,6 +29,12 @@
                     <a href="/jinsang/write?boardType=4" class="button" style="margin-top: 30%">글쓰기</a>
                 </span>
             </h3>
+            <h3 th:if="${pageDto.boardType eq '5'}" class="sub-title">
+                변호사 상담
+                <span class="write">
+                    <a href="/jinsang/write?boardType=5" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
         </div>
         <div class="board-wrap normal-list">
             <div class="bbs-list" th:with="result=${boards.result}">
