@@ -17,9 +17,7 @@ public class Address {
     @Column(name = "address_id")
     private Long id;
 
-    private String city;
+    private String cityName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
+    private int boardCount;
 }

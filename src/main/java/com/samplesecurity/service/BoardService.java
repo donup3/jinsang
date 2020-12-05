@@ -1,10 +1,7 @@
 package com.samplesecurity.service;
 
-import com.samplesecurity.domain.board.AgreeCheck;
-import com.samplesecurity.domain.board.AttachFile;
-import com.samplesecurity.domain.board.Board;
+import com.samplesecurity.domain.board.*;
 import com.samplesecurity.domain.Member;
-import com.samplesecurity.domain.board.Category;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.BoardUpdateDto;
@@ -38,19 +35,26 @@ import static java.lang.Long.*;
 @Transactional
 @Slf4j
 public class BoardService {
-
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
     private final AgreeCheckRepository agreeCheckRepository;
     private final CategoryRepository categoryRepository;
     private final ReplyRepository replyRepository;
     private final UploadFileRepository uploadFileRepository;
+    private final AddressRepository addressRepository;
 
     public Page<BoardListDto> getBoardList(String boardType, Pageable pageable) {
         return boardRepository.findAllByDto(boardType, pageable);
     }
 
-    public void register(Board board, List<AttachFileDto> fileDtos) {
+    public void register(Board board, List<AttachFileDto> fileDtos, String address) {
+        String cityName = address.substring(0, 2);
+        log.info("cityName: " + cityName);
+        Address findAddress = addressRepository.findByCityName(cityName);
+        if (findAddress != null) {
+            findAddress.setBoardCount(findAddress.getBoardCount() + 1);
+            board.setCityNameOfAddress(findAddress);
+        }
         Board saveBoard = boardRepository.save(board);
 
         if (fileDtos != null) {
@@ -134,6 +138,14 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).get();
         Long newCategoryId = parseLong(boardUpdateDto.getCategory());
         Category newCategory = categoryRepository.findById(newCategoryId).get();
+        //주소 업데이트
+        String cityName = boardUpdateDto.getAddress().substring(0, 2);
+        Address originAddress = addressRepository.findByCityName(board.getCityNameOfAddress().getCityName());
+        Address findAddress = addressRepository.findByCityName(cityName);
+        if (findAddress != null) {
+            originAddress.setBoardCount(originAddress.getBoardCount() - 1);
+            findAddress.setBoardCount(findAddress.getBoardCount() + 1);
+        }
 
         if (findMember.getNickName().equals(board.getMember().getNickName())) {
             attachFileRepository.deleteByBoardId(boardId);
@@ -160,6 +172,9 @@ public class BoardService {
     public void delete(Long boardId, Member findMember) {
         Board board = boardRepository.findById(boardId).get();
         if (findMember.getNickName().equals(board.getMember().getNickName())) {
+            //주소 boardCount -1
+            Address address = addressRepository.findByCityName(board.getCityNameOfAddress().getCityName());
+            address.setBoardCount(address.getBoardCount() - 1);
             //댓글 삭제
             replyRepository.deleteByBoardId(boardId);
             //파일 삭제

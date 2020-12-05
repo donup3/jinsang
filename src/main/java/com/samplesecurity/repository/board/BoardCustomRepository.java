@@ -1,5 +1,7 @@
 package com.samplesecurity.repository.board;
 
+import com.querydsl.core.Tuple;
+import com.samplesecurity.domain.board.Address;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.dto.Board.BoardListDto;
 import org.springframework.data.domain.Page;
@@ -18,4 +20,5 @@ public interface BoardCustomRepository {
     List<Board> findAllByType2();
     List<Board> findAllByType3();
     List<Board> findAllByType4();
+    List<Address> findCountByAddress();
 }

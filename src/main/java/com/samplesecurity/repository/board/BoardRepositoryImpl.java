@@ -2,9 +2,8 @@ package com.samplesecurity.repository.board;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.samplesecurity.domain.board.Address;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.QBoardListDto;
@@ -16,6 +15,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.samplesecurity.domain.QMember.member;
+import static com.samplesecurity.domain.board.QAddress.address;
 import static com.samplesecurity.domain.board.QBoard.board;
 import static com.samplesecurity.domain.board.QCategory.category;
 
@@ -51,6 +51,7 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
         QueryResults<BoardListDto> result = queryFactory
                 .select(
                         new QBoardListDto(board.id,
+                                board.id,
                                 category.name.as("category"),
                                 board.title,
                                 board.createdDate,
@@ -128,12 +129,9 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                 .fetch();
     }
 
-    public List<Tuple> findCountByAddress(){
-        StringExpression substring = board.address.substring(0, 2);
-        System.out.println(substring);
-        return queryFactory.select(board.address.substring(0,2),board.count())
-                .from(board)
-                .groupBy(substring)
+    @Override
+    public List<Address> findCountByAddress(){
+        return queryFactory.selectFrom(address)
                 .fetch();
     }
 }

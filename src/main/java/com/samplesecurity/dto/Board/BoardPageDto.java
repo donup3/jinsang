@@ -47,7 +47,7 @@ public class BoardPageDto {
         long number = ((long) this.getSize() * (this.getPage() - 1)); // page에서 가장 큰 번호
 
         for (int i = 0; i < content.size(); i++) {
-            content.get(i).setId(number + i + 1);
+            content.get(i).setIdx(number + i + 1);
         }
     }
 

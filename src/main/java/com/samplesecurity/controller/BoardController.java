@@ -105,7 +105,7 @@ public class BoardController {
 
         List<AttachFileDto> fileDtos = boardRegisterDto.getFileDtos();
 
-        boardService.register(board, fileDtos);
+        boardService.register(board, fileDtos, boardRegisterDto.getAddress());
 
         return "redirect:/jinsang/jslist" + boardPageDto.getListLink();
     }

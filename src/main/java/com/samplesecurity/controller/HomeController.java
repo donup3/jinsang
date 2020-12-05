@@ -1,5 +1,7 @@
 package com.samplesecurity.controller;
 
+import com.querydsl.core.Tuple;
+import com.samplesecurity.domain.board.Address;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.repository.board.BoardRepository;
 import com.samplesecurity.service.BoardService;
@@ -33,6 +35,9 @@ public class HomeController {
 
         List<Board> boardsOfType4 =boardRepository.findAllByType4();
         model.addAttribute("board4", boardsOfType4);
+
+        List<Address> address = boardRepository.findCountByAddress();
+        model.addAttribute("address",address);
 
         return "/index";
     }

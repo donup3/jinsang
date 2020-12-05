@@ -9,6 +9,8 @@ import java.time.LocalDate;
 public class BoardListDto {
     private Long id;
 
+    private Long idx;
+
     private String category;
 
     private String title;
@@ -20,10 +22,10 @@ public class BoardListDto {
     private int agreeCount;
 
     private int replyCount;
-
     @QueryProjection
-    public BoardListDto(Long id, String category, String title, LocalDate createdDate, String writer, int agreeCount, int replyCount) {
+    public BoardListDto(Long id, Long idx, String category, String title, LocalDate createdDate, String writer, int agreeCount, int replyCount) {
         this.id = id;
+        this.idx = idx;
         this.category = category;
         this.title = title;
         this.createdDate = createdDate;

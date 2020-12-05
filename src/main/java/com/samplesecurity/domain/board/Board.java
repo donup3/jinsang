@@ -46,6 +46,10 @@ public class Board {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address cityNameOfAddress;
+
     //attach 파일들은 단방향 매핑해놓음
     @OneToMany(mappedBy = "board")
     private List<UploadFile> uploadFiles;
