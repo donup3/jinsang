@@ -1,7 +1,6 @@
 package com.samplesecurity.service;
 
 import com.samplesecurity.domain.*;
-import com.samplesecurity.dto.MemberAuthDto;
 import com.samplesecurity.dto.MemberDto;
 import com.samplesecurity.repository.EmailAuthRepository;
 import com.samplesecurity.repository.MemberAuthRepository;
@@ -9,14 +8,12 @@ import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -54,6 +51,7 @@ public class MemberService {
                 .email(memberDto.getEmail())
                 .password(passwordEncoder.encode(memberDto.getPassword()))
                 .nickName(memberDto.getNickName())
+                .type(memberDto.getType())
                 .build();
 
         return memberRepository.save(member);
@@ -76,10 +74,26 @@ public class MemberService {
     private void saveRoles(Member member) {
         List<MemberAuth> roles = new ArrayList<>();
 
-        MemberAuth memberAuth = MemberAuth.builder().role(Role.MEMBER.getValue()).build();
-        roles.add(memberAuth);
-        memberAuth.setMember(member);
+        addRole(Role.MEMBER.getValue(), member, roles);
 
+        if (member.getType().equals("1")) {
+            addRole(Role.LAWYER.getValue(), member, roles);
+        }
+
+        if (member.getType().equals("2")) {
+            addRole(Role.CS.getValue(), member, roles);
+        }
+
+        if (member.getType().equals("3")) {
+            addRole(Role.COUNSELOR.getValue(), member, roles);
+        }
+    }
+
+    private void addRole(String specificRole, Member member, List<MemberAuth> roles) {
+        MemberAuth memberAuth = MemberAuth.builder().role(specificRole).build();
+
+        memberAuth.setMember(member);
+        roles.add(memberAuth);
         memberAuthRepository.save(memberAuth);
     }
 

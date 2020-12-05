@@ -10,7 +10,7 @@ public enum Role {
     MEMBER("ROLE_MEMBER"),
     LAWYER("ROLE_LAWYER"),
     CS("ROLE_CS"),
-    CONSULTANT("ROLE_CONSULTANT");
+    COUNSELOR("ROLE_COUNSELOR");
 
     private String value;
 }

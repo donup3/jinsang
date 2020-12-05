@@ -27,6 +27,8 @@ public class Member {
 
     private String nickName;
 
+    private String type;
+
     @OneToMany(mappedBy = "member")
     private List<MemberAuth> roles;
 

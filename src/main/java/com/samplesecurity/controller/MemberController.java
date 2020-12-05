@@ -20,8 +20,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/signup")
-    public String getSignupPage(@RequestParam(required = false) String type, Model model){
-        log.info("type : " + type);
+    public String getSignupPage(@RequestParam(required = false) String type, Model model) {
         model.addAttribute("type", type);
         return "/member/signup";
     }

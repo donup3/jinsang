@@ -22,7 +22,6 @@
                     </tr>
                     <tr>
                         <p class="emailVerificationMsg" style="float:right; margin-right:120px; font-size:14px;">이메일을 입력하세요.</p>
-                        <p th:text="${type}"></p>
                     </tr>
                     <tr>
                         <div class="input-field">
@@ -52,6 +51,9 @@
                     </tr>
                     <tr>
                         <p class="nickNameVerificationMsg" style="float:right; margin-right:120px; font-size:14px;">닉네임을 입력하세요.</p>
+                    </tr>
+                    <tr>
+                        <input type="hidden" name="type" th:value="${type}">
                     </tr>
                     <tr>
                         <div class="input-field">
