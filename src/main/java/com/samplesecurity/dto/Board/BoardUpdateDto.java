@@ -21,4 +21,5 @@ public class BoardUpdateDto {
 
     private List<AttachFile> fileDtos;
 
+    private String hidden;
 }

@@ -1,10 +1,8 @@
 package com.samplesecurity.controller;
 
-import com.querydsl.core.Tuple;
-import com.samplesecurity.domain.board.Address;
 import com.samplesecurity.domain.board.Board;
+import com.samplesecurity.dto.Board.HomeBoardDto;
 import com.samplesecurity.repository.board.BoardRepository;
-import com.samplesecurity.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -36,7 +34,7 @@ public class HomeController {
         List<Board> boardsOfType4 =boardRepository.findAllByType4();
         model.addAttribute("board4", boardsOfType4);
 
-        List<Address> address = boardRepository.findCountByAddress();
+        List<HomeBoardDto> address = boardRepository.findCountByAddress();
         model.addAttribute("address",address);
 
         return "/index";

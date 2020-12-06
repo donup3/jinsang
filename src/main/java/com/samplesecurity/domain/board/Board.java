@@ -72,4 +72,9 @@ public class Board {
     public void setCategory(Category category) {
         this.category = category;
     }
+
+    @PrePersist
+    public void prePersist() {
+        this.hidden = this.hidden == null ? "N" : this.hidden;
+    }
 }

@@ -19,6 +19,12 @@
         <h3 th:if="${pageDto.boardType eq '5'}" class="sub-title">
             변호사 상담
         </h3>
+        <h3 th:if="${pageDto.boardType eq '6'}" class="sub-title">
+            심리 상담
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '7'}" class="sub-title">
+            CS 전문 상담
+        </h3>
         <div class="board-wrap normal-view write">
             <form id="f1" th:action="@{/jinsang/write}" method="post" enctype="multipart/form-data">
                 <!-- s: .board-detail -->
@@ -56,18 +62,19 @@
                                 </div>
                             </div>
 
-                            <div class="field is-horizontal" th:if="${pageDto.boardType eq '5'}">
+                            <div class="field is-horizontal"
+                                 th:if="${pageDto.boardType eq '5'} or ${pageDto.boardType eq '6'} or ${pageDto.boardType eq '7'}">
                                 <div class="field-label is-normal">
                                     <label class="label">공개설정</label>
                                 </div>
                                 <div class="field-body">
                                     <div class="field is-normal">
                                         <div class="control radio-list" style="margin-top: 5px">
-                                                <input type="radio" name="hidden" value="N" >
-                                                <label class="radio">공개</label>
+                                            <input type="radio" name="hidden" value="N">
+                                            <label class="radio">공개</label>
 
-                                                <input type="radio" name="hidden" value="Y" style="margin-left: 7px">
-                                                <label class="radio">비공개</label>
+                                            <input type="radio" name="hidden" value="Y" style="margin-left: 7px">
+                                            <label class="radio">비공개</label>
                                         </div>
                                     </div>
                                 </div>
@@ -379,6 +386,7 @@
         background-color: white;
         border: 1px solid black;
     }
+
     input[type='radio']:checked {
         background-color: #9281e3;
     }

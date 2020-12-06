@@ -1,4 +1,5 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head th:replace="fragments/mainHeader :: mainHeader"></head>
 
 <body class="jsdotcom vsc-initialized">
@@ -33,6 +34,18 @@
                 변호사 상담
                 <span class="write">
                     <a href="/jinsang/write?boardType=5" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '6'}" class="sub-title">
+                심리 상담
+                <span class="write">
+                    <a href="/jinsang/write?boardType=6" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '7'}" class="sub-title">
+                CS 전문 상담
+                <span class="write">
+                    <a href="/jinsang/write?boardType=7" class="button" style="margin-top: 30%">글쓰기</a>
                 </span>
             </h3>
         </div>
@@ -122,12 +135,11 @@
         //수정 필요
         $("#title").on("click", function (e) {
             var hidden=$(this).data("hidden");
-            console.log(hidden);
             if (hidden.toString() === "Y") {
                 e.preventDefault();
                 alert("비밀글입니다.")
             }
-        })
+        });
     })
 </script>
 

@@ -51,6 +51,7 @@ public class BoardService {
         return boardRepository.findAllByDto(boardType, pageable);
     }
 
+    //게시물 등록
     public void register(Board board, List<AttachFileDto> fileDtos, String address) {
         if (address != null) {
             String cityName = address.substring(0, 2);
@@ -58,7 +59,6 @@ public class BoardService {
             Address findAddress = addressRepository.findByCityName(cityName);
 
             if (findAddress != null) {
-                findAddress.setBoardCount(findAddress.getBoardCount() + 1);
                 board.setCityNameOfAddress(findAddress);
             }
         }
@@ -74,7 +74,6 @@ public class BoardService {
     }
 
     public Board getBoard(Long id) {
-
         if (id != null) {
             return boardRepository.findById(id).get();
         }
@@ -146,22 +145,16 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).get();
         Long newCategoryId = parseLong(boardUpdateDto.getCategory());
         Category newCategory = categoryRepository.findById(newCategoryId).get();
-        //주소 업데이트
-        if (boardUpdateDto.getAddress() != null) {
-            String cityName = boardUpdateDto.getAddress().substring(0, 2);
-            Address originAddress = addressRepository.findByCityName(board.getCityNameOfAddress().getCityName());
-            Address findAddress = addressRepository.findByCityName(cityName);
 
-            if (findAddress != null) {
-                originAddress.setBoardCount(originAddress.getBoardCount() - 1);
-                findAddress.setBoardCount(findAddress.getBoardCount() + 1);
-            }
-        }
         if (findMember.getNickName().equals(board.getMember().getNickName())) {
             attachFileRepository.deleteByBoardId(boardId);
             //게시물 업데이트
             board.setTitle(boardUpdateDto.getTitle());
             board.setContents(boardUpdateDto.getContents());
+            //1234타입의 글은 업데이트할때 hidden이 null임
+            if (boardUpdateDto.getHidden() != null) {
+                board.setHidden(boardUpdateDto.getHidden());
+            }
             //주소 위도 경도 업데이트
             if (boardUpdateDto.getAddress() != null && boardUpdateDto.getLatitude() != null && boardUpdateDto.getLongitude() != null) {
                 board.setAddress(boardUpdateDto.getAddress());
@@ -182,11 +175,6 @@ public class BoardService {
     public void delete(Long boardId, Member findMember) {
         Board board = boardRepository.findById(boardId).get();
         if (findMember.getNickName().equals(board.getMember().getNickName())) {
-            //주소 boardCount -1
-            if (board.getCityNameOfAddress() != null) {
-                Address address = addressRepository.findByCityName(board.getCityNameOfAddress().getCityName());
-                address.setBoardCount(address.getBoardCount() - 1);
-            }
             //댓글 삭제
             replyRepository.deleteByBoardId(boardId);
             //파일 삭제
@@ -232,21 +220,5 @@ public class BoardService {
         });
 
         return boardMapDtos;
-    }
-
-    public Board getBoardByGrantCheck(Long boardId, Authentication authentication) {
-        Board board = boardRepository.findById(boardId).get();
-        if (board.getHidden().equals("Y")) {
-            if(authentication!=null) {
-                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-                Member loginMember = memberRepository.findByEmail(userDetails.getUsername()).get(); //로그인 유저
-                Member writer = board.getMember();
-                if (loginMember.getNickName().equals(writer.getNickName()) || loginMember.getRoles().contains("ROLE_ADMIN") || loginMember.getRoles().contains("ROLE_LAWYER")) {
-                    return board;
-                }
-            }
-            throw new SecretBoardException("비밀글입니다.");
-        }
-        return board;
     }
 }

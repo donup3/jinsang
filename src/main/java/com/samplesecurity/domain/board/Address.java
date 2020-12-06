@@ -3,6 +3,8 @@ package com.samplesecurity.domain.board;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,5 +21,6 @@ public class Address {
 
     private String cityName;
 
-    private int boardCount;
+    @OneToMany(mappedBy = "cityNameOfAddress")
+    private List<Board> boards=new ArrayList<>();
 }

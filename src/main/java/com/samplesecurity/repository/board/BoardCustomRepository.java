@@ -4,6 +4,7 @@ import com.samplesecurity.domain.Member;
 import com.samplesecurity.domain.board.Address;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.dto.Board.BoardListDto;
+import com.samplesecurity.dto.Board.HomeBoardDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,5 +25,5 @@ public interface BoardCustomRepository {
 
     List<Board> findAllByType4();
 
-    List<Address> findCountByAddress();
+    List<HomeBoardDto> findCountByAddress();
 }

@@ -11,8 +11,8 @@
             <div class="status-wrap">
                 <ul class="status-list">
                     <li th:each="address:${address}">
-                        <span th:class="${address.cityName}+' zone'" th:text="${address.cityName}"></span>
-                        <span class="w-count" th:text="${address.boardCount}"></span>
+                        <span th:class="${address.city}+' zone'" th:text="${address.city}"></span>
+                        <span class="w-count" th:text="${address.count}"></span>
                     </li>
                 </ul>
                 <div class="map">

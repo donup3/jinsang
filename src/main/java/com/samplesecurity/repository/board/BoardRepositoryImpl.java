@@ -2,13 +2,12 @@ package com.samplesecurity.repository.board;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.samplesecurity.domain.Member;
-import com.samplesecurity.domain.board.Address;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.dto.Board.BoardListDto;
+import com.samplesecurity.dto.Board.HomeBoardDto;
 import com.samplesecurity.dto.Board.QBoardListDto;
+import com.samplesecurity.dto.Board.QHomeBoardDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +47,12 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                     break;
                 case "5":
                     builder.and(board.boardType.eq("5"));
+                    break;
+                case "6":
+                    builder.and(board.boardType.eq("6"));
+                    break;
+                case "7":
+                    builder.and(board.boardType.eq("7"));
                     break;
                 default:
                     break;
@@ -137,8 +142,9 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
     }
 
     @Override
-    public List<Address> findCountByAddress() {
-        return queryFactory.selectFrom(address)
+    public List<HomeBoardDto> findCountByAddress() {
+        return queryFactory.select(new QHomeBoardDto(address.cityName, address.boards.size()))
+                .from(address)
                 .fetch();
     }
 }

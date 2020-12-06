@@ -7,8 +7,24 @@
 
 <div class="content sub">
     <section>
-        <h3 class="sub-title">
-            오늘의 진상 </h3>
+        <h3 th:if="${pageDto.boardType eq '2'}" class="sub-title">
+            오늘의 진상　
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '3'}" class="sub-title">
+            진상 대응 노하우　
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '4'}" class="sub-title">
+            인생은 실전이야 진상아
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '5'}" class="sub-title">
+            변호사 상담
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '6'}" class="sub-title">
+            심리 상담
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '7'}" class="sub-title">
+            CS 전문 상담
+        </h3>
         <div class="board-wrap normal-view">
             <!-- s: .board-detail -->
             <article class="board-detail">

@@ -41,7 +41,6 @@ public class BoardController {
 
     @GetMapping("/jslist")
     public String list(@ModelAttribute("pageDto") BoardPageDto boardPageDto, Model model) {
-        log.info("ss" + boardPageDto);
         Pageable pageable = boardPageDto.makePageable();
 
         Page<BoardListDto> boards = boardService.getBoardList(boardPageDto.getBoardType(), pageable);
@@ -57,11 +56,8 @@ public class BoardController {
     public String get(@PathVariable("id") Long boardId,
                       @PathVariable("boardType") String type,
                       @ModelAttribute("pageDto") BoardPageDto boardPageDto,
-                      Authentication authentication,
                       Model model) {
-        model.addAttribute("error", null);
-
-        Board findBoard = boardService.getBoardByGrantCheck(boardId, authentication);
+        Board findBoard = boardService.getBoard(boardId);
 
         boardPageDto.setBoardType(type);
 
@@ -193,11 +189,11 @@ public class BoardController {
         String username = userDetails.getUsername();
         return memberRepository.findByEmail(username).get();
     }
-    //수정 필요
-    @ExceptionHandler({SecretBoardException.class})
-    public String errorHandler(SecretBoardException e, Model model) {
-        log.info("catch error: " + e);
-        model.addAttribute("error", e);
-        return "jinsang/jslist";
-    }
+//    //수정 필요
+//    @ExceptionHandler({SecretBoardException.class})
+//    public String errorHandler(SecretBoardException e, Model model) {
+//        log.info("catch error: " + e);
+//        model.addAttribute("error", e);
+//        return "jinsang/jslist";
+//    }
 }
