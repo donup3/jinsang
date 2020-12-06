@@ -2,7 +2,9 @@ package com.samplesecurity.repository.board;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.samplesecurity.domain.Member;
 import com.samplesecurity.domain.board.Address;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.dto.Board.BoardListDto;
@@ -29,6 +31,7 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
     @Override
     public Page<BoardListDto> findAllByDto(String boardType, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
+
         if (boardType != null) {
             switch (boardType) {
                 case "1":

@@ -6,6 +6,7 @@ import com.samplesecurity.domain.board.Category;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.Board.*;
 import com.samplesecurity.dto.PageMaker;
+import com.samplesecurity.exception.SecretBoardException;
 import com.samplesecurity.repository.board.CategoryRepository;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.AttachFileRepository;
@@ -53,22 +54,26 @@ public class BoardController {
     }
 
     @GetMapping("/{id}/{boardType}")
-    public String get(@PathVariable("id") Long id,
+    public String get(@PathVariable("id") Long boardId,
                       @PathVariable("boardType") String type,
                       @ModelAttribute("pageDto") BoardPageDto boardPageDto,
+                      Authentication authentication,
                       Model model) {
-        Board findBoard = boardService.getBoard(id);
+        model.addAttribute("error", null);
+
+        Board findBoard = boardService.getBoardByGrantCheck(boardId, authentication);
+
         boardPageDto.setBoardType(type);
 
         model.addAttribute("board", findBoard);
 
-        Long preBoardId = boardService.getPreBoard(id, boardPageDto.getBoardType());
+        Long preBoardId = boardService.getPreBoard(boardId, boardPageDto.getBoardType());
 
         Board findPreBoard = boardService.getBoard(preBoardId);
         model.addAttribute("preBoard", findPreBoard);
 
 
-        Long nextBoardId = boardService.getNextBoard(id, boardPageDto.getBoardType());
+        Long nextBoardId = boardService.getNextBoard(boardId, boardPageDto.getBoardType());
 
         Board nextBoard = boardService.getBoard(nextBoardId);
         model.addAttribute("nextBoard", nextBoard);
@@ -187,5 +192,12 @@ public class BoardController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
         return memberRepository.findByEmail(username).get();
+    }
+    //수정 필요
+    @ExceptionHandler({SecretBoardException.class})
+    public String errorHandler(SecretBoardException e, Model model) {
+        log.info("catch error: " + e);
+        model.addAttribute("error", e);
+        return "jinsang/jslist";
     }
 }

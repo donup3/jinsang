@@ -63,10 +63,10 @@
                                 <div class="field-body">
                                     <div class="field is-normal">
                                         <div class="control radio-list" style="margin-top: 5px">
-                                                <input type="radio" name="hidden" value="Y" >
+                                                <input type="radio" name="hidden" value="N" >
                                                 <label class="radio">공개</label>
 
-                                                <input type="radio" name="hidden" value="N" style="margin-left: 7px">
+                                                <input type="radio" name="hidden" value="Y" style="margin-left: 7px">
                                                 <label class="radio">비공개</label>
                                         </div>
                                     </div>
@@ -289,8 +289,6 @@
         $("input[name='hidden']").change(function () {
             $("#isshow").val($("input[name='hidden']:checked").val());
         });
-
-        // $("#w-category").load("./ajax/loadcategory.php");
 
         //파일추가
         $("#fileupload").on("change", addFiles);

@@ -64,6 +64,7 @@
                         <td class="is-hidden-mobile">[[${board.category}]]</td>
                         <td class="has-text-left">
                             <a href="#" class="title is-6 text-ellipsis"
+                               id="title" th:attr="data-hidden=${board.hidden}"
                                th:href="@{/jinsang/{id}/{boardType} (id=${board.id},boardType=${pageDto.boardType})}">[[${board.title}]]
                                 <span th:if="${board.replyCount}" th:text="'['+${board.replyCount}+']'"></span>
                             </a>
@@ -110,15 +111,23 @@
         <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
     </div>
 </footer>
-<script>
+<script th:inline="javascript">
     $(document).ready(function () {
         var formObj = $("#listForm");
-
         $(".pagination a").on("click", function (e) {
             e.preventDefault();
             formObj.find('[name="page"]').val($(this).attr('href'));
             formObj.submit();
         });
+        //수정 필요
+        $("#title").on("click", function (e) {
+            var hidden=$(this).data("hidden");
+            console.log(hidden);
+            if (hidden.toString() === "Y") {
+                e.preventDefault();
+                alert("비밀글입니다.")
+            }
+        })
     })
 </script>
 

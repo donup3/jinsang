@@ -129,10 +129,8 @@
         <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
     </div>
 </footer>
-<script>
 
-</script>
-<script>
+<script th:inline="javascript">
     var id = [[${board.id}]];
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
@@ -215,7 +213,6 @@
 </script>
 <script th:inline="javascript" th:src="@{'/js/reply.js'}"></script>
 <script th:inline="javascript">
-    var tmp;
     $(document).ready(function (e) {
         (function () {
             replyManger.getAll(id, printList);

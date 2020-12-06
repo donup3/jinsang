@@ -5,6 +5,8 @@ import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.BoardUpdateDto;
+import com.samplesecurity.exception.SecretBoardException;
+import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.*;
 import com.samplesecurity.repository.reply.ReplyAgreeCheckRepository;
 import com.samplesecurity.repository.reply.ReplyRepository;
@@ -42,8 +44,10 @@ public class BoardService {
     private final ReplyRepository replyRepository;
     private final UploadFileRepository uploadFileRepository;
     private final AddressRepository addressRepository;
+    private final MemberRepository memberRepository;
 
     public Page<BoardListDto> getBoardList(String boardType, Pageable pageable) {
+
         return boardRepository.findAllByDto(boardType, pageable);
     }
 
@@ -70,6 +74,7 @@ public class BoardService {
     }
 
     public Board getBoard(Long id) {
+
         if (id != null) {
             return boardRepository.findById(id).get();
         }
@@ -229,4 +234,19 @@ public class BoardService {
         return boardMapDtos;
     }
 
+    public Board getBoardByGrantCheck(Long boardId, Authentication authentication) {
+        Board board = boardRepository.findById(boardId).get();
+        if (board.getHidden().equals("Y")) {
+            if(authentication!=null) {
+                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+                Member loginMember = memberRepository.findByEmail(userDetails.getUsername()).get(); //로그인 유저
+                Member writer = board.getMember();
+                if (loginMember.getNickName().equals(writer.getNickName()) || loginMember.getRoles().contains("ROLE_ADMIN") || loginMember.getRoles().contains("ROLE_LAWYER")) {
+                    return board;
+                }
+            }
+            throw new SecretBoardException("비밀글입니다.");
+        }
+        return board;
+    }
 }

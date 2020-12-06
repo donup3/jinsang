@@ -1,6 +1,6 @@
 package com.samplesecurity.repository.board;
 
-import com.querydsl.core.Tuple;
+import com.samplesecurity.domain.Member;
 import com.samplesecurity.domain.board.Address;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.dto.Board.BoardListDto;
@@ -17,8 +17,12 @@ public interface BoardCustomRepository {
     Long findNextBoardId(Long boardId, String boardType);
 
     List<Board> findAllByType1();
+
     List<Board> findAllByType2();
+
     List<Board> findAllByType3();
+
     List<Board> findAllByType4();
+
     List<Address> findCountByAddress();
 }
