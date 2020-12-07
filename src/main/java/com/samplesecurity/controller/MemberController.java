@@ -1,11 +1,14 @@
 package com.samplesecurity.controller;
 
+import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.MemberDto;
+import com.samplesecurity.dto.PasswordDto;
 import com.samplesecurity.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +46,9 @@ public class MemberController {
     // 내 정보 페이지
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myinfo")
-    public String dispMyInfo() {
+    public String displayMyInfo(Model model, Authentication authentication) {
+        Member member = memberService.getMemberInfo(authentication);
+        model.addAttribute("member", member);
         return "/member/myinfo";
     }
 
@@ -63,9 +68,22 @@ public class MemberController {
         return "redirect:/user/login";
     }
 
-    @PostMapping("/password")
+    @PostMapping("/reset/password")
     public ResponseEntity<String> resetPassword(String email) {
         memberService.resetPassword(email);
         return ResponseEntity.ok().body("인증코드 전송 완료");
+    }
+
+
+    @PostMapping("/match/password")
+    public ResponseEntity<Boolean> matchPassword(String currentPassword, Authentication authentication) {
+        Boolean isPasswordVerified = memberService.matchPassword(currentPassword, authentication);
+        return ResponseEntity.ok().body(isPasswordVerified);
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<String> password(PasswordDto passwordDto, Authentication authentication) {
+        memberService.changePassword(passwordDto, authentication);
+        return ResponseEntity.ok().body("비밀번호 변경 완료");
     }
 }

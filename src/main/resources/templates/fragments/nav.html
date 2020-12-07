@@ -52,14 +52,14 @@
             </li>
             <li sec:authorize="isAuthenticated()">
                 <div class="login-box">
-                    <a href="/user/logout" class="login-proc">
+                    <a href="/user/logout" class="logout">
                         <span>로그아웃</span>
                     </a>
                 </div>
             </li>
-            <li sec:authorize="isAuthenticated()">
+            <li sec:authorize="isAuthenticated()" class="register-box">
                 <div class="login-box">
-                    <a href="/user/myinfo" class="login-proc">
+                    <a href="/user/myinfo" class="mypage">
                         <span>내 정보</span>
                     </a>
                 </div>

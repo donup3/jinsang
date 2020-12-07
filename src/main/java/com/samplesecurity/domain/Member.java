@@ -35,9 +35,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Board> boards;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE)
     private Profile profile;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE)
     private EmailAuth emailAuth;
 }

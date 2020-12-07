@@ -2,12 +2,16 @@ package com.samplesecurity.service;
 
 import com.samplesecurity.domain.*;
 import com.samplesecurity.dto.MemberDto;
+import com.samplesecurity.dto.PasswordDto;
 import com.samplesecurity.repository.EmailAuthRepository;
 import com.samplesecurity.repository.MemberAuthRepository;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.ProfileRepository;
+import com.samplesecurity.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +33,6 @@ public class MemberService {
     private final EmailAuthRepository emailAuthRepository;
     private final MemberAuthRepository memberAuthRepository;
     private final ProfileRepository profileRepository;
-
 
     public boolean nickNameChecker(String nickName) {
         return memberRepository.findByNickName(nickName).isPresent();
@@ -73,20 +76,16 @@ public class MemberService {
 
     private void saveRoles(Member member) {
         List<MemberAuth> roles = new ArrayList<>();
-
         addRole(Role.MEMBER.getValue(), member, roles);
 
-        if (member.getType().equals("1")) {
+        if (member.getType().equals("1"))
             addRole(Role.LAWYER.getValue(), member, roles);
-        }
 
-        if (member.getType().equals("2")) {
+        if (member.getType().equals("2"))
             addRole(Role.CS.getValue(), member, roles);
-        }
 
-        if (member.getType().equals("3")) {
+        if (member.getType().equals("3"))
             addRole(Role.COUNSELOR.getValue(), member, roles);
-        }
     }
 
     private void addRole(String specificRole, Member member, List<MemberAuth> roles) {
@@ -101,9 +100,36 @@ public class MemberService {
         String generatedPassword = emailAuthService.sendAuthCode(email);
 
         memberRepository.findByEmail(email)
-                .ifPresent(member -> {
-                    member.setPassword(passwordEncoder.encode(generatedPassword));
-                    memberRepository.save(member);
-                });
+            .ifPresent(member -> {
+                member.setPassword(passwordEncoder.encode(generatedPassword));
+                memberRepository.save(member);
+            });
+    }
+
+    public String changePassword(PasswordDto passwordDto, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String userEmail = userDetails.getUsername();
+
+        memberRepository.findByEmail(userEmail)
+            .ifPresent(member -> {
+                member.setPassword(passwordEncoder.encode(passwordDto.getEditPassword()));
+                memberRepository.save(member);
+            });
+        return "비밀번호가 변경되었습니다.";
+    }
+
+    public Boolean matchPassword(String currentPassword, Authentication authentication) {
+        Member member = getMemberInfo(authentication);
+        if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
+            return false;
+        }
+        return true;
+    }
+
+    public Member getMemberInfo(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String userEmail = userDetails.getUsername();
+
+        return memberRepository.findByEmail(userEmail).get();
     }
 }

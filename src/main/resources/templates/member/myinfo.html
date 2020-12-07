@@ -12,29 +12,31 @@
             내 정보 수정
         </h3>
         <div class="register-wrap">
-            <div class="input-fl-field">
-                <span class="input-tit">비밀번호 변경</span>
-                <div class="input-multi">
-                    <div class="inner-wrap">
-						<span>
-							<input class="input" type="password" id="cur-user-pw" placeholder="현재 비밀번호">
-						</span>
-                        <span>
-							<input class="input" type="password" id="edit-user-pw" placeholder="새 비밀번호">
-						</span>
-                        <span>
-							<input class="input" type="password" id="conf-user-pw" placeholder="새 비밀번호 확인">
-						</span>
-                    </div>
-                </div>
-                <button type="button" class="button btnpass">수정완료</button>
-
-            </div>
+			<form id="f1" th:action="@{/user/password}" method="post"></form>
+				<div class="input-fl-field">
+					<span class="input-tit">비밀번호 변경</span>
+					<div class="input-multi">
+						<div class="inner-wrap">
+							<span>
+								<input class="input" type="password" id="cur-user-pw" name="currentPassword" placeholder="현재 비밀번호">
+							</span>
+							<span>
+								<input class="input" type="password" id="edit-user-pw" name="editPassword" placeholder="새 비밀번호">
+							</span>
+							<span>
+								<input class="input" type="password" id="conf-user-pw" placeholder="새 비밀번호 확인">
+							</span>
+						</div>
+					</div>
+					<button type="submit" class="button btnpass">수정완료</button>
+					<button type="button" class="button chekpassword">비밀번호 체크 버튼</button>
+				</div>
+			</form>
             <div class="input-fl-field">
                 <label class="input-tit" for="user-nick">닉네임 변경</label>
                 <div class="input-multi duo">
                     <div class="inner-wrap">
-                        <span class="ell">jang</span>
+                        <span class="ell" th:text="${member.nickName}">jang</span>
                         <span>
 							<span class="with-conf">
 								<input class="input base-input" type="text" id="user-nick" placeholder="새 닉네임">
@@ -98,7 +100,12 @@
 var isnicknamecheck = false;//nick check
 
 $(function(){
-	var userid = "azanghs@naver.com";
+	var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+
+	// var userid = "azanghs@naver.com";
+	var f1 = $("#f1");
+	
 	$(".btnpass").click(function(){
 		if(!$("#cur-user-pw").val()){
 			alert("비밀번호를 입력해주세요");
@@ -128,24 +135,45 @@ $(function(){
 			return false;
 		}
 
-		//ajax
-		var param = {id:userid,pwd:$("#cur-user-pw").val(),newpwd:$("#edit-user-pw").val() };
+		if($("#cur-user-pw").val()){
+			verifyPassword();	
+		}
+		
+		f1.submit();
+	});
+
+	$(".chekpassword").click(function(){
+		if(!$("#cur-user-pw").val()){
+			alert("비밀번호를 입력해주세요");
+			$("#cur-user-pw").focus();
+			return false;
+		}
+
+		verifyPassword();
+	})
+
+	function verifyPassword(){
+		$(document).ajaxSend(function (e, xhr, options) {
+			xhr.setRequestHeader(header, token);
+		});
+
+		// 현재 비밀번호 체크
+		var param = {"currentPassword":$("#cur-user-pw").val()};
 		$.ajax({
-			url:'./ajax/usercheck.php',
+			url:'/user/match/password',
 			data:param,
-			dataType:'json',
 			method:'post',
 			success:function(data){
-				if(data.result =='E'){
-					alert(data.msg);
-				}
+				if(!data){
+					alert("패스워드가 일치하지 않습니다.");
+				} 
 			},
 			error:function(request,status,error){
 				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 			}
 		});
-	});
-
+	}
+	
 	$(".btnsavenick").click(function(){
 		if(!$("#user-nick").val()){
 			alert("닉네임을 입력해주세요");
