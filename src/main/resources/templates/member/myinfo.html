@@ -12,7 +12,7 @@
             내 정보 수정
         </h3>
         <div class="register-wrap">
-			<form id="f1" th:action="@{/user/password}" method="post"></form>
+			<form id="f1" th:action="@{/user/password}" method="post">
 				<div class="input-fl-field">
 					<span class="input-tit">비밀번호 변경</span>
 					<div class="input-multi">
@@ -26,10 +26,10 @@
 							<span>
 								<input class="input" type="password" id="conf-user-pw" placeholder="새 비밀번호 확인">
 							</span>
+							<p class="passwordMsg" style="float:right; margin: 0 10px 20px 0">비밀번호를 입력해주세요.</p>
 						</div>
 					</div>
-					<button type="submit" class="button btnpass">수정완료</button>
-					<button type="button" class="button chekpassword">비밀번호 체크 버튼</button>
+					<button type="button" class="button btnpass">수정완료</button>
 				</div>
 			</form>
             <div class="input-fl-field">
@@ -43,6 +43,7 @@
 								<button type="button" class="button btnchecknick">중복확인</button>
 							</span>
 						</span>
+						<p class="nickNameMsg" style="float:right; margin: 0 10px 0 0;">닉네임을 입력해주세요.</p>
                     </div>
                 </div>
                 <button type="button" class="button btnsavenick">수정완료</button>
@@ -54,7 +55,8 @@
                             <span>
                                 <span class="with-conf">
                                     <span class="base-input">
-                                        <img src='./userprofile/azanghs@naver.com.png'>                                    </span>
+										<img src=''>                                    
+									</span>
                                     <button type="button" class="button delprofile">삭제</button>
                                 </span>
                             </span>
@@ -105,6 +107,12 @@ $(function(){
 
 	// var userid = "azanghs@naver.com";
 	var f1 = $("#f1");
+	var passwordMsg = $(".passwordMsg");
+	var currentPassword = $("#cur-user-pw");
+	var editPassword = $("#edit-user-pw");
+
+	var nickNameMsg = $(".nickNameMsg");
+	var nickNameInput = $("#user-nick");
 	
 	$(".btnpass").click(function(){
 		if(!$("#cur-user-pw").val()){
@@ -122,7 +130,6 @@ $(function(){
 			$("#conf-user-pw").focus();
 			return false;
 		}
-
 		if($("#edit-user-pw").val() != $("#conf-user-pw").val()){
 			alert("새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
 			return false;
@@ -136,21 +143,9 @@ $(function(){
 		}
 
 		if($("#cur-user-pw").val()){
-			verifyPassword();	
+			verifyPassword();
 		}
-		
-		f1.submit();
 	});
-
-	$(".chekpassword").click(function(){
-		if(!$("#cur-user-pw").val()){
-			alert("비밀번호를 입력해주세요");
-			$("#cur-user-pw").focus();
-			return false;
-		}
-
-		verifyPassword();
-	})
 
 	function verifyPassword(){
 		$(document).ajaxSend(function (e, xhr, options) {
@@ -164,16 +159,46 @@ $(function(){
 			data:param,
 			method:'post',
 			success:function(data){
-				if(!data){
-					alert("패스워드가 일치하지 않습니다.");
-				} 
+				if(!data) {
+					passwordMsg.text("비밀번호가 일치하지 않습니다.").css("color", "red");
+					return false;
+				} else {
+					sendChangedPassword();
+				}
 			},
-			error:function(request,status,error){
+			error:function(request, status, error){
+				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			}
+		});
+	}
+
+	function sendChangedPassword() {
+		$(document).ajaxSend(function (e, xhr, options) {
+			xhr.setRequestHeader(header, token);
+		});
+
+		var password = {
+			currentPassword: currentPassword.val(),
+			editPassword: editPassword.val()
+		}
+
+		$.ajax({
+			url:'/user/password',
+			data:JSON.stringify(password),
+			contentType : "application/json",
+			method:'post',
+			success:function(data){
+				if(data) {
+					passwordMsg.text("비밀번호 변경 완료").css("color", "black");
+				}
+			},
+			error:function(request, status, error){
 				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 			}
 		});
 	}
 	
+	// 새로운 닉네임을 저장한다.
 	$(".btnsavenick").click(function(){
 		if(!$("#user-nick").val()){
 			alert("닉네임을 입력해주세요");
@@ -184,19 +209,18 @@ $(function(){
 			alert("닉네임중복체크를 해주세요");
 			return false;
 		}
-		if(nickcheck()){
+		if(!nickcheck()){
 			//닉네임 수정 전송.
-			var senddata = {nickname :$("#user-nick").val()}
+			var senddata = {"nickName" :$("#user-nick").val()}
 			//check email
 			$.ajax({
-				url:'./ajax/updatenick.php',
+				url:'/user/change/nickname',
 				method:'post',
-				dataType:'json',
 				data:senddata,
-				async:false,
 				success:function(data){
-					console.log(data);
-					alert(data.msg);
+					if(data){
+						nickNameMsg.text("닉네임 변경 완료").css("color", "black");
+					}
 				},
 				error:function(request,status,error){
 					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -205,26 +229,31 @@ $(function(){
 			});
 		}
 	});
+
 	$(".btnchecknick").click(function(){
 		nickcheck();
 	});
 
 	//닉네임 중복체크.
 	function nickcheck(){
-		var senddata = {nickname :$("#user-nick").val()}
-		//check email
+		$(document).ajaxSend(function (e, xhr, options) {
+			xhr.setRequestHeader(header, token);
+		});
+
+		var senddata = {"nickName" :$("#user-nick").val()}
+		
 		$.ajax({
-			url:'./ajax/nicknameduplecheck.php',
+			url:'/user/checkNickName',
 			method:'post',
-			dataType:'json',
 			data:senddata,
-			async:false,
 			success:function(data){
 				console.log(data);
-				if(data.result == 'DUPLE'){
-					alert('이미 등록된 닉네임입니다.');
+				if(data){
+					nickNameMsg.text("이미 등록된 닉네임 입니다.").css("color", "red");
+					nickNameInput.val("").focus();
 					return false;
-				}else{
+				} else {
+					nickNameMsg.text("사용가능한 닉네임 입니다.").css("color", "black");
 					isnicknamecheck = true;
 					return true;
 				}

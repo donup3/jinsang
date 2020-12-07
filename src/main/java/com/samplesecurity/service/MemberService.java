@@ -106,7 +106,7 @@ public class MemberService {
             });
     }
 
-    public String changePassword(PasswordDto passwordDto, Authentication authentication) {
+    public Boolean changePassword(PasswordDto passwordDto, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String userEmail = userDetails.getUsername();
 
@@ -115,11 +115,15 @@ public class MemberService {
                 member.setPassword(passwordEncoder.encode(passwordDto.getEditPassword()));
                 memberRepository.save(member);
             });
-        return "비밀번호가 변경되었습니다.";
+
+        return true;
     }
 
     public Boolean matchPassword(String currentPassword, Authentication authentication) {
-        Member member = getMemberInfo(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String userEmail = userDetails.getUsername();
+
+        Member member = memberRepository.findByEmail(userEmail).get();
         if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
             return false;
         }
@@ -131,5 +135,17 @@ public class MemberService {
         String userEmail = userDetails.getUsername();
 
         return memberRepository.findByEmail(userEmail).get();
+    }
+
+    public Boolean changeNickName(String nickName, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String userEmail = userDetails.getUsername();
+
+        memberRepository.findByEmail(userEmail)
+                .ifPresent(member -> {
+                    member.setNickName(nickName);
+                    memberRepository.save(member);
+                });
+        return true;
     }
 }

@@ -52,7 +52,6 @@ public class MemberController {
         return "/member/myinfo";
     }
 
-    @ResponseBody
     @PostMapping("/checkNickName")
     public ResponseEntity<Boolean> verifyNickName(String nickName) {
         boolean isNickNameExisted = memberService.nickNameChecker(nickName);
@@ -60,6 +59,12 @@ public class MemberController {
             return ResponseEntity.ok().body(true);
         }
         return ResponseEntity.ok().body(false);
+    }
+
+    @PostMapping("/change/nickname")
+    public ResponseEntity<Boolean> changeNickName(String nickName, Authentication authentication) {
+        Boolean isNickNameChanged = memberService.changeNickName(nickName, authentication);
+        return ResponseEntity.ok().body(isNickNameChanged);
     }
 
     @PostMapping("/signup")
@@ -74,7 +79,6 @@ public class MemberController {
         return ResponseEntity.ok().body("인증코드 전송 완료");
     }
 
-
     @PostMapping("/match/password")
     public ResponseEntity<Boolean> matchPassword(String currentPassword, Authentication authentication) {
         Boolean isPasswordVerified = memberService.matchPassword(currentPassword, authentication);
@@ -82,8 +86,8 @@ public class MemberController {
     }
 
     @PostMapping("/password")
-    public ResponseEntity<String> password(PasswordDto passwordDto, Authentication authentication) {
-        memberService.changePassword(passwordDto, authentication);
-        return ResponseEntity.ok().body("비밀번호 변경 완료");
+    public ResponseEntity<Boolean> changePassword(@RequestBody PasswordDto passwordDto, Authentication authentication) {
+        Boolean isPasswordChanged =  memberService.changePassword(passwordDto, authentication);
+        return ResponseEntity.ok().body(isPasswordChanged);
     }
 }
