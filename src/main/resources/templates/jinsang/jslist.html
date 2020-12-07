@@ -77,7 +77,8 @@
                         <td class="is-hidden-mobile">[[${board.category}]]</td>
                         <td class="has-text-left">
                             <a href="#" class="title is-6 text-ellipsis"
-                               id="title" th:attr="data-hidden=${board.hidden}"
+                               id="title"
+                               th:attr="data-hidden=${board.hidden},data-writer=${board.writer},data-type=${pageDto.boardType}"
                                th:href="@{/jinsang/{id}/{boardType} (id=${board.id},boardType=${pageDto.boardType})}">[[${board.title}]]
                                 <span th:if="${board.replyCount}" th:text="'['+${board.replyCount}+']'"></span>
                             </a>
@@ -132,12 +133,44 @@
             formObj.find('[name="page"]').val($(this).attr('href'));
             formObj.submit();
         });
-        //수정 필요
+        //조회시 권한 체크
         $("#title").on("click", function (e) {
-            var hidden=$(this).data("hidden");
-            if (hidden.toString() === "Y") {
-                e.preventDefault();
-                alert("비밀글입니다.")
+            var loginUserNickName = [[${#authentication.principal} eq 'anonymousUser' ? null : ${#authentication.principal.member.nickName}]];
+            var role = [[${#authentication.principal} eq 'anonymousUser' ? null : ${#authentication.principal.member.roles}]];
+            var writer = $(this).data("writer");
+            var type = $(this).data("type");
+            var roleArr = [];
+            //null 체크않하면 개발자도구 console에서 오류보임
+            if (role !== null) {
+                for (var i = 0; i < role.length; i++) {
+                    roleArr.push(role[i].role);
+                }
+            }
+            var adminCheck = roleArr.includes("ROLE_ADMIN");
+            var lawyerCheck = roleArr.includes("ROLE_LAWYER");
+            var CounselorCheck = roleArr.includes("ROLE_COUNSELOR");
+            var CsCounselorCheck = roleArr.includes("ROLE_CSCOUNSELOR");
+            var hidden = $(this).data("hidden");
+            console.log("type: " + type);
+            console.log("hidden: " + hidden);
+            if (type.toString() === "5" && hidden.toString() === "Y") {
+                console.log("@@@")
+                if (loginUserNickName !== writer && !adminCheck && !lawyerCheck) {
+                    e.preventDefault();
+                    alert("비밀글입니다.")
+                }
+            }
+            if (type.toString() === "6" && hidden.toString() === "Y") {
+                if (loginUserNickName !== writer && !adminCheck && !CounselorCheck) {
+                    e.preventDefault();
+                    alert("비밀글입니다.")
+                }
+            }
+            if (type.toString() === "7" && hidden.toString() === "Y") {
+                if (loginUserNickName !== writer && !adminCheck && !CsCounselorCheck) {
+                    e.preventDefault();
+                    alert("비밀글입니다.")
+                }
             }
         });
     })
