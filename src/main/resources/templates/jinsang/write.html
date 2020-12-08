@@ -7,8 +7,24 @@
 
 <div class="content sub">
     <section>
-        <h3 class="sub-title">
-            오늘의 진상 </h3>
+        <h3 th:if="${pageDto.boardType eq '2'}" class="sub-title">
+            오늘의 진상　
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '3'}" class="sub-title">
+            진상 대응 노하우　
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '4'}" class="sub-title">
+            인생은 실전이야 진상아
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '5'}" class="sub-title">
+            변호사 상담
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '6'}" class="sub-title">
+            심리 상담
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '7'}" class="sub-title">
+            CS 전문 상담
+        </h3>
         <div class="board-wrap normal-view write">
             <form id="f1" th:action="@{/jinsang/write}" method="post" enctype="multipart/form-data">
                 <!-- s: .board-detail -->
@@ -26,23 +42,8 @@
                                         <div class="select">
                                             <select id="w-category" name="category" class="is-hovered">
                                                 <option value="">----선택----</option>
-                                                <option value="1">연인</option>
-                                                <option value="2">가족</option>
-                                                <option value="3">버릇</option>
-                                                <option value="4">음식점</option>
-                                                <option value="5">자동차</option>
-                                                <option value="6">층간소음</option>
-                                                <option value="7">블랙박스</option>
-                                                <option value="8">회사생활</option>
-                                                <option value="9">공공장소</option>
-                                                <option value="10">중고거래</option>
-                                                <option value="11">편의점</option>
-                                                <option value="12">패스트푸드</option>
-                                                <option value="13">상담원</option>
-                                                <option value="14">카페</option>
-                                                <option value="15">술집</option>
-                                                <option value="16">쇼핑몰</option>
-                                                <option value="17">기타</option>
+                                                <option th:each="category:${categoryList}" th:value="${category.id}"
+                                                        th:text="${category.name}"></option>
                                             </select>
                                         </div>
                                     </div>
@@ -60,7 +61,26 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="field is-horizontal">
+
+                            <div class="field is-horizontal"
+                                 th:if="${pageDto.boardType eq '5'} or ${pageDto.boardType eq '6'} or ${pageDto.boardType eq '7'}">
+                                <div class="field-label is-normal">
+                                    <label class="label">공개설정</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field is-normal">
+                                        <div class="control radio-list" style="margin-top: 5px">
+                                            <input type="radio" name="hidden" value="N">
+                                            <label class="radio">공개</label>
+
+                                            <input type="radio" name="hidden" value="Y" style="margin-left: 7px">
+                                            <label class="radio">비공개</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="field is-horizontal" th:if="${pageDto.boardType eq '2'}">
                                 <div class="field-label is-normal">
                                     <label for="address" class="label">진상발생지</label>
                                 </div>
@@ -79,9 +99,11 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div id="map" style="width:100%;height:500px;margin-top:10px;display:none"></div>
                             <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-                            <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8c652b5a26b0e5a0c4f28c04363c2076&libraries=services"></script>
+                            <script type="text/javascript"
+                                    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8c652b5a26b0e5a0c4f28c04363c2076&libraries=services"></script>
                             <script>
                                 var addr;
                                 var latitude;//위도
@@ -197,10 +219,7 @@
         <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
     </div>
 </footer>
-<script>
-
-</script>
-<script>
+<script th:inline="javascript">
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
     var f1 = $("#f1");
@@ -227,6 +246,7 @@
         }
         $(this).val('');
     }
+
     //파일업로드
     function allFileUpload() {
         var formData = new FormData();
@@ -276,8 +296,6 @@
         $("input[name='hidden']").change(function () {
             $("#isshow").val($("input[name='hidden']:checked").val());
         });
-
-        // $("#w-category").load("./ajax/loadcategory.php");
 
         //파일추가
         $("#fileupload").on("change", addFiles);
@@ -333,7 +351,8 @@
                 $("#w-title").focus();
                 return false;
             }
-            if (!latitude && !longitude) {
+            var boardType = [[${pageDto.boardType}]];
+            if (!latitude && !longitude && boardType == '2') {
                 alert("진상발생지를 선택해주세요");
                 return false;
             }
@@ -353,3 +372,22 @@
 
 </body>
 </html>
+<style>
+    input[type='radio'],
+    input[type='radio']:checked {
+        appearance: none;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 100%;
+        margin-right: 0.1rem;
+    }
+
+    input[type='radio'] {
+        background-color: white;
+        border: 1px solid black;
+    }
+
+    input[type='radio']:checked {
+        background-color: #9281e3;
+    }
+</style>

@@ -7,8 +7,24 @@
 
 <div class="content sub">
     <section>
-        <h3 class="sub-title">
-            오늘의 진상 </h3>
+        <h3 th:if="${pageDto.boardType eq '2'}" class="sub-title">
+            오늘의 진상　
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '3'}" class="sub-title">
+            진상 대응 노하우　
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '4'}" class="sub-title">
+            인생은 실전이야 진상아
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '5'}" class="sub-title">
+            변호사 상담
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '6'}" class="sub-title">
+            심리 상담
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '7'}" class="sub-title">
+            CS 전문 상담
+        </h3>
         <div class="board-wrap normal-view">
             <!-- s: .board-detail -->
             <article class="board-detail">
@@ -41,7 +57,9 @@
                 <div class="buttons-group">
                     <div class="fl">
                         <div class="buttons">
-                            <a href="#" th:href="@{/jinsang/modify/{id} (id=${board.id})}" class="button" id="edit">수정</a>
+                            <a href="#"
+                               th:href="@{/jinsang/modify/{id} (id=${board.id},boardType=${pageDto.boardType})}"
+                               class="button" id="edit">수정</a>
                         </div>
                     </div>
                     <div class="board-recommend">
@@ -99,11 +117,15 @@
                 <ul>
                     <li class="prev-num" th:if="${preBoard!=null}">
                         <i class="ico-chevron-up-thin">이전글</i>
-                        <a href="#" th:href="@{/jinsang/{id}/2 (id=${preBoard.id})}" class="viewArticle" th:text="${preBoard.title}"></a>
+                        <a href="#"
+                           th:href="@{/jinsang/{id}/{boardType} (id=${preBoard.id},boardType=${pageDto.boardType})}"
+                           class="viewArticle" th:text="${preBoard.title}"></a>
                     </li>
                     <li class="next-num" th:if="${nextBoard!=null}">
                         <i class="ico-chevron-down-thin">다음글</i>
-                        <a href="#" th:href="@{/jinsang/{id}/2 (id=${nextBoard.id})}"  data-idx="415" class="viewArticle" th:text="${nextBoard.title}">test2</a>
+                        <a href="#"
+                           th:href="@{/jinsang/{id}/{boardType} (id=${nextBoard.id},boardType=${pageDto.boardType})}"
+                           data-idx="415" class="viewArticle" th:text="${nextBoard.title}">test2</a>
                     </li>
                 </ul>
             </div>
@@ -123,10 +145,8 @@
         <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
     </div>
 </footer>
-<script>
 
-</script>
-<script>
+<script th:inline="javascript">
     var id = [[${board.id}]];
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
@@ -209,7 +229,6 @@
 </script>
 <script th:inline="javascript" th:src="@{'/js/reply.js'}"></script>
 <script th:inline="javascript">
-    var tmp;
     $(document).ready(function (e) {
         (function () {
             replyManger.getAll(id, printList);

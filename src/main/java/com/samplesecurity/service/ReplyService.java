@@ -145,7 +145,6 @@ public class ReplyService {
     }
 
     private ReplyAgreeCheck createAgreeCheck(Member findMember, Reply reply) {
-
         ReplyAgreeCheck replyAgreeCheck = ReplyAgreeCheck
                 .builder()
                 .reply(reply)

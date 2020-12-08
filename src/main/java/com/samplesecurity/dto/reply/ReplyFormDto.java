@@ -8,8 +8,6 @@ import java.time.LocalDate;
 @Data
 public class ReplyFormDto {
 
-//    private String memberName; controller에서 로그인한 유저 받음
-
     private String contents;
 
     //board,member 세팅은 service에서 함

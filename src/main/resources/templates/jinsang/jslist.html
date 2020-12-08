@@ -1,4 +1,5 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head th:replace="fragments/mainHeader :: mainHeader"></head>
 
 <body class="jsdotcom vsc-initialized">
@@ -8,10 +9,43 @@
 <div class="content sub">
     <section>
         <div class="h3-wrap">
-            <h3 class="sub-title">
+            <h3 th:if="${pageDto.boardType eq '1'}" class="sub-title">
+                진상 of 진상　
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '2'}" class="sub-title">
                 오늘의 진상　
                 <span class="write">
                     <a href="/jinsang/write?boardType=2" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '3'}" class="sub-title">
+                진상 대응 노하우　
+                <span class="write">
+                    <a href="/jinsang/write?boardType=3" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '4'}" class="sub-title">
+                인생은 실전이야 진상아
+                <span class="write">
+                    <a href="/jinsang/write?boardType=4" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '5'}" class="sub-title">
+                변호사 상담
+                <span class="write">
+                    <a href="/jinsang/write?boardType=5" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '6'}" class="sub-title">
+                심리 상담
+                <span class="write">
+                    <a href="/jinsang/write?boardType=6" class="button" style="margin-top: 30%">글쓰기</a>
+                </span>
+            </h3>
+            <h3 th:if="${pageDto.boardType eq '7'}" class="sub-title">
+                CS 전문 상담
+                <span class="write">
+                    <a href="/jinsang/write?boardType=7" class="button" style="margin-top: 30%">글쓰기</a>
                 </span>
             </h3>
         </div>
@@ -39,11 +73,13 @@
                     </thead>
                     <tbody>
                     <tr th:each="board:${result.content}">
-                        <td class="is-hidden-mobile">[[${board.id}]]</td>
+                        <td class="is-hidden-mobile">[[${board.idx}]]</td>
                         <td class="is-hidden-mobile">[[${board.category}]]</td>
                         <td class="has-text-left">
                             <a href="#" class="title is-6 text-ellipsis"
-                               th:href="@{/jinsang/{id}/2 (id=${board.id})}">[[${board.title}]]
+                               id="title"
+                               th:attr="data-hidden=${board.hidden},data-writer=${board.writer},data-type=${pageDto.boardType}"
+                               th:href="@{/jinsang/{id}/{boardType} (id=${board.id},boardType=${pageDto.boardType})}">[[${board.title}]]
                                 <span th:if="${board.replyCount}" th:text="'['+${board.replyCount}+']'"></span>
                             </a>
                         </td>
@@ -89,14 +125,53 @@
         <p class="copyright">Copyright ⓒ jinnsang.com , ALL RIGHTS RESERVED.</p>
     </div>
 </footer>
-<script>
+<script th:inline="javascript">
     $(document).ready(function () {
         var formObj = $("#listForm");
-
         $(".pagination a").on("click", function (e) {
             e.preventDefault();
             formObj.find('[name="page"]').val($(this).attr('href'));
             formObj.submit();
+        });
+        //조회시 권한 체크
+        $("#title").on("click", function (e) {
+            var loginUserNickName = [[${#authentication.principal} eq 'anonymousUser' ? null : ${#authentication.principal.member.nickName}]];
+            var role = [[${#authentication.principal} eq 'anonymousUser' ? null : ${#authentication.principal.member.roles}]];
+            var writer = $(this).data("writer");
+            var type = $(this).data("type");
+            var roleArr = [];
+            //null 체크않하면 개발자도구 console에서 오류보임
+            if (role !== null) {
+                for (var i = 0; i < role.length; i++) {
+                    roleArr.push(role[i].role);
+                }
+            }
+            var adminCheck = roleArr.includes("ROLE_ADMIN");
+            var lawyerCheck = roleArr.includes("ROLE_LAWYER");
+            var CounselorCheck = roleArr.includes("ROLE_COUNSELOR");
+            var CsCounselorCheck = roleArr.includes("ROLE_CSCOUNSELOR");
+            var hidden = $(this).data("hidden");
+            console.log("type: " + type);
+            console.log("hidden: " + hidden);
+            if (type.toString() === "5" && hidden.toString() === "Y") {
+                console.log("@@@")
+                if (loginUserNickName !== writer && !adminCheck && !lawyerCheck) {
+                    e.preventDefault();
+                    alert("비밀글입니다.")
+                }
+            }
+            if (type.toString() === "6" && hidden.toString() === "Y") {
+                if (loginUserNickName !== writer && !adminCheck && !CounselorCheck) {
+                    e.preventDefault();
+                    alert("비밀글입니다.")
+                }
+            }
+            if (type.toString() === "7" && hidden.toString() === "Y") {
+                if (loginUserNickName !== writer && !adminCheck && !CsCounselorCheck) {
+                    e.preventDefault();
+                    alert("비밀글입니다.")
+                }
+            }
         });
     })
 </script>

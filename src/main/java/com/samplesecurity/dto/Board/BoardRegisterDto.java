@@ -20,6 +20,7 @@ public class BoardRegisterDto {
     private String latitude; //위도
     private String boardType;
     private String longitude; //경도
+    private String hidden;
     private List<AttachFileDto> fileDtos = new ArrayList<>();
 
     public Board toEntity(Member member, Category category) {
@@ -32,7 +33,23 @@ public class BoardRegisterDto {
                 .boardType(boardType)
                 .category(category)
                 .agreeCount(0)
+                .hidden(hidden)
                 .createdDate(LocalDate.now())
+                .build();
+        board.setMember(member);
+
+        return board;
+    }
+
+    public Board toEntityOfKnow(Member member, Category category) {
+        Board board = Board.builder()
+                .title(title)
+                .contents(contents)
+                .boardType(boardType)
+                .category(category)
+                .agreeCount(0)
+                .createdDate(LocalDate.now())
+                .hidden(hidden)
                 .build();
         board.setMember(member);
 

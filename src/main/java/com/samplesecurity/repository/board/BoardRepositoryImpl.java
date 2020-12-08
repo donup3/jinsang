@@ -3,8 +3,11 @@ package com.samplesecurity.repository.board;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.dto.Board.BoardListDto;
+import com.samplesecurity.dto.Board.HomeBoardDto;
 import com.samplesecurity.dto.Board.QBoardListDto;
+import com.samplesecurity.dto.Board.QHomeBoardDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +16,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.samplesecurity.domain.QMember.member;
+import static com.samplesecurity.domain.board.QAddress.address;
 import static com.samplesecurity.domain.board.QBoard.board;
 import static com.samplesecurity.domain.board.QCategory.category;
 
@@ -26,10 +30,29 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
     @Override
     public Page<BoardListDto> findAllByDto(String boardType, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
+
         if (boardType != null) {
             switch (boardType) {
+                case "1":
+                    builder.and(board.boardType.eq("1"));
+                    break;
                 case "2":
-                    builder.and(board.boardType.eq(boardType));
+                    builder.and(board.boardType.eq("1").or(board.boardType.eq("2")));
+                    break;
+                case "3":
+                    builder.and(board.boardType.eq("3"));
+                    break;
+                case "4":
+                    builder.and(board.boardType.eq("4"));
+                    break;
+                case "5":
+                    builder.and(board.boardType.eq("5"));
+                    break;
+                case "6":
+                    builder.and(board.boardType.eq("6"));
+                    break;
+                case "7":
+                    builder.and(board.boardType.eq("7"));
                     break;
                 default:
                     break;
@@ -39,12 +62,14 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
         QueryResults<BoardListDto> result = queryFactory
                 .select(
                         new QBoardListDto(board.id,
+                                board.id,
                                 category.name.as("category"),
                                 board.title,
                                 board.createdDate,
                                 member.nickName.as("writer"),
                                 board.agreeCount,
-                                board.replies.size()))
+                                board.replies.size(),
+                                board.hidden))
                 .from(board)
                 .orderBy(board.id.desc())
                 .leftJoin(board.category, category)
@@ -68,7 +93,6 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                 .where(board.id.lt(boardId)
                         .and(board.boardType.eq(boardType)))
                 .fetchOne();
-
     }
 
     @Override
@@ -79,5 +103,48 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                 .where(board.id.gt(boardId)
                         .and(board.boardType.eq(boardType)))
                 .fetchOne();
+    }
+
+    @Override
+    public List<Board> findAllByType1() {
+        return queryFactory.selectFrom(board)
+                .where(board.boardType.eq("1"))
+                .orderBy(board.id.desc())
+                .limit(4)
+                .fetch();
+    }
+
+    @Override
+    public List<Board> findAllByType2() {
+        return queryFactory.selectFrom(board)
+                .where(board.boardType.eq("2").or(board.boardType.eq("1")))
+                .orderBy(board.id.desc())
+                .limit(4)
+                .fetch();
+    }
+
+    @Override
+    public List<Board> findAllByType3() {
+        return queryFactory.selectFrom(board)
+                .where(board.boardType.eq("3"))
+                .orderBy(board.id.desc())
+                .limit(4)
+                .fetch();
+    }
+
+    @Override
+    public List<Board> findAllByType4() {
+        return queryFactory.selectFrom(board)
+                .where(board.boardType.eq("4"))
+                .orderBy(board.id.desc())
+                .limit(4)
+                .fetch();
+    }
+
+    @Override
+    public List<HomeBoardDto> findCountByAddress() {
+        return queryFactory.select(new QHomeBoardDto(address.cityName, address.boards.size()))
+                .from(address)
+                .fetch();
     }
 }

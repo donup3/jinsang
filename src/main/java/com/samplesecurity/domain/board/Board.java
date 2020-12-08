@@ -3,6 +3,7 @@ package com.samplesecurity.domain.board;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.domain.reply.Reply;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -36,7 +37,10 @@ public class Board {
 
     private LocalDate createdDate;
 
-    private String boardType; //게시물 구분분
+    private String boardType; //게시물 구분
+
+    @Column(columnDefinition = "varchar(1) default 'N'")
+    private String hidden; //Y일  경우 비밀글, N 일경우 공개글
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -46,12 +50,19 @@ public class Board {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address cityNameOfAddress;
+
     //attach 파일들은 단방향 매핑해놓음
     @OneToMany(mappedBy = "board")
     private List<UploadFile> uploadFiles;
 
     @OneToMany(mappedBy = "board")
     private List<Reply> replies;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<AgreeCheck> agreeChecks;
 
     public void setMember(Member member) {
         this.member = member;
@@ -60,5 +71,10 @@ public class Board {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.hidden = this.hidden == null ? "N" : this.hidden;
     }
 }

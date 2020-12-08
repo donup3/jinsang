@@ -10,4 +10,5 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> ,ReplyCustom
     List<Reply> findAllByRefOrderGreaterThanEqualAndRef(int setRefOrder, int ref);
 
     void deleteByBoardId(Long boardId);
+
 }

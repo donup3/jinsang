@@ -1,10 +1,7 @@
 package com.samplesecurity.service;
 
-import com.samplesecurity.domain.board.AgreeCheck;
-import com.samplesecurity.domain.board.AttachFile;
-import com.samplesecurity.domain.board.Board;
+import com.samplesecurity.domain.board.*;
 import com.samplesecurity.domain.Member;
-import com.samplesecurity.domain.board.Category;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.BoardUpdateDto;
@@ -38,19 +35,30 @@ import static java.lang.Long.*;
 @Transactional
 @Slf4j
 public class BoardService {
-
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
     private final AgreeCheckRepository agreeCheckRepository;
     private final CategoryRepository categoryRepository;
     private final ReplyRepository replyRepository;
     private final UploadFileRepository uploadFileRepository;
+    private final AddressRepository addressRepository;
 
     public Page<BoardListDto> getBoardList(String boardType, Pageable pageable) {
+
         return boardRepository.findAllByDto(boardType, pageable);
     }
 
-    public void register(Board board, List<AttachFileDto> fileDtos) {
+    //게시물 등록
+    public void register(Board board, List<AttachFileDto> fileDtos, String address) {
+        if (address != null) {
+            String cityName = address.substring(0, 2);
+            log.info("cityName: " + cityName);
+            Address findAddress = addressRepository.findByCityName(cityName);
+
+            if (findAddress != null) {
+                board.setCityNameOfAddress(findAddress);
+            }
+        }
         Board saveBoard = boardRepository.save(board);
 
         if (fileDtos != null) {
@@ -90,7 +98,9 @@ public class BoardService {
             agreeCheck.setAgreeChecked(false);
             board.setAgreeCount(count);
         }
-
+        if (board.getAgreeCount() >= 50 && board.getBoardType().equals("2")) {
+            board.setBoardType("1");
+        }
         return count;
     }
 
@@ -138,9 +148,16 @@ public class BoardService {
             //게시물 업데이트
             board.setTitle(boardUpdateDto.getTitle());
             board.setContents(boardUpdateDto.getContents());
-            board.setAddress(boardUpdateDto.getAddress());
-            board.setLatitude(parseFloat(boardUpdateDto.getLatitude()));
-            board.setLongitude(parseFloat(boardUpdateDto.getLongitude()));
+            //1234타입의 글은 업데이트할때 hidden이 null임
+            if (boardUpdateDto.getHidden() != null) {
+                board.setHidden(boardUpdateDto.getHidden());
+            }
+            //주소 위도 경도 업데이트
+            if (boardUpdateDto.getAddress() != null && boardUpdateDto.getLatitude() != null && boardUpdateDto.getLongitude() != null) {
+                board.setAddress(boardUpdateDto.getAddress());
+                board.setLatitude(parseFloat(boardUpdateDto.getLatitude()));
+                board.setLongitude(parseFloat(boardUpdateDto.getLongitude()));
+            }
             board.setCategory(newCategory);
             //파일 업데이트
             if (boardUpdateDto.getFileDtos() != null) {
@@ -152,19 +169,21 @@ public class BoardService {
         }
     }
 
-    public void delete(Long boardId,Member findMember) {
+    public void delete(Long boardId, Member findMember) {
         Board board = boardRepository.findById(boardId).get();
         if (findMember.getNickName().equals(board.getMember().getNickName())) {
+            //댓글 삭제
+            replyRepository.deleteByBoardId(boardId);
+            //파일 삭제
             List<AttachFile> attachFiles = attachFileRepository.findAllByBoardId(boardId);
             deleteFiles(attachFiles);
-
-            replyRepository.deleteByBoardId(boardId);
             attachFileRepository.deleteByBoardId(boardId);
             uploadFileRepository.deleteByBoardId(boardId);
-
+            //게시글 삭제
             boardRepository.deleteById(boardId);
         }
     }
+
     private void deleteFiles(List<AttachFile> attachList) {
         if (attachList == null || attachList.size() == 0) {
             return;

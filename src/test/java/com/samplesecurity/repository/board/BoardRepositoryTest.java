@@ -82,7 +82,7 @@ class BoardRepositoryTest {
     @Test
     public void 페이징테스트(){
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC,"id");
-        Page<BoardListDto> boards = boardRepository.findAllByDto("T",pageRequest);
+        Page<BoardListDto> boards = boardRepository.findAllByDto("T", pageRequest);
         for (BoardListDto board : boards) {
             System.out.println("board = " + board);
         }

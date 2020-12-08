@@ -4,78 +4,15 @@
 <body class="jsdotcom vsc-initialized">
 <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 <div th:replace="fragments/nav :: mainNav"></div>
-<script>
-    $(function () {
-        $(".logout").click(function () {
-            //ajax
-            $.ajax({
-                url: 'logout.php',
-                method: 'post',
-                dataType: 'json',
-                success: function (result) {
-                    location.href = "./index.php";
-                },
-                error: function (request, status, error) {
-                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
-                }
-            });
-        });
-    });
-</script>
 <div class="content">
     <div class="cont-wrap">
         <section class="area" id="status">
             <h3>진상 출몰 지역</h3>
             <div class="status-wrap">
                 <ul class="status-list">
-                    <li>
-                        <span class="seoul zone">서울</span><span class="w-count">250</span>
-                    </li>
-                    <li>
-                        <span class="incheon zone">인천</span><span class="w-count">80</span>
-                    </li>
-                    <li>
-                        <span class="gyeonggi zone">경기</span><span class="w-count">130</span>
-                    </li>
-                    <li>
-                        <span class="kangwon zone">강원</span><span class="w-count">68</span>
-                    </li>
-                    <li>
-                        <span class="chungbuk zone">충북</span><span class="w-count">30</span>
-                    </li>
-                    <li>
-                        <span class="chungnam zone">충남</span><span class="w-count">35</span>
-                    </li>
-
-                    <li>
-                        <span class="daejeon zone">대전</span><span class="w-count">82</span>
-                    </li>
-                    <li>
-                        <span class="gyeongbuk zone">경북</span><span class="w-count">12</span>
-                    </li>
-                    <li>
-                        <span class="ulsan zone">울산</span><span class="w-count">60</span>
-                    </li>
-                    <li>
-                        <span class="daegu zone">대구</span><span class="w-count">43</span>
-                    </li>
-                    <li>
-                        <span class="gyeongnam zone">경남</span><span class="w-count">44</span>
-                    </li>
-                    <li>
-                        <span class="busan zone">부산</span><span class="w-count">118</span>
-                    </li>
-                    <li>
-                        <span class="jeonbuk zone">전북</span><span class="w-count">65</span>
-                    </li>
-                    <li>
-                        <span class="jeonnam zone">전남</span><span class="w-count">32</span>
-                    </li>
-                    <li>
-                        <span class="gwangju zone">광주</span><span class="w-count">53</span>
-                    </li>
-                    <li>
-                        <span class="jeju zone">제주</span><span class="w-count">120</span>
+                    <li th:each="address:${address}">
+                        <span th:class="${address.city}+' zone'" th:text="${address.city}"></span>
+                        <span class="w-count" th:text="${address.count}"></span>
                     </li>
                 </ul>
                 <div class="map">
@@ -83,7 +20,7 @@
                          xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="500px" height="500px"
                          viewBox="50 50 591 800" xml:space="preserve">
                             <g i:extraneous="self">
-                                <g name="서울" class="md-trigger" data-modal="modal-3" id="seoul" i:layer="yes"
+                                <g name="서울" class="md-trigger" data-modal="modal-3" id="서울" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#000000000000" seq="1">
                                     <path i:knockout="Off" fill="#7d6db4" stroke="#FFFFFF" d="M183.5,256.583l1.188,4.667L183,263.083l1.375,3.792l2.938-1.313
                         l2.5-1.563l0.75,1l3.271,7.417l2.917-1.729l2.75,1.896l2.125,0.104l3.5-3.938l5.541,0.333l1.521,4.167l2.646,0.833L218.25,269
@@ -93,14 +30,14 @@
                         l-1.583-3.042l-2.75,2.938l-2.188,0.813l-0.375,6.125l-2.125,0.938l-2.438,2.188l-2.188-0.125l-1.313-0.188l-4.5-3.063
                         l-4.792,7.333l6.229,2.604L183.5,256.583z"></path>
                                 </g>
-                                <g name="인천" class="md-trigger" data-modal="modal-3" id="incheon" i:layer="yes"
+                                <g name="인천" class="md-trigger" data-modal="modal-3" id="인천" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#4F00FFFF4F00" seq="2">
                                     <path i:knockout="Off" fill="#d0c8eb" stroke="#FFFFFF" d="M174.667,265l-0.083-4.25l1.917-1.583v-0.75l0.583-4.833l3-4
                         l-0.583-0.5l-5.833-0.583l-1.47-0.817l0.137-0.183l-9.5-7l-2.5,4.5l-7.417,3.25l3.5,4.333l0.417,4.583L163,257.75l-4.25,0.667
                         l-0.083,2.75l1.793,0.249l-1.334,1.334l-2,1.313h-0.188l-0.188,2.25l-1.375,1.938l-0.063,2.125l1.063,0.938l1.438-1.188
                         l0.188,2.063l1.833,1.146l1.417,2.25l3.333,2.75l2.75,1.917l5.417,0.167L179,268.5l-1.75-1.25L174.667,265z"></path>
                                 </g>
-                                <g name="경기" class="md-trigger" data-modal="modal-3" id="gyeonggi" i:layer="yes"
+                                <g name="경기" class="md-trigger" data-modal="modal-3" id="경기" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#4F004F00FFFF" seq="3">
                                     <path i:knockout="Off" fill="#b7aedc" stroke="#FFFFFF" d="M312.167,254.167l-6.334-5l-4-1.667h-8l-12.333-8.167l-6.167,3
                         L272.5,238l2.333-1.167l0.5-9.667l-4.833,0.667l0.333-3.833l2.833-3.333l-2.5-4.5l1.833-2.833l-0.833-4.667l6.667-6.333h2.833
@@ -125,7 +62,7 @@
                         l2.167-0.5l2.167,0.833l-0.167-2.667l3.5-1.167L285,315.5l7.333,3.667l5.833-9.5l1.667-8l1.5-10.667L301,282.5l5.5-10.667
                         l-1.333-6.333l-4.667-3.333l7.333-6.833L312.167,254.167z"></path>
                                 </g>
-                                <g name="충북" class="md-trigger" data-modal="modal-3" id="chungbuk" i:layer="yes"
+                                <g name="충북" class="md-trigger" data-modal="modal-3" id="충북" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#FFFFFFFF4F00" seq="4">
                                     <path i:knockout="Off" fill="#e8e3f9" stroke="#FFFFFF" d="M409.5,324.333l-6.167,0.833l-8-4.833l-3.958,0.792l-7.208,0.375
                         L380,315.333h-5.667l-6.166,2.5l-2.667-4.5l7.667-6.333l-0.334-2.333l-2.208-0.417l-5.792,2.25L362,303.333l-4.25-2.583
@@ -147,7 +84,7 @@
                         l3.125,0.75l6.5,7.625l3.75,1.375l2.25,2.125l3.5-3.375l3.875,0.25l3.75-5.75l-1-2.75l-1.625-3.375l2-5.625l9.625-9.25
                         l2.625-0.875l2.25-3.75l2.25-4.25l6.25-0.125l2.75-3.167L409.5,324.333z"></path>
                                 </g>
-                                <g name="충남" id="chungnam" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#000000000000">
+                                <g name="충남" id="충남" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#000000000000">
                                     <path i:knockout="Off" fill="#e8e3f9" stroke="#FFFFFF" d="M287.167,484.5l-2.5-5.833l-3.5-3.334l1.5-3.5l-0.167-4l-0.667-4.666
                         l-1.667-2.334h-3.833l-2.5-3l-4.667,1.334l-6.667,6.958l-2.833-2.625l-4.042-3.5l-0.375-5.875l-1.375-0.375l-1.708,2.417
                         L252.25,462l-3,4.125l-7.125-7.5l0.875-3.25l-6.25-3.125l1.625-1.625L239,446l0.125-0.375l1.375-2.25V434l2.75-3.25l3.875-0.125
@@ -170,7 +107,7 @@
                         l2.75,2.583l2.167,9.667l4.333,6.167l1.167,0.333l2.167-2.333l3.833,5.833l9.333-0.333l1-8.167l10,6.333l1.667-5L285,486.667
                         L287.167,484.5z"></path>
                                 </g>
-                                <g name="강원" id="kangwon" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#4F00FFFF4F00">
+                                <g name="강원" id="강원" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#4F00FFFF4F00">
                                     <path i:knockout="Off" fill="#d8d1f0" stroke="#FFFFFF" d="M499.5,305.167l0.333-1.667l-0.833-2l2.833-1.667l-4.666-7.5
                         L493,288.167l-3.167-1.333l-2.5-7.333l1.167-2.167l-8.167-5.5l-0.5-5.5l-3.5-3l-2.666-4.667l-4.5-6.167l2.166-2.5l-1.5-3.333
                         l-6.666-5L461,237.5c0,0,1.333-4.667,1.5-5.333S450,219.833,450,219.833h-1.667l0.334-3L439.5,207l-5.333-6.167l-0.5-4.333
@@ -189,7 +126,7 @@
                         l7.333,3.333l4.834,1.333l-1-3.333l2-2.333l2.5-3.167l6.833,4l4,1.167l4.833-0.667l2.334-6.333l4.333,2.5l3-1l5.667,1.5L465,326
                         l0.667-2.333l2.833-2.333l3.667,0.833l9,7.5l5.333-0.333L486.167,324l5.833-5.667l3.667-0.333l3.666-4.167h3.5L499.5,305.167z"></path>
                                 </g>
-                                <g class="md-trigger" data-modal="modal-3" name="광주" id="gwangju" i:layer="yes"
+                                <g class="md-trigger" data-modal="modal-3" name="광주" id="광주" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#4F00FFFFFFFF" seq="5">
                                     <path i:knockout="Off" fill="#dfd9f5" stroke="#FFFFFF" d="M207.334,628.25l1.5-1.417l-2.25-2.916L203.417,624l-2-1.917
                         l-1.75-4.416l-2.667-4L194.834,612l-3.333,2l-2.833,0.083l-2.583,2.667L181,619l-6.167-2.917l-0.25-2.666h-2.25l-1.75,6.166
@@ -197,7 +134,7 @@
                         l-0.583,2.25l1.75,1.333l5.5,0.25l3.25-2.417l5.25-1.333l3.917-1.75l3.833,3.167l1-1.5l3.583-1.667l2-3l2-3.167l-0.75-1.916
                         V628.25z"></path>
                                 </g>
-                                <g class="md-trigger" data-modal="modal-3" name="대전" id="daejeon" i:layer="yes"
+                                <g class="md-trigger" data-modal="modal-3" name="대전" id="대전" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#4F008000FFFF" seq="6">
                                     <path i:knockout="Off" fill="#d0c8eb" stroke="#FFFFFF" d="M275.667,433l-0.5-1.667L272,430.875L270.625,433l-2.125-3.625V429
                         l0.875-3.125l-1.25-1.125l-1-3.5l-1.5,1.75l-2.25,3.125l-1.625-0.625l-4.625-0.875l-0.125-4.75L254.625,418l-1.375,1.375
@@ -205,7 +142,7 @@
                         l-0.875,3.25l3.5,3.875l3.625,4l3-4.5l-0.125-5.375l1.75-2.875l0.125-0.5l1.25,0.875l0.375,5.875l3.875,3.875l3,2.25
                         l6.167-6.792L268.5,455l1.167-3.167L268.875,448l0.792-4.333l2.958-2.667l0.375-5.167l2.125-0.333l2.208-1.667L275.667,433z"></path>
                                 </g>
-                                <g class="md-trigger" data-modal="modal-3" name="울산" id="ulsan" i:layer="yes"
+                                <g class="md-trigger" data-modal="modal-3" name="울산" id="울산" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#4F00FFFF4F00" seq="7">
                                     <path i:knockout="Off" fill="#d8d1f0" stroke="#FFFFFF" d="M520.875,554.5l-2.125-3l-1.25-4.5l-10.25-4.25L500,547.5l-4.5-1.625
                         l-0.5-6.625l-6.5-1.75l-6.75,0.25l-1.25-1l-3,2.5l-4.75,0.75l-3.25,6.5l2.375,3.375L468.25,550l-5.25,2l2.125,3.125l-0.75,3.75
@@ -214,7 +151,7 @@
                         l-0.25-3.375l0.25-2.375l0.847-2.42l1.403,1.045l-1,2.5l1.75,0.875l0.375,4.25l3-2.375l1.625-3l0.125-5.625l1.125-2.875
                         l-1.375-1.75l1.5-2L520.875,554.5z"></path>
                                 </g>
-                                <g class="md-trigger" data-modal="modal-3" name="경북" id="gyeongbuk" i:layer="yes"
+                                <g class="md-trigger" data-modal="modal-3" name="경북" id="경북" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#4F008000FFFF" seq="8">
                                     <path i:knockout="Off" fill="#efebfd" stroke="#FFFFFF" d="M532.75,481l-2-2l-5.75,8.75l-3.25,2.25l-2.75,4l-5.25-2.75
                         L511.5,488l-3.25-4.5l6-6l1.25-2.5l-4.5-4.25l-0.75-5.5l-2.5-2.25l-1-2l1.25-0.5l1.75-4l-1.5-1.25l-1-4.5l0.25-10.5l6.5-11
@@ -238,7 +175,7 @@
                         l3-2.5l1.25,1l6.75-0.25l6.5,1.75l0.5,7l4.5,1.25l7.25-4.75L517.5,547l4.25-4.75l-0.25-2.75l1.75-6l0.5-8.75l2.75-3.25
                         l-0.5-2.75l1.75-2.5L528,510l-2-7l4-2.5l1.25-5.5l2.75-6.5L532.75,481z"></path>
                                 </g>
-                                <g class="md-trigger" data-modal="modal-3" name="경남" id="gyeongnam" i:layer="yes"
+                                <g class="md-trigger" data-modal="modal-3" name="경남" id="경남" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#4F004F00FFFF" seq="9">
                                     <path i:knockout="Off" fill="#dfd9f5" stroke="#FFFFFF" d="M487.75,581.75l-5.625,0.375l-6.375-8.875l-5-3.5l-6.5-0.75
                         l-3.5-2.75l-1.625-1.5v-2.875l5.25-3l0.75-3.75L463,552l-3.5,3.25l-3.5-3.5l-4.25-1.75l-6.25,2.25l-3.25,5.25l-5,1l-2.5,3
@@ -259,7 +196,7 @@
                         l-0.875-2.375l0.5,0.125l3.5-0.5l1.75-2.25l3.5,1.75l-0.25-3.5c0,0,1.25-4.5,2-4.5s5.25-0.25,5.25-0.25l2.5-2.5l7-2.75l3.25-5
                         l12-5l1.5-9.5l2-0.25l3,2.25l3-2l0.875-3.75l2-3.75L487.75,581.75z"></path>
                                 </g>
-                                <g class="md-trigger" data-modal="modal-3" name="부산" id="busan" i:layer="yes"
+                                <g class="md-trigger" data-modal="modal-3" name="부산" id="부산" i:layer="yes"
                                    i:dimmedpercent="50" i:rgbtrio="#FFFFFFFF4F00" seq="10">
                                     <path i:knockout="Off" fill="#b7aedc" stroke="#FFFFFF" d="M499.125,596.5l-0.375-5.25L496,589.5l-2.125,0.5L489,589.25
                         l-1.25,3.75l-3,2l-2.625-2.125L479.75,593l-1.5,9.5l-8.75,3.75l-3.25,1.25l-1-0.75L463,612.5l-7,2.75l-2.5,2.5l-5.25,0.25
@@ -270,7 +207,7 @@
                         l1.625-0.375l0.875-2.25l1.25-2.75l-1.875-1.5l1.375-1.25l2-2.875l-1.5-1.875l1.875-3.25l2.25,1.125l0.625-1.75L499.125,596.5z"></path>
                                 </g>
 
-                                <g name="제주" id="jeju" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#000000000000">
+                                <g name="제주" id="제주" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#000000000000">
                                     <path i:knockout="Off" fill="#b7aedc" stroke="#FFFFFF" d="M532.167,742.667l-1.334-2l-3.166-2.5l0.5-3.5l-0.5-4l-2.834-0.167
                         l-6.166-1.667l-2-4.833l-9-0.333l-2.834,2.5L496,726.5l-6.333,2L484,731h-10.333l-7.334,4L459,738.5l-8.833,0.333l-2.5,3
                         l-4.334,2.834L443,747.833L430.333,759.5v8.333l2.167,4l1.833,3.167l3.667,0.833l5.667,6l2.833,0.334L447,779l3.333-2.333
@@ -278,7 +215,7 @@
                         l0.167-3.334l5.833-8l3.334-3.333l4-3.833l-1.334-2.167L532.167,742.667z"></path>
                                 </g>
 
-                                <g name="대구" id="daegu" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#FFFF4F004F00">
+                                <g name="대구" id="대구" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#FFFF4F004F00">
                                     <path i:knockout="Off" fill="#dfd9f5" stroke="#FFFFFF" d="M427.75,505.75l-0.5-9l-1.25-3.5l-3.833-1.084l-8.834,0.001
                         L410,496.333l-0.333,0.334l-6,3l-2.5-1.667l-1.334,1.333l1,3.667L400,507.167l-2.333,4.166L393.333,510L393,504.833l-2.5-1.166
                         l-4.667,4L383,512.5v7.167l4.833-1.167l6.667,3.333l-0.5,2l-6.667,1L383.5,533l6,4.833L388.833,543l-9.166-1l0.666,4.667
@@ -287,7 +224,7 @@
                                 </g>
 
 
-                                <g name="전북" id="jeonbuk" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#FFFF4F00FFFF">
+                                <g name="전북" id="전북" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#FFFF4F00FFFF">
                                     <path i:knockout="Off" fill="#d8d1f0" stroke="#FFFFFF" d="M323,503.5l-5.167-7.333l-0.5-3.334L313.5,491l-10.167,3.333
                         L302.167,492l-5.667-1.167l-3-4.833l-2.667,2.667l-3.667-4.167L285,486.667l1.667,4.166l-1.667,4.5l-10-5.833l-0.96,7.842
                         L264.667,498l-3.833-5.833l-2.167,2.333l-1.167-0.333l-3.148-3.577l0.148-0.423L253.167,488L251,478.333l-3.333-2.666
@@ -308,7 +245,7 @@
                                 </g>
 
 
-                                <g name="전남" id="jeonnam" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#800080008000">
+                                <g name="전남" id="전남" i:layer="yes" i:dimmedpercent="50" i:rgbtrio="#800080008000">
                                     <path i:knockout="Off" fill="#e8e3f9" d="M287.25,668H293l6.5-7.5l2-0.75l3.167-3.083l2.333-2.334l0.667-3.833l-1.834,0.167
                             L304.5,646l-2.667-2l-1.333-2.667l-5-4l-0.667-6l-8.583-7.083l0.75-8.75l-4.25-6l-2.25-4l-4.25-4.25l-7-4.5l-6.875-0.25
                             L256,605.125l-0.198,3.664l-0.302-3.622l-4-2.292l-4.833,3.625l-4.167-2.667l-3.875-0.333l-3.125-3.625l-2.25,3.875
@@ -367,42 +304,25 @@
                                         <col style="width:130px;" class="is-hidden-480">
                                     </colgroup>
                                     <tbody>
-                                    <tr>
+                                    <tr th:each="board1:${board1}">
                                         <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                편의점 알바 진상 고객들 어떻게 대처해야하나요ㅠㅠ </a>
+                                            <a href="#"
+                                               th:href="@{/jinsang/{id}/{boardType} (id=${board1.id},boardType=${board1.boardType})}"
+                                               class="title is-6 text-ellipsis">
+                                                [[${board1.title}]]
+                                            </a>
                                         </td>
-                                        <td class="is-hidden-480">2019.07.29</td>
+                                        <td class="is-hidden-480">[[${board1.createdDate}]]</td>
                                     </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                알바 고민하는 애들 꼭 봐 진상 썰 푼다 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.29</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                1년넘게 일한곳 진상때문에 그만둡니다. </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.29</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                진상글이 대세인가요. 호프집에서 꽤오래 일하면서 본 유형들 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.29</td>
-                                    </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <!-- e: .bbs-list -->
                         </div>
-                        <a href="#" class="read-more" title="진상of진상 더보기"><i class="blind">더보기</i><span
-                                class="ico-plus-thick1"></span></a>
+                        <a href="/jinsang/jslist?boardType=1" class="read-more" title="진상of진상 더보기">
+                            <i class="blind">더보기</i>
+                            <span class="ico-plus-thick1"></span>
+                        </a>
                     </section>
                 </div>
             </li>
@@ -420,47 +340,29 @@
                                         <col style="width:130px;" class="is-hidden-480">
                                     </colgroup>
                                     <tbody>
-                                    <tr>
+                                    <tr th:each="board2:${board2}">
                                         <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                유튜브 테스트 </a>
+                                            <a href="#"
+                                               th:href="@{/jinsang/{id}/{boardType} (id=${board2.id},boardType=${board2.boardType})}"
+                                               class="title is-6 text-ellipsis">
+                                                [[${board2.title}]]
+                                            </a>
                                         </td>
-                                        <td class="is-hidden-480">2020.11.22</td>
+                                        <td class="is-hidden-480">[[${board2.createdDate}]]</td>
                                     </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                강원도 진상 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2020.11.22</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                진상 때문에 장사 접고싶은거111 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2020.11.18</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                직원이 실업급여를 요청할경우...? </a>
-                                        </td>
-                                        <td class="is-hidden-480">2020.03.02</td>
-                                    </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <!-- e: .bbs-list -->
                         </div>
-                        <a href="#" class="read-more" title="오늘의 진상 더보기"><i class="blind">더보기</i><span
-                                class="ico-plus-thick1"></span></a>
+                        <a href="/jinsang/jslist?boardType=2" class="read-more" title="오늘의 진상 더보기">
+                            <i class="blind">더보기</i>
+                            <span class="ico-plus-thick1"></span>
+                        </a>
                     </section>
                 </div>
             </li>
             <li class="inbox">
-
                 <div class="cont-wrap">
                     <section class="knowhow">
                         <h3>진상대응노하우</h3>
@@ -473,42 +375,23 @@
                                         <col style="width:130px;" class="is-hidden-480">
                                     </colgroup>
                                     <tbody>
-                                    <tr>
+                                    <tr th:each="board3:${board3}">
                                         <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                중고나라 사기 대응 일지 </a>
+                                            <a href="#" th:href="@{/jinsang/{id}/{boardType} (id=${board3.id},boardType=${board3.boardType})}" class="title is-6 text-ellipsis">
+                                                [[${board3.title}]]
+                                            </a>
                                         </td>
-                                        <td class="is-hidden-480">2019.11.01</td>
+                                        <td class="is-hidden-480">[[${board3.createdDate}]]</td>
                                     </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                진상 인실진 방법 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.09.12</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                테스트116 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.11</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                테스트115 </a>
-                                        </td>
-                                        <td class="is-hidden-480">2019.07.11</td>
-                                    </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <!-- e: .bbs-list -->
                         </div>
-                        <a href="#" class="read-more" title="진상대응노하우 더보기"><i class="blind">더보기</i><span
-                                class="ico-plus-thick1"></span></a>
+                        <a href="/jinsang/jslist?boardType=3" class="read-more" title="진상대응노하우 더보기">
+                            <i class="blind">더보기</i>
+                            <span class="ico-plus-thick1"></span>
+                        </a>
                     </section>
                 </div>
             </li>
@@ -526,21 +409,23 @@
                                         <col style="width:130px;" class="is-hidden-480">
                                     </colgroup>
                                     <tbody>
-                                    <tr>
+                                    <tr th:each="board4:${board4}">
                                         <td class="has-text-left">
-                                            <a href="#" class="title is-6 text-ellipsis">
-                                                편의점 진상 대응요령 </a>
+                                            <a href="#" th:href="@{/jinsang/{id}/{boardType} (id=${board4.id},boardType=${board4.boardType})}" class="title is-6 text-ellipsis">
+                                                [[${board4.title}]]
+                                            </a>
                                         </td>
-                                        <td class="is-hidden-480">2019.08.07</td>
+                                        <td class="is-hidden-480">[[${board4.createdDate}]]</td>
                                     </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <!-- e: .bbs-list -->
                         </div>
-                        <a href="#" class="read-more" title="인생은 실전이야 진상아 더보기"><i class="blind">더보기</i><span
-                                class="ico-plus-thick1"></span></a>
+                        <a href="/jinsang/jslist?boardType=4" class="read-more" title="인생은 실전이야 진상아 더보기">
+                            <i class="blind">더보기</i>
+                            <span class="ico-plus-thick1"></span>
+                        </a>
                     </section>
                 </div>
             </li>

@@ -3,6 +3,9 @@ package com.samplesecurity.dto.Board;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @Data
 public class BoardPageDto {
@@ -37,5 +40,22 @@ public class BoardPageDto {
 
     public Pageable makePageable() {
         return PageRequest.of(this.page - 1, this.size);
+    }
+
+
+    public void calBno(List<BoardListDto> content) {
+        long number = ((long) this.getSize() * (this.getPage() - 1)); // page에서 가장 큰 번호
+
+        for (int i = 0; i < content.size(); i++) {
+            content.get(i).setIdx(number + i + 1);
+        }
+    }
+
+    public String getListLink() {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath("")
+                .queryParam("page", this.page)
+                .queryParam("boardType", this.getBoardType());
+
+        return builder.toUriString();
     }
 }

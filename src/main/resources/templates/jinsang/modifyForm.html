@@ -7,10 +7,26 @@
 
 <div class="content sub">
     <section>
-        <h3 class="sub-title">
-            오늘의 진상 </h3>
+        <h3 th:if="${pageDto.boardType eq '2'}" class="sub-title">
+            오늘의 진상　
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '3'}" class="sub-title">
+            진상 대응 노하우　
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '4'}" class="sub-title">
+            인생은 실전이야 진상아
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '5'}" class="sub-title">
+            변호사 상담
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '6'}" class="sub-title">
+            심리 상담
+        </h3>
+        <h3 th:if="${pageDto.boardType eq '7'}" class="sub-title">
+            CS 전문 상담
+        </h3>
         <div class="board-wrap normal-view write">
-            <form id="f1" th:action="@{/jinsang/modify/{boardId} (boardId=${board.id}, boardType=2)}"
+            <form id="f1" th:action="@{/jinsang/modify/{boardId} (boardId=${board.id}, boardType=${pageDto.boardType})}"
                   method="post" enctype="multipart/form-data">
                 <!-- s: .board-detail -->
                 <article class="board-detail">
@@ -26,6 +42,7 @@
                                     <div class="field control">
                                         <div class="select">
                                             <select id="w-category" name="category" class="is-hovered">
+                                                <option value="">----선택----</option>
                                                 <option th:each="category:${categoryList}" th:value="${category.id}"
                                                         th:text="${category.name}"></option>
                                             </select>
@@ -46,7 +63,26 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="field is-horizontal">
+
+                            <div class="field is-horizontal"
+                                 th:if="${pageDto.boardType eq '5'} or ${pageDto.boardType eq '6'} or ${pageDto.boardType eq '7'}">
+                                <div class="field-label is-normal">
+                                    <label class="label">공개설정</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field is-normal">
+                                        <div class="control radio-list" style="margin-top: 5px">
+                                            <input type="radio" name="hidden" value="N">
+                                            <label class="radio">공개</label>
+
+                                            <input type="radio" name="hidden" value="Y" style="margin-left: 7px">
+                                            <label class="radio">비공개</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="field is-horizontal" th:if="${pageDto.boardType eq '2'}">
                                 <div class="field-label is-normal">
                                     <label for="address" class="label">진상발생지</label>
                                 </div>
@@ -65,7 +101,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="map" style="width:100%;height:500px;margin-top:10px;display:none"></div>
+                            <div th:if="${pageDto.boardType eq '2'}" id="map" style="width:100%;height:500px;margin-top:10px;display:none"></div>
                             <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
                             <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=32519abbf2740e177af7221aa1c38b81&libraries=services"></script>
                             <script th:inline="javascript">
@@ -311,7 +347,7 @@
             }
         });
         var contents = [[${board.contents}]];
-        $('#summernote').summernote('pasteHTML', contents);
+        $('#summernote').summernote('code', contents);
 
         function sendFile(file, el) {
             $(document).ajaxSend(function (e, xhr, options) {
@@ -350,7 +386,8 @@
                 $("#w-title").focus();
                 return false;
             }
-            if (!latitude && !longitude) {
+            var boardType=[[${pageDto.boardType}]];
+            if (!latitude && !longitude&&boardType =='2') {
                 alert("진상발생지를 선택해주세요");
                 return false;
             }
@@ -367,6 +404,24 @@
         });
     });
 </script>
-
 </body>
 </html>
+<style>
+    input[type='radio'],
+    input[type='radio']:checked {
+        appearance: none;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 100%;
+        margin-right: 0.1rem;
+    }
+
+    input[type='radio'] {
+        background-color: white;
+        border: 1px solid black;
+    }
+
+    input[type='radio']:checked {
+        background-color: #9281e3;
+    }
+</style>
