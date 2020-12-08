@@ -40,7 +40,6 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
                 .fetch();
     }
 
-    //    @SuppressWarnings("ConstantConditions") //int -> integer로 바꿔야안전 null일수도 있어서 warning 표시가 뜸
     @Override
     public int findBottom(Reply parentReply) {
         Integer minRef = queryFactory.select(reply.refOrder.min())

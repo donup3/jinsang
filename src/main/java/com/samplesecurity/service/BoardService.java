@@ -5,10 +5,8 @@ import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.Board.BoardListDto;
 import com.samplesecurity.dto.Board.BoardUpdateDto;
-import com.samplesecurity.exception.SecretBoardException;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.*;
-import com.samplesecurity.repository.reply.ReplyAgreeCheckRepository;
 import com.samplesecurity.repository.reply.ReplyRepository;
 import com.samplesecurity.dto.Board.BoardMapDto;
 import com.samplesecurity.repository.board.AgreeCheckRepository;
@@ -44,7 +42,6 @@ public class BoardService {
     private final ReplyRepository replyRepository;
     private final UploadFileRepository uploadFileRepository;
     private final AddressRepository addressRepository;
-    private final MemberRepository memberRepository;
 
     public Page<BoardListDto> getBoardList(String boardType, Pageable pageable) {
 

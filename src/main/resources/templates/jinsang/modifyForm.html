@@ -347,7 +347,7 @@
             }
         });
         var contents = [[${board.contents}]];
-        $('#summernote').summernote('pasteHTML', contents);
+        $('#summernote').summernote('code', contents);
 
         function sendFile(file, el) {
             $(document).ajaxSend(function (e, xhr, options) {

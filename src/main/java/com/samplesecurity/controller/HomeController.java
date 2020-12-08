@@ -21,7 +21,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String index(Model model) {
-        log.info("main@@@@@@");
         List<Board> boardsOfType1 = boardRepository.findAllByType1();
         model.addAttribute("board1", boardsOfType1);
 

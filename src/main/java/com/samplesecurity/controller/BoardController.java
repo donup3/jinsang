@@ -6,7 +6,6 @@ import com.samplesecurity.domain.board.Category;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.Board.*;
 import com.samplesecurity.dto.PageMaker;
-import com.samplesecurity.exception.SecretBoardException;
 import com.samplesecurity.repository.board.CategoryRepository;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.AttachFileRepository;
@@ -189,11 +188,4 @@ public class BoardController {
         String username = userDetails.getUsername();
         return memberRepository.findByEmail(username).get();
     }
-//    //수정 필요
-//    @ExceptionHandler({SecretBoardException.class})
-//    public String errorHandler(SecretBoardException e, Model model) {
-//        log.info("catch error: " + e);
-//        model.addAttribute("error", e);
-//        return "jinsang/jslist";
-//    }
 }
