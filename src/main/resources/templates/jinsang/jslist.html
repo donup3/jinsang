@@ -140,7 +140,7 @@
             var writer = $(this).data("writer");
             var type = $(this).data("type");
             var roleArr = [];
-            //null 체크않하면 개발자도구 console에서 오류보임
+            //null 체크안하면 개발자도구 console에서 오류보임
             if (role !== null) {
                 for (var i = 0; i < role.length; i++) {
                     roleArr.push(role[i].role);
@@ -149,7 +149,7 @@
             var adminCheck = roleArr.includes("ROLE_ADMIN");
             var lawyerCheck = roleArr.includes("ROLE_LAWYER");
             var CounselorCheck = roleArr.includes("ROLE_COUNSELOR");
-            var CsCounselorCheck = roleArr.includes("ROLE_CSCOUNSELOR");
+            var CsCounselorCheck = roleArr.includes("ROLE_CS");
             var hidden = $(this).data("hidden");
             console.log("type: " + type);
             console.log("hidden: " + hidden);

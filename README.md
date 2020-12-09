@@ -16,8 +16,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-      show_sql: true
-      format_sql: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
 
   mail:
     host: smtp.gmail.com
@@ -27,5 +29,4 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
-
 ```
