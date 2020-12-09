@@ -6,12 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class EmailAuthService {
 
@@ -40,7 +42,7 @@ public class EmailAuthService {
 
     public String sendAuthCode(String email) {
         SimpleMailMessage simpleMailMessage;
-        String authCode = "haha1122@@";
+        String authCode = getCode();
         try {
             simpleMailMessage =  new SimpleMailMessage();
             simpleMailMessage.setFrom(FROM_ADDRESS);
@@ -54,6 +56,55 @@ public class EmailAuthService {
         return authCode;
     }
 
+    public void remove(String email) {
+        emailAuthRepository.findByEmail(email)
+                .ifPresent(item -> emailAuthRepository.delete(item));
+    }
+
+    private String getCode() {
+        String numbers = "01234567890";
+        String alphabet = "abcdefghijklmnopqrstuvwxyz";
+        String symbols = "!@#$%^&";
+
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        int pickedIndex;
+        int randomChoice;
+        int numberCount = 0;
+        int alphabetCount = 0;
+        int symbolCount = 0;
+        int codeLength = 12;
+        char character;
+
+        while(stringBuilder.length() < codeLength) {
+            randomChoice = random.nextInt(3);
+            if (randomChoice == 0) {
+                if (numberCount < 4) {
+                    pickedIndex = random.nextInt(numbers.length());
+                    character = numbers.charAt(pickedIndex);
+                    stringBuilder.append(character);
+                    numberCount++;
+                }
+            } else if (randomChoice == 1) {
+                if (alphabetCount < 4) {
+                    pickedIndex = random.nextInt(alphabet.length());
+                    character = alphabet.charAt(pickedIndex);
+                    stringBuilder.append(character);
+                    alphabetCount++;
+                }
+            } else {
+                if (symbolCount < 4) {
+                    pickedIndex = random.nextInt(symbols.length());
+                    character = symbols.charAt(pickedIndex);
+                    stringBuilder.append(character);
+                    symbolCount++;
+                }
+            }
+        }
+        return stringBuilder.toString();
+    }
+
     private String getAuthCode() {
         Random random = new Random();
         StringBuffer stringBuffer = new StringBuffer();
@@ -65,14 +116,5 @@ public class EmailAuthService {
             stringBuffer.append(num);
         }
         return stringBuffer.toString();
-    }
-
-    private String getCode() {
-        UUID uuid = UUID.randomUUID();
-        String pieceOfUUID = uuid.toString().substring(0, 8);
-
-
-
-        return pieceOfUUID + "!!";
     }
 }

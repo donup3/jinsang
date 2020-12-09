@@ -41,13 +41,13 @@ public class FileController {
     @ResponseBody
     @PostMapping("/uploadProfile")
     public ResponseEntity<ProfileDto> uploadProfileImg(@RequestParam(value = "profileimg") MultipartFile uploadFile) {
-        ProfileDto profileDto = fileService.uploadSingleFile(uploadFile);
+        ProfileDto profileDto = fileService.uploadProfile(uploadFile);
         return new ResponseEntity<>(profileDto, HttpStatus.OK);
     }
 
     @GetMapping("/display")
     public ResponseEntity<byte[]> getFile(String fileName) {
-        File file = new File("C:\\upload\\" + fileName);
+        File file = new File("C:\\upload\\profile\\" + fileName);
         ResponseEntity<byte[]> result = null;
 
         try {
@@ -87,11 +87,5 @@ public class FileController {
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
-    private String getFolder() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String str = sdf.format(date);
-        return str.replace("-", File.separator);
-    }
 
 }

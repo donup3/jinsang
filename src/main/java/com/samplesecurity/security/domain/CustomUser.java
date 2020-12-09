@@ -17,7 +17,7 @@ public class CustomUser extends User {
 
     public CustomUser(Member member) {
         super(member.getEmail(), member.getPassword(), member.getRoles().stream()
-        .map(role -> new SimpleGrantedAuthority(role.getRole())).collect(Collectors.toList()));
+        .map(memberAuth -> new SimpleGrantedAuthority(memberAuth.getRole())).collect(Collectors.toList()));
 
         this.member = member;
     }

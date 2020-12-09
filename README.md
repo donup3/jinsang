@@ -19,7 +19,7 @@ spring:
       show_sql: true
       format_sql: true
 
-mail:
+  mail:
     host: smtp.gmail.com
     port: 587
     username: 본인 이메일 주소  // 이메일 주소추가하기

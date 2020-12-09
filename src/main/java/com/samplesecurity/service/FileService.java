@@ -3,10 +3,17 @@ package com.samplesecurity.service;
 import com.samplesecurity.dto.Board.AttachFileDto;
 import com.samplesecurity.dto.ProfileDto;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,6 +48,10 @@ public class FileService {
                     .uploadPath(directoryPathByDate)
                     .uuid(uuid)
                     .build();
+
+            String fileNameWithoutUUID = fileName.substring(fileName.indexOf("_") + 1);
+            attachFileDTO.setFileName(fileNameWithoutUUID);
+
             try {
                 multipartFile.transferTo(saveFile);
             } catch (Exception e) {
@@ -52,7 +63,7 @@ public class FileService {
         return listOfAttachments;
     }
 
-    public ProfileDto uploadSingleFile(MultipartFile uploadFile) {
+    public ProfileDto uploadProfile(MultipartFile uploadFile) {
         String directoryPathByDate = getDirectoryPathByDate();
         File uploadPath = new File(rootProfileDirectory, directoryPathByDate);
 
@@ -71,6 +82,17 @@ public class FileService {
 
         try {
             uploadFile.transferTo(saveFile);
+
+            InputStream inputStream = new FileInputStream(saveFile.getAbsoluteFile());
+
+            FileOutputStream thumbnailOutputStream =
+                    new FileOutputStream(new File(uploadPath, "s_" + fileName));
+            Thumbnailator.createThumbnail(inputStream, thumbnailOutputStream, 150,150);
+            thumbnailOutputStream.close();
+            inputStream.close();
+
+            String fileNameWithoutUUID = fileName.substring(fileName.indexOf("_") + 1);
+            profileDto.setFileName(fileNameWithoutUUID);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -93,5 +115,23 @@ public class FileService {
     private String UUIDGenerator() {
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
+    }
+
+    public void deleteProfile(ProfileDto profileDto) {
+        if (profileDto == null) {
+            return;
+        }
+
+        try {
+            Path file = Paths.get("C:\\upload\\profile\\" + profileDto.getUploadPath()
+                    + "\\" + profileDto.getUuid() + "_" + profileDto.getFileName());
+            Files.delete(file);
+
+            Path thumbnail = Paths.get("C:\\upload\\profile\\" + profileDto.getUploadPath()
+                    + "\\s_" + profileDto.getUuid() + "_" + profileDto.getFileName());
+            Files.delete(thumbnail);
+        } catch (Exception e) {
+            log.error("delete file error : " + e.getMessage());
+        }
     }
 }

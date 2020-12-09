@@ -1,9 +1,6 @@
 package com.samplesecurity.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -12,16 +9,21 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "member")
 public class Profile {
 
     @Id
-    @Column(name = "profile_uuid", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "profile_id", nullable = false)
+    private Long id;
+
+    @Column(name = "uuid")
     private String uuid;
 
-    @Column(name = "uploadPath", nullable = false)
+    @Column(name = "uploadPath")
     private String uploadPath;
 
-    @Column(name = "fileName", nullable = false)
+    @Column(name = "fileName")
     private String fileName;
 
     @OneToOne(fetch = FetchType.LAZY)

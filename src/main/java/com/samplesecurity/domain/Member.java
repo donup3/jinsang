@@ -27,15 +27,17 @@ public class Member {
 
     private String nickName;
 
-    @OneToMany(mappedBy = "member")
+    private String type;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<MemberAuth> roles;
 
     @OneToMany(mappedBy = "member")
     private List<Board> boards;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE)
     private Profile profile;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE)
     private EmailAuth emailAuth;
 }

@@ -36,4 +36,10 @@ public class EmailAuthController {
         }
         return ResponseEntity.ok().body(false);
     }
+
+    @PostMapping("/email/remove")
+    public ResponseEntity<String> removeEmail(String email) {
+        emailAuthService.remove(email);
+        return ResponseEntity.ok().body("새로운 이메일을 등록해주세요.");
+    }
 }
