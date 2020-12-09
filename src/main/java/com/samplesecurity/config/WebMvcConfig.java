@@ -15,4 +15,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns(loginIntercepter.loginEssential)
                 .excludePathPatterns();
     }
+
+
 }

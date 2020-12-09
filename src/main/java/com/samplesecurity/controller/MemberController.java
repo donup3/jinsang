@@ -3,6 +3,7 @@ package com.samplesecurity.controller;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.MemberDto;
 import com.samplesecurity.dto.PasswordDto;
+import com.samplesecurity.dto.ProfileDto;
 import com.samplesecurity.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +44,14 @@ public class MemberController {
         return "/denied";
     }
 
+    @ResponseBody
+    @GetMapping("/get/profile")
+    public ResponseEntity<ProfileDto> getProfile(Authentication authentication) {
+        ProfileDto profileDto = memberService.getProfileImg(authentication);
+        return ResponseEntity.ok().body(profileDto);
+    }
+
     // 내 정보 페이지
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/myinfo")
     public String displayMyInfo(Model model, Authentication authentication) {
         Member member = memberService.getMemberInfo(authentication);
@@ -89,5 +96,17 @@ public class MemberController {
     public ResponseEntity<Boolean> changePassword(@RequestBody PasswordDto passwordDto, Authentication authentication) {
         Boolean isPasswordChanged =  memberService.changePassword(passwordDto, authentication);
         return ResponseEntity.ok().body(isPasswordChanged);
+    }
+
+    @PostMapping("/modify/profile")
+    public ResponseEntity<Boolean> modifyProfile(@RequestBody ProfileDto profileDto, Authentication authentication) {
+        memberService.modifyProfile(profileDto, authentication);
+        return ResponseEntity.ok().body(true);
+    }
+
+    @PostMapping("/delete/profile")
+    public ResponseEntity<Boolean> deleteProfile(@RequestBody ProfileDto profileDto, Authentication authentication) {
+        memberService.deleteProfile(profileDto, authentication);
+        return ResponseEntity.ok().body(true);
     }
 }

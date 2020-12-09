@@ -6,6 +6,20 @@
 <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 <div th:replace="fragments/nav :: mainNav"></div>
 
+<style>
+.btnsaveprofile {
+	height: 40px;
+    width: 104px;
+    margin-left: 10px;
+    background-color: black;
+    border-color: black;
+    color: #9281e3;
+    border-radius: 8px;
+    padding: 0;
+}
+
+</style>
+
 <div class="content sub ">
     <section>
         <h3 class="sub-title">
@@ -52,18 +66,18 @@
                 <span class="input-tit">프로필 변경</span>
                 <div class="input-multi duo">
                     <div class="inner-wrap">
-                            <span>
-                                <span class="with-conf">
-                                    <span class="base-input">
-										<img src=''>                                    
-									</span>
-                                    <button type="button" class="button delprofile">삭제</button>
-                                </span>
-                            </span>
+						<span>
+							<span class="with-conf locationOfThumbnail">
+								<span class="base-input">
+									<img src=''>
+								</span>
+								<button type="button" class="button delprofile">삭제</button>
+							</span>
+						</span>
                         <span>
 							<span class="file">
 								<label class="file-label" for="user-prof">
-									<input id="user-prof" name="user-prof" class="file-input" type="file">
+									<input id="user-prof" name="profileimg" class="file-input" type="file">
 									<span class="file-name">선택된 파일 없음</span>
 									<span class="file-cta">
 										<span>파일선택</span>
@@ -71,20 +85,13 @@
 								</label>
 							</span>
 						</span>
+						<p class="fileUploadMsg" style="float:right; margin: 0 10px 20px 0">파일을 업로드해주세요.</p>
                     </div>
-                </div>
-                <button type="button" class="button btnsaveprofile">수정완료</button>
+				</div>
+				<span class="profileImgModify">
+					<button type="button" class="button btnsaveprofile">수정완료</button>
+				</span>
             </div>
-            <script>
-				// File upload 를 위한 스크립트
-				$(function () {
-					$(document).on('change','.file-input',function () {
-						if ($(this).length > 0) {
-							$(this).closest('.file').find('.file-name').text($(this)[0].files[0].name);
-						}
-					});
-				});
-			</script>
         </div>
     </section>
 </div>
@@ -113,6 +120,12 @@ $(function(){
 
 	var nickNameMsg = $(".nickNameMsg");
 	var nickNameInput = $("#user-nick");
+
+	var inputFile = $("input[name='profileimg']");
+	var fileUploadMsg = $(".fileUploadMsg");
+
+	var locationOfThumbnail = $(".locationOfThumbnail");
+	var profileImgModify = $(".profileImgModify");
 	
 	$(".btnpass").click(function(){
 		if(!$("#cur-user-pw").val()){
@@ -265,21 +278,48 @@ $(function(){
 		});
 	}
 
-	$(".delprofile").click(function(){
-		var userprofile = "azanghs@naver.com.png";
+	$(".locationOfThumbnail").on("click", ".delprofile" ,function(){
+		$(document).ajaxSend(function (e, xhr, options) {
+			xhr.setRequestHeader(header, token);
+		});
+
+		var userprofile = $("input[name='profileimg']");
+
 		if(!userprofile){
 			alert("삭제할 프로필이 없습니다.");
 			return false;
 		}
 
+		var uuid = $(this).data("uuid");
+		var uploadPath = $(this).data("path");
+		var fileName = $(this).data("file");
+
+		var fileDetail = {
+			uuid : uuid,
+			uploadPath : uploadPath,
+			fileName : fileName
+		}
+
+		var str ="";
+
+		console.log("about to delete file");
+		console.log(fileDetail);
+
 		if(confirm("프로필을 삭제하시겠습니까?")){
 			$.ajax({
-				url:'./ajax/delprofile.php',
+				url:'/user/delete/profile',
 				method:'post',
-				dataType:'json',
-				async:false,
+				data: JSON.stringify(fileDetail),
+				contentType : "application/json",
 				success:function(data){
-					alert(data.msg);
+					if(data) {
+						fileUploadMsg.text("프로필이 삭제되었습니다.");
+
+						str += "<span class='base-input'><img src=''></span>";
+						str += "<button type='button' class='button delprofile'>삭제</button>";
+
+						locationOfThumbnail.html(str);
+					}
 				},
 				error:function(request,status,error){
 					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -290,39 +330,121 @@ $(function(){
 	});
 
 	//fileupload
-	$(".btnsaveprofile").click(function(){
+	$(".profileImgModify").on("click", ".btnsaveprofile" ,function(){
 		//validation
 		if(!$("#user-prof").val()){
 			alert("프로필이 업로드되지 않았습니다.");
 			return false;
 		}
+		
+		var uuid = $(this).data("uuid");
+		var uploadPath = $(this).data("path");
+		var fileName = $(this).data("file");
+
+		var fileDetail = {
+			uuid : uuid,
+			uploadPath : uploadPath,
+			fileName : fileName
+		}
+
+		console.log(fileDetail);
+
+		sendFileDetail(fileDetail);
+	});
+
+	$(".file-input").change(function () {
+		if ($(this).length > 0) {
+			$(this).closest('.file').find('.file-name').text($(this)[0].files[0].name);
+		}
+
+		uploadProfileImg();
+	});
+
+	function uploadProfileImg(){
+		$(document).ajaxSend(function (e, xhr, options) {
+			xhr.setRequestHeader(header, token);
+		});
 
 		var formData = new FormData();
-		formData.append("myprofile", $("#user-prof")[0].files[0]);
+		var files = inputFile[0].files;
 
-		$(".loading-container").show();
+		formData.set("profileimg", files[0]);
+		str = "";
+		strBtn = "";
 
 		$.ajax({
-			url: './ajax/savefile.php',
+			type: "POST",
+			url: "/uploadProfile",
 			data: formData,
-			contentType: 'multipart/form-data',
-			mimeType: 'multipart/form-data',
 			processData: false,
 			contentType: false,
-			type: 'POST',
-			dataType:'json',
-			success: function(data){
-				alert(data.msg);
-				$(".loading-container").hide();
+			dataType:"json",
+			success: function (data) {
+				// sendFileDetail(data);
+				var fileCallPath 
+						= encodeURIComponent(data.uploadPath + "/s_" + data.uuid + "_" + data.fileName);
+				
+				str += "<div><img src='/display?fileName=" + fileCallPath + "'></div>";
+				str += "<button type='button' class='button delprofile' data-path='"+ data.uploadPath +"' "
+					   + "data-uuid='"+ data.uuid +"' data-file='"+ data.fileName +"'>삭제</button>"
+
+				strBtn += "<button type='button' class='btnsaveprofile' data-path='"+ data.uploadPath +"' "
+					   + "data-uuid='"+ data.uuid +"' data-file='"+ data.fileName +"'>수정완료</button>"
+				
+
+				locationOfThumbnail.html(str);
+				profileImgModify.html(strBtn);
+
+				fileUploadMsg.text("수정완료 버튼을 눌러주세요.");
 			},
-			error:function(data){
-				console.log(data);
-				alert("데이터 처리 중 오류가 발생했습니다.");
-				$(".loading-container").hide();
+			err: function (err) {
+				alert(err.status);
 			}
 		});
-	});
+	}
+
+	function sendFileDetail(fileDetail) {
+		$(document).ajaxSend(function (e, xhr, options) {
+			xhr.setRequestHeader(header, token);
+		});
+
+		$.ajax({
+			type: "POST",
+			url: "/user/modify/profile",
+			data: JSON.stringify(fileDetail),
+			contentType: "application/json",
+			success: function (data) {
+				if(data) {
+					fileUploadMsg.text("프로필이 수정되었습니다.");
+				}
+			},
+			err: function (err) {
+				alert(err.status);
+			}
+		});
+	}
 });
+</script>
+<script>
+	$(document).ready(function() {
+		var locationOfThumbnail = $(".locationOfThumbnail");
+
+		(function(){
+			$.getJSON("/user/get/profile", function(data){
+				console.log(data);
+				var str = "";
+
+				var fileCallPath 
+						= encodeURIComponent(data.uploadPath + "/s_" + data.uuid + "_" + data.fileName);
+				
+				str += "<div><img src='/display?fileName=" + fileCallPath + "'></div>";
+				str += "<button type='button' class='button delprofile' data-path='"+ data.uploadPath +"' "
+					   + "data-uuid='"+ data.uuid +"' data-file='"+ data.fileName +"'>삭제</button>"
+				
+				locationOfThumbnail.html(str);
+			});
+		})();
+	});
 </script>
 </body>
 </html>

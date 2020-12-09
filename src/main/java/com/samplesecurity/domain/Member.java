@@ -29,7 +29,7 @@ public class Member {
 
     private String type;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<MemberAuth> roles;
 
     @OneToMany(mappedBy = "member")
