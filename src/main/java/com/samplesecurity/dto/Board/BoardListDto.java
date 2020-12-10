@@ -25,8 +25,10 @@ public class BoardListDto {
 
     private String hidden;
 
+    private int view;
+
     @QueryProjection
-    public BoardListDto(Long id, Long idx, String category, String title, LocalDate createdDate, String writer, int agreeCount, int replyCount, String hidden) {
+    public BoardListDto(Long id, Long idx, String category, String title, LocalDate createdDate, String writer, int agreeCount, int replyCount, String hidden, int view) {
         this.id = id;
         this.idx = idx;
         this.category = category;
@@ -36,5 +38,6 @@ public class BoardListDto {
         this.agreeCount = agreeCount;
         this.replyCount = replyCount;
         this.hidden = hidden;
+        this.view = view;
     }
 }

@@ -69,7 +69,8 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
                                 member.nickName.as("writer"),
                                 board.agreeCount,
                                 board.replies.size(),
-                                board.hidden))
+                                board.hidden,
+                                board.viewCount))
                 .from(board)
                 .orderBy(board.id.desc())
                 .leftJoin(board.category, category)
@@ -143,7 +144,8 @@ public class BoardRepositoryImpl implements BoardCustomRepository {
 
     @Override
     public List<HomeBoardDto> findCountByAddress() {
-        return queryFactory.select(new QHomeBoardDto(address.cityName, address.boards.size()))
+        return queryFactory
+                .select(new QHomeBoardDto(address.cityName, address.boards.size()))
                 .from(address)
                 .fetch();
     }

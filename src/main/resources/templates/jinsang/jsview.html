@@ -1,4 +1,5 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">>
 <head th:replace="fragments/mainHeader :: mainHeader"></head>
 
 <body class="jsdotcom vsc-initialized">
@@ -114,16 +115,18 @@
             </section>
             <!-- e: .section-comment -->
             <div class="pn-list">
-                <ul>
+                <ul id="pn-list">
                     <li class="prev-num" th:if="${preBoard!=null}">
-                        <i class="ico-chevron-up-thin">이전글</i>
+                        <i class="ico-chevron-up-thin" >이전글</i>
                         <a href="#"
+                           th:attr="data-hidden=${preBoard.hidden},data-writer=${preBoard.member.nickName},data-type=${preBoard.boardType}"
                            th:href="@{/jinsang/{id}/{boardType} (id=${preBoard.id},boardType=${pageDto.boardType})}"
                            class="viewArticle" th:text="${preBoard.title}"></a>
                     </li>
                     <li class="next-num" th:if="${nextBoard!=null}">
                         <i class="ico-chevron-down-thin">다음글</i>
                         <a href="#"
+                           th:attr="data-hidden=${nextBoard.hidden},data-writer=${nextBoard.member.nickName},data-type=${nextBoard.boardType}"
                            th:href="@{/jinsang/{id}/{boardType} (id=${nextBoard.id},boardType=${pageDto.boardType})}"
                            data-idx="415" class="viewArticle" th:text="${nextBoard.title}">test2</a>
                     </li>
@@ -426,6 +429,45 @@
         })
 
     })
+    $("#pn-list >li >a").on("click", function (e) {
+        var loginUserNickName = [[${#authentication.principal} eq 'anonymousUser' ? null : ${#authentication.principal.member.nickName}]];
+        var role = [[${#authentication.principal} eq 'anonymousUser' ? null : ${#authentication.principal.member.roles}]];
+        var writer = $(this).data("writer");
+        var type = $(this).data("type");
+        var roleArr = [];
+        //null 체크안하면 개발자도구 console에서 오류보임
+        if (role !== null) {
+            for (var i = 0; i < role.length; i++) {
+                roleArr.push(role[i].role);
+            }
+        }
+        var adminCheck = roleArr.includes("ROLE_ADMIN");
+        var lawyerCheck = roleArr.includes("ROLE_LAWYER");
+        var CounselorCheck = roleArr.includes("ROLE_COUNSELOR");
+        var CsCounselorCheck = roleArr.includes("ROLE_CS");
+        var hidden = $(this).data("hidden");
+        console.log("type: " + type);
+        console.log("hidden: " + hidden);
+        if (type.toString() === "5" && hidden.toString() === "Y") {
+            if (loginUserNickName !== writer && !adminCheck && !lawyerCheck) {
+                e.preventDefault();
+                alert("비밀글입니다.")
+            }
+        }
+        if (type.toString() === "6" && hidden.toString() === "Y") {
+            if (loginUserNickName !== writer && !adminCheck && !CounselorCheck) {
+                e.preventDefault();
+                alert("비밀글입니다.")
+            }
+        }
+        if (type.toString() === "7" && hidden.toString() === "Y") {
+            if (loginUserNickName !== writer && !adminCheck && !CsCounselorCheck) {
+                e.preventDefault();
+                alert("비밀글입니다.")
+            }
+        }
+    });
+
 </script>
 </body>
 </html>

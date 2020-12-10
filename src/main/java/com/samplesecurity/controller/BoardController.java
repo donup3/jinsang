@@ -1,14 +1,14 @@
 package com.samplesecurity.controller;
 
+import com.samplesecurity.domain.Member;
 import com.samplesecurity.domain.board.AttachFile;
 import com.samplesecurity.domain.board.Board;
 import com.samplesecurity.domain.board.Category;
-import com.samplesecurity.domain.Member;
 import com.samplesecurity.dto.Board.*;
 import com.samplesecurity.dto.PageMaker;
-import com.samplesecurity.repository.board.CategoryRepository;
 import com.samplesecurity.repository.MemberRepository;
 import com.samplesecurity.repository.board.AttachFileRepository;
+import com.samplesecurity.repository.board.CategoryRepository;
 import com.samplesecurity.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +23,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-import static java.lang.Long.*;
+import static java.lang.Long.parseLong;
 
 @Controller
 @Slf4j
@@ -55,8 +57,11 @@ public class BoardController {
     public String get(@PathVariable("id") Long boardId,
                       @PathVariable("boardType") String type,
                       @ModelAttribute("pageDto") BoardPageDto boardPageDto,
+                      Authentication authentication,
                       Model model) {
-        Board findBoard = boardService.getBoard(boardId);
+        Member findMember = findMember(authentication);
+
+        Board findBoard = boardService.getBoard(findMember, boardId);
 
         boardPageDto.setBoardType(type);
 
@@ -64,13 +69,13 @@ public class BoardController {
 
         Long preBoardId = boardService.getPreBoard(boardId, boardPageDto.getBoardType());
 
-        Board findPreBoard = boardService.getBoard(preBoardId);
+        Board findPreBoard = boardService.getBoard(findMember, preBoardId);
         model.addAttribute("preBoard", findPreBoard);
 
 
         Long nextBoardId = boardService.getNextBoard(boardId, boardPageDto.getBoardType());
 
-        Board nextBoard = boardService.getBoard(nextBoardId);
+        Board nextBoard = boardService.getBoard(findMember, nextBoardId);
         model.addAttribute("nextBoard", nextBoard);
 
         return "jinsang/jsview";
@@ -184,8 +189,11 @@ public class BoardController {
     }
 
     private Member findMember(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
-        return memberRepository.findByEmail(username).get();
+        if(authentication!=null) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String username = userDetails.getUsername();
+            return memberRepository.findByEmail(username).get();
+        }
+        return null;
     }
 }

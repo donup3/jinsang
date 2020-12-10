@@ -3,11 +3,9 @@ package com.samplesecurity.domain.board;
 import com.samplesecurity.domain.Member;
 import com.samplesecurity.domain.reply.Reply;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -39,6 +37,8 @@ public class Board {
 
     private String boardType; //게시물 구분
 
+    private int viewCount;
+
     @Column(columnDefinition = "varchar(1) default 'N'")
     private String hidden; //Y일  경우 비밀글, N 일경우 공개글
 
@@ -63,6 +63,10 @@ public class Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<AgreeCheck> agreeChecks;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<ViewsCheck> views;
+
 
     public void setMember(Member member) {
         this.member = member;

@@ -60,6 +60,7 @@
                         <col style="width:135px;" class="is-hidden-480">
                         <col style="width:120px;" class="is-hidden-mobile">
                         <col style="width:80px;" class="is-hidden-mobile">
+                        <col style="width:80px;" class="is-hidden-mobile">
                     </colgroup>
                     <thead>
                     <tr>
@@ -69,6 +70,7 @@
                         <th scope="col" class="is-hidden-480">작성일</th>
                         <th scope="col" class="is-hidden-mobile">작성자</th>
                         <th scope="col" class="is-hidden-mobile">공감</th>
+                        <th scope="col" class="is-hidden-mobile">조회수</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -86,6 +88,7 @@
                         <td class="is-hidden-480">[[${board.createdDate}]]</td>
                         <td class="is-hidden-mobile">[[${board.writer}]]</td>
                         <td class="is-hidden-mobile">[[${board.agreeCount}]]</td>
+                        <td class="is-hidden-mobile">[[${board.view}]]</td>
                     </tr>
                     </tbody>
 
@@ -154,7 +157,6 @@
             console.log("type: " + type);
             console.log("hidden: " + hidden);
             if (type.toString() === "5" && hidden.toString() === "Y") {
-                console.log("@@@")
                 if (loginUserNickName !== writer && !adminCheck && !lawyerCheck) {
                     e.preventDefault();
                     alert("비밀글입니다.")

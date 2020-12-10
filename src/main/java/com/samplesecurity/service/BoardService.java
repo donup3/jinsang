@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,6 +43,7 @@ public class BoardService {
     private final ReplyRepository replyRepository;
     private final UploadFileRepository uploadFileRepository;
     private final AddressRepository addressRepository;
+    private final ViewsCheckRepository viewsCheckRepository;
 
     public Page<BoardListDto> getBoardList(String boardType, Pageable pageable) {
 
@@ -70,9 +72,27 @@ public class BoardService {
         }
     }
 
-    public Board getBoard(Long id) {
-        if (id != null) {
-            return boardRepository.findById(id).get();
+    public Board getBoard(Member findMember, Long boardId) {
+        if (boardId != null) {
+            ViewsCheck viewsCheck;
+            Board board = boardRepository.findById(boardId).get();
+            if (findMember != null) {
+                ViewsCheck findViewsCheck = viewsCheckRepository.findByMemberIdAndBoardId(findMember.getId(), boardId);
+                viewsCheck = findViewsCheck;
+                if (findViewsCheck == null) {
+                    viewsCheck = createViewsCheck(findMember, board);
+                }
+                int count = board.getViewCount();
+                if (!viewsCheck.isChecked()) {
+                    count++;
+                    viewsCheck.setChecked(true);
+                    board.setViewCount(count);
+                } else {
+                    return board;
+                }
+            }
+
+            return board;
         }
         return null;
     }
@@ -112,6 +132,17 @@ public class BoardService {
                 .agreeChecked(false)
                 .build();
         return agreeCheckRepository.save(agreeCheck);
+    }
+
+    private ViewsCheck createViewsCheck(Member findMember, Board board) {
+        ViewsCheck viewsCheck = ViewsCheck
+                .builder()
+                .board(board)
+                .member(findMember)
+                .checked(false)
+                .build();
+
+        return viewsCheckRepository.save(viewsCheck);
     }
 
     public Long getPreBoard(Long boardId, String boardType) {
