@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,7 +73,10 @@ public class BoardService {
         }
     }
 
-    public Board getBoard(Member findMember, Long boardId) {
+    public Board getBoard(Member findMember,
+                          String cookie,
+                          Long boardId,
+                          HttpServletResponse response) {
         if (boardId != null) {
             ViewsCheck viewsCheck;
             Board board = boardRepository.findById(boardId).get();
@@ -87,10 +91,17 @@ public class BoardService {
                     count++;
                     viewsCheck.setChecked(true);
                     board.setViewCount(count);
+                    return board;
                 } else {
                     return board;
                 }
             }
+            //board 얻어올때 boardId 기준으로 cookie 생성
+            if (!(cookie.contains(String.valueOf(boardId)))) {
+                cookie += boardId + "/";
+                board.setViewCount(board.getViewCount() + 1);
+            }
+            response.addCookie(new Cookie("view", cookie));
 
             return board;
         }
@@ -248,5 +259,12 @@ public class BoardService {
         });
 
         return boardMapDtos;
+    }
+
+    public Board getBoardByNoCount(Long boardId) {
+        if (boardId != null) {
+            return boardRepository.findById(boardId).get();
+        }
+        return null;
     }
 }

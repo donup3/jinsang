@@ -57,11 +57,13 @@ public class BoardController {
     public String get(@PathVariable("id") Long boardId,
                       @PathVariable("boardType") String type,
                       @ModelAttribute("pageDto") BoardPageDto boardPageDto,
+                      @CookieValue(name = "view") String cookie,
+                      HttpServletResponse response,
                       Authentication authentication,
                       Model model) {
         Member findMember = findMember(authentication);
 
-        Board findBoard = boardService.getBoard(findMember, boardId);
+        Board findBoard = boardService.getBoard(findMember,cookie, boardId,response);
 
         boardPageDto.setBoardType(type);
 
@@ -69,13 +71,13 @@ public class BoardController {
 
         Long preBoardId = boardService.getPreBoard(boardId, boardPageDto.getBoardType());
 
-        Board findPreBoard = boardService.getBoard(findMember, preBoardId);
+        Board findPreBoard = boardService.getBoardByNoCount(preBoardId);
         model.addAttribute("preBoard", findPreBoard);
 
 
         Long nextBoardId = boardService.getNextBoard(boardId, boardPageDto.getBoardType());
 
-        Board nextBoard = boardService.getBoard(findMember, nextBoardId);
+        Board nextBoard = boardService.getBoardByNoCount(nextBoardId);
         model.addAttribute("nextBoard", nextBoard);
 
         return "jinsang/jsview";
