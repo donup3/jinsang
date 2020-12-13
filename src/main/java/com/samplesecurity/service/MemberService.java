@@ -77,6 +77,13 @@ public class MemberService {
 
     private void saveRoles(Member member) {
         List<MemberAuth> roles = new ArrayList<>();
+        if (member.getType().equals("4")) {
+            for (Role role : Role.values()) {
+                addRole(role.getValue(), member, roles);
+            }
+            return;
+        }
+
         addRole(Role.MEMBER.getValue(), member, roles);
 
         if (member.getType().equals("1"))
@@ -87,6 +94,8 @@ public class MemberService {
 
         if (member.getType().equals("3"))
             addRole(Role.COUNSELOR.getValue(), member, roles);
+
+
     }
 
     private void addRole(String specificRole, Member member, List<MemberAuth> roles) {
@@ -101,10 +110,10 @@ public class MemberService {
         String generatedPassword = emailAuthService.sendAuthCode(email);
 
         memberRepository.findByEmail(email)
-            .ifPresent(member -> {
-                member.setPassword(passwordEncoder.encode(generatedPassword));
-                memberRepository.save(member);
-            });
+                .ifPresent(member -> {
+                    member.setPassword(passwordEncoder.encode(generatedPassword));
+                    memberRepository.save(member);
+                });
     }
 
     public Boolean changePassword(PasswordDto passwordDto, Authentication authentication) {
@@ -112,10 +121,10 @@ public class MemberService {
         String userEmail = userDetails.getUsername();
 
         memberRepository.findByEmail(userEmail)
-            .ifPresent(member -> {
-                member.setPassword(passwordEncoder.encode(passwordDto.getEditPassword()));
-                memberRepository.save(member);
-            });
+                .ifPresent(member -> {
+                    member.setPassword(passwordEncoder.encode(passwordDto.getEditPassword()));
+                    memberRepository.save(member);
+                });
 
         return true;
     }
@@ -155,26 +164,21 @@ public class MemberService {
         String userEmail = userDetails.getUsername();
 
         memberRepository.findByEmail(userEmail)
-            .ifPresent(member -> {
-                // 회원가입시 프로필을 저장했을때
-                if (member.getProfile() != null) {
-                    Profile memberProfile = member.getProfile();
-                    memberProfile.setUuid(profileDto.getUuid());
-                    memberProfile.setUploadPath(profileDto.getUploadPath());
-                    memberProfile.setFileName(profileDto.getFileName());
-                    profileRepository.save(memberProfile);
-                // 회원가입시 프로필을 저장하지 않았을때
-                } else {
-//                    Profile memberProfile = member.getProfile();
-//                    member.setProfile(profile);
-//                    member.getProfile().setMember(member);
-//                    memberRepository.save(member);
-
-                    Profile profile = profileDto.toEntity();
-                    profile.setMember(member);
-                    profileRepository.save(profile);
-                }
-            });
+                .ifPresent(member -> {
+                    // 회원가입시 프로필을 저장했을때
+                    if (member.getProfile() != null) {
+                        Profile memberProfile = member.getProfile();
+                        memberProfile.setUuid(profileDto.getUuid());
+                        memberProfile.setUploadPath(profileDto.getUploadPath());
+                        memberProfile.setFileName(profileDto.getFileName());
+                        profileRepository.save(memberProfile);
+                        // 회원가입시 프로필을 저장하지 않았을때
+                    } else {
+                        Profile profile = profileDto.toEntity();
+                        profile.setMember(member);
+                        profileRepository.save(profile);
+                    }
+                });
     }
 
     public ProfileDto getProfileImg(Authentication authentication) {
@@ -202,10 +206,10 @@ public class MemberService {
         String userEmail = userDetails.getUsername();
 
         memberRepository.findByEmail(userEmail)
-            .ifPresent(member -> {
-                Profile profile = profileRepository.findByUuid(profileDto.getUuid()).get();
-                profileRepository.delete(profile);
-                fileService.deleteProfile(profileDto);
-            });
+                .ifPresent(member -> {
+                    Profile profile = profileRepository.findByUuid(profileDto.getUuid()).get();
+                    profileRepository.delete(profile);
+                    fileService.deleteProfile(profileDto);
+                });
     }
 }
